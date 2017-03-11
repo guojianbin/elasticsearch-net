@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,8 @@ namespace DocGenerator.AsciiDoc
 
 		private readonly FileInfo _source;
 		private readonly FileInfo _destination;
+		private int _topSectionTitleLevel;
+		private Document _document;
 		private Document _newDocument;
 		private bool _topLevel = true;
 
@@ -30,6 +33,7 @@ namespace DocGenerator.AsciiDoc
 
 		public Document Convert(Document document)
 		{
+			_document = document;
 			document.Accept(this);
 			return _newDocument;
 		}
@@ -85,18 +89,28 @@ namespace DocGenerator.AsciiDoc
 					   "please modify the original csharp file found at the link and submit the PR with that change. Thanks!"
 			});
 
+			_topSectionTitleLevel = _source.Directory.Name.Equals("request", StringComparison.OrdinalIgnoreCase) &&
+				_source.Directory.Parent != null &&
+				_source.Directory.Parent.Name.Equals("search", StringComparison.OrdinalIgnoreCase)
+				? 2
+				: 3;
+
 			// see if the document has some kind of top level title and add one with an anchor if not.
+			// Used to add titles to *Usage test files
 			if (document.Title == null && document.Count > 0)
 			{
 				var sectionTitle = document[0] as SectionTitle;
 
-				if (sectionTitle == null || sectionTitle.Level != 2)
+				// capture existing top level
+				if (sectionTitle != null && sectionTitle.Level <= 3)
+					_topSectionTitleLevel = sectionTitle.Level;
+
+				if (sectionTitle == null || (sectionTitle.Level > 3))
 				{
 					var id = Path.GetFileNameWithoutExtension(_destination.Name);
 					var title = id.LowercaseHyphenToPascal();
-					sectionTitle = new SectionTitle(title, 2);
+					sectionTitle = new SectionTitle(title, _topSectionTitleLevel);
 					sectionTitle.Attributes.Add(new Anchor(id));
-
 					_newDocument.Add(sectionTitle);
 				}
 			}
@@ -143,7 +157,7 @@ namespace DocGenerator.AsciiDoc
 
 						// if there is a section title since the last source block, don't add one
 						var lastSourceBlock = _newDocument.LastOrDefault(e => e is Source);
-						var lastSectionTitle = _newDocument.OfType<SectionTitle>().LastOrDefault(e => e.Level == 3);
+						var lastSectionTitle = _newDocument.OfType<SectionTitle>().LastOrDefault(e => e.Level == _topSectionTitleLevel + 1);
 						if (lastSourceBlock != null && lastSectionTitle != null)
 						{
 							var lastSectionTitleIndex = _newDocument.IndexOf(lastSectionTitle);
@@ -161,14 +175,14 @@ namespace DocGenerator.AsciiDoc
 							case "queryfluent":
 								if (!LastSectionTitleMatches(text => text.StartsWith("Fluent DSL", StringComparison.OrdinalIgnoreCase)))
 								{
-									_newDocument.Add(new SectionTitle("Fluent DSL Example", 3));
+									_newDocument.Add(CreateSubsectionTitle("Fluent DSL Example"));
 								}
 
 								_newDocument.Add(element);
 
 								if (objectInitializerExample != null)
 								{
-									_newDocument.Add(new SectionTitle("Object Initializer Syntax Example", 3));
+									_newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
 									_newDocument.Add(objectInitializerExample);
 									objectInitializerExample = null;
 
@@ -180,7 +194,7 @@ namespace DocGenerator.AsciiDoc
 								}
 								break;
 							case "initializer":
-								_newDocument.Add(new SectionTitle("Object Initializer Syntax Example", 3));
+								_newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
 								_newDocument.Add(element);
 								// Move the example json to after the initializer example
 								if (exampleJson != null)
@@ -192,7 +206,7 @@ namespace DocGenerator.AsciiDoc
 							case "queryinitializer":
 								if (objectInitializerExample != null)
 								{
-									_newDocument.Add(new SectionTitle("Object Initializer Syntax Example", 3));
+									_newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
 									_newDocument.Add(objectInitializerExample);
 
 									// Move the example json to after the initializer example
@@ -211,7 +225,7 @@ namespace DocGenerator.AsciiDoc
 								// Don't add the Handlng Response section title if it was the last title (it might be defined in the doc already)
 								if (!LastSectionTitleMatches(text => text.Equals("Handling Responses", StringComparison.OrdinalIgnoreCase)))
 								{
-									_newDocument.Add(new SectionTitle("Handling Responses", 3));
+									_newDocument.Add(CreateSubsectionTitle("Handling Responses"));
 								}
 
 								_newDocument.Add(element);
@@ -257,14 +271,8 @@ namespace DocGenerator.AsciiDoc
 
 		public override void Visit(SectionTitle sectionTitle)
 		{
-			if (sectionTitle.Level != 2)
-			{
-				base.Visit(sectionTitle);
-				return;
-			}
-
-			// Generate an anchor for all Level 2 section titles
-			if (!sectionTitle.Attributes.HasAnchor)
+			// Generate an anchor for all top level section titles
+			if (this._document.IndexOf(sectionTitle) == 0 && !sectionTitle.Attributes.HasAnchor)
 			{
 				var builder = new StringBuilder();
 				using (var writer = new AsciiDocVisitor(new StringWriter(builder)))
@@ -276,15 +284,19 @@ namespace DocGenerator.AsciiDoc
 				sectionTitle.Attributes.Add(new Anchor(title));
 			}
 
-			// Check for duplicate ids across documents
-			var key = sectionTitle.Attributes.Anchor.Id;
-			string existingFile;
-			if (Ids.TryGetValue(key, out existingFile))
+			if (sectionTitle.Attributes.HasAnchor)
 			{
-				throw new Exception($"duplicate id {key} in {_destination.FullName}. Id already exists in {existingFile}");
+				// Check for duplicate ids across documents
+				var key = sectionTitle.Attributes.Anchor.Id;
+				string existingFile;
+				if (Ids.TryGetValue(key, out existingFile))
+				{
+					throw new Exception($"duplicate id {key} in {_destination.FullName}. Id already exists in {existingFile}");
+				}
+
+				Ids.Add(key, _destination.FullName);
 			}
 
-			Ids.Add(key, _destination.FullName);
 			base.Visit(sectionTitle);
 		}
 
@@ -299,8 +311,8 @@ namespace DocGenerator.AsciiDoc
 
 		private bool LastSectionTitleMatches(Func<string, bool> predicate)
 		{
-			var lastSectionTitle = _newDocument.OfType<SectionTitle>().LastOrDefault(e => e.Level == 3);
-			if (lastSectionTitle != null && lastSectionTitle.Level == 3)
+			var lastSectionTitle = _newDocument.OfType<SectionTitle>().LastOrDefault(e => e.Level == _topSectionTitleLevel + 1);
+			if (lastSectionTitle != null && lastSectionTitle.Level == _topSectionTitleLevel + 1)
 			{
 				var builder = new StringBuilder();
 				using (var visitor = new AsciiDocVisitor(new StringWriter(builder)))
@@ -312,6 +324,17 @@ namespace DocGenerator.AsciiDoc
 			}
 
 			return false;
+		}
+
+		private SectionTitle CreateSubsectionTitle(string title)
+		{
+			var level = _topSectionTitleLevel + 1;
+			var sectionTitle = new SectionTitle(title, level);
+
+			if (level < 4)
+				sectionTitle.IsFloating = true;
+
+			return sectionTitle;
 		}
 	}
 }

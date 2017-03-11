@@ -9,7 +9,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 {
 	public class ConnectionPooling
 	{
-		/**== Connection Pooling
+		/**=== Connection Pooling
 		 * Connection pooling is the internal mechanism that takes care of registering what nodes there are in the cluster and which
 		 * NEST can use to issue client calls on. There are four types of connection pool
 		 *
@@ -21,7 +21,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 
 		/**
 		* [[single-node-connection-pool]]
-		* === SingleNodeConnectionPool
+		* ==== SingleNodeConnectionPool
 		* The simplest of all connection pools, this takes a single `Uri` and uses that to connect to Elasticsearch for all the calls
 		* It doesn't opt in to sniffing and pinging behavior, and will never mark nodes dead or alive. The one `Uri` it holds is always
 		* ready to go.
@@ -54,7 +54,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		}
 
 		/**[[static-connection-pool]]
-		* === StaticConnectionPool
+		* ==== StaticConnectionPool
 		* The static connection pool is great if you have a known small sized cluster and do no want to enable
 		* sniffing to find out the cluster topology.
 		*/
@@ -83,7 +83,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		}
 
 		/**[[sniffing-connection-pool]]
-		* === SniffingConnectionPool
+		* ==== SniffingConnectionPool
 		* A subclass of `StaticConnectionPool` that allows itself to be reseeded at run time.
 		* It comes with a very minor overhead of a `ReaderWriterLockSlim` to ensure thread safety.
 		*/
@@ -116,7 +116,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		}
 
 		/**[[sticky-connection-pool]]
-		* === StickyConnectionPool
+		* ==== StickyConnectionPool
 		* A type of `IConnectionPool` that returns the first live node such that it is sticky between
 		* requests.
 		* It uses https://msdn.microsoft.com/en-us/library/system.threading.interlocked(v=vs.110).aspx[`System.Threading.Interlocked`]

@@ -10,7 +10,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 {
 	/**
 	* [[auto-map]]
-	* == Auto mapping properties
+	* === Auto mapping properties
 	 *
 	 * When creating a mapping (either when creating an index or via the put mapping API),
 	* NEST offers a feature called `.AutoMap()`, which will automagically infer the correct
@@ -46,7 +46,8 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		[U]
 		public void MappingManually()
 		{
-			/** === Manual mapping
+			/**[float]
+			 * === Manual mapping
 			 * To create a mapping for our Company type, we can use the fluent API
 			 * and map each property explicitly
 			 */
@@ -123,7 +124,8 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		[U]
 		public void UsingAutoMap()
 		{
-			/** === Simple Automapping
+			/**[float]
+			* === Simple Automapping
 			* This is exactly where `.AutoMap()` becomes useful. Instead of manually mapping each property,
 			* explicitly, we can instead call `.AutoMap()` for each of our mappings and let NEST do all the work
 			*/
@@ -136,6 +138,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 			/**
 			* Observe that NEST has inferred the Elasticsearch types based on the CLR type of our POCO properties.
 			* In this example,
+			*
 			* - Birthday was mapped as a `date`,
 			* - Hours was mapped as a `long` (ticks)
 			* - IsManager was mapped as a `bool`,
@@ -1189,7 +1192,8 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 			};
 		}
 
-		/**=== Visiting on PropertyInfo
+		/**[float]
+		 * === Visiting on PropertyInfo
 		 * You can even take the visitor approach a step further, and instead of visiting on `IProperty` types, visit
 		 * directly on your POCO properties (PropertyInfo). As an example, let's create a visitor that maps all CLR types
 		 * to an Elasticsearch text datatype (ITextProperty).

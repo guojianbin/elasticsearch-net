@@ -7,14 +7,16 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 {
 	public class DocumentPaths
 	{
-		/**== Document Paths
+		/**[[document-paths]]
+		 * === Document Paths
 		 *
 		 * Many API's in Elasticsearch describe a path to a document. In NEST, besides generating a constructor that takes
 		 * and Index, Type and Id separately, we also generate a constructor taking a `DocumentPath` that allows you to describe the path
 		 * to your document more succinctly
 		 */
 
-		/** === Creating new instances */
+		/**
+		 * ==== Creating new instances */
 		[U] public void FromId()
 		{
 			/** here we create a new document path based on Project with the id 1 */
@@ -37,7 +39,8 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 			Expect(1).WhenSerializing(path.Id);
 		}
 
-		/** === Creating from a document type instance
+		/**
+		 * ==== Creating from a document type instance
 		 * if you have an instance of your document you can use it as well generate document paths
 		 */
 		[U] public void FromObject()
@@ -66,7 +69,8 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 			DocumentPath<Project> p = project;
 		}
 
-		/** === An example with requests */
+		/**
+		 * ==== An example with requests */
 		[U] public void UsingWithRequests()
 		{
 			/* Given the following CLR type that describes a document */

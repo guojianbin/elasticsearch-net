@@ -1,14 +1,36 @@
-﻿:output-dir: aggregations
-
-[[aggregations]]
+﻿[[aggregations]]
 = Aggregations
 
 [partintro]
 --
 Aggregations are arguably one of the most powerful features of Elasticsearch and NEST
 exposes all of the available Aggregation types
+
+- <<metric-aggregations, Metric Aggregations>>
+- <<bucket-aggregations, Bucket Aggregations>>
+- <<pipeline-aggregations, Pipeline Aggregations>>
+- <<matrix-aggregations, Matrix Aggregations>>
 --
 
-include::{output-dir}/writing-aggregations.asciidoc[]
+include::aggregations/writing-aggregations.asciidoc[]
 
-include::aggregations-usage.asciidoc[]
+[[metric-aggregations]]
+== Metric Aggregations
+
+include::metric-aggregations.asciidoc[]
+
+[[bucket-aggregations]]
+== Bucket Aggregations
+
+include::bucket-aggregations.asciidoc[]
+
+[[pipeline-aggregations]]
+== Pipeline Aggregations
+
+include::pipeline-aggregations.asciidoc[]
+
+[[matrix-aggregations]]
+== Matrix Aggregations
+
+include::matrix-aggregations.asciidoc[]
+

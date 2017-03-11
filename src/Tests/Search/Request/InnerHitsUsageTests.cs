@@ -113,7 +113,7 @@ namespace Tests.Search.Request
 	}
 
 	/**[[inner-hits-usage]]
-	*== Inner Hits Usage
+	*=== Inner Hits Usage
 	*
 	* The {ref_current}/mapping-parent-field.html[parent/child] and {ref_current}/nested.html[nested] features allow the
 	* return of documents that have matches in a different scope.
@@ -156,7 +156,7 @@ namespace Tests.Search.Request
 	}
 
 	/**[float]
-	*== Query Inner Hits
+	*=== Query Inner Hits
 	*/
 	public class QueryInnerHitsApiTests : InnerHitsApiTestsBase<King>
 	{

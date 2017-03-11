@@ -1,0 +1,14 @@
+:includes-from-dirs: query-dsl/nest-specific
+
+////
+IMPORTANT NOTE
+==============
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/nest-specific-queries.asciidoc. 
+If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
+please modify the original csharp file found at the link and submit the PR with that change. Thanks!
+////
+
+include::query-dsl/nest-specific/raw/raw-combine-usage.asciidoc[]
+
+include::query-dsl/nest-specific/raw/raw-query-usage.asciidoc[]
+

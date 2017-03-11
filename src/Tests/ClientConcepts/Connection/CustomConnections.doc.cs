@@ -13,16 +13,17 @@ namespace Tests.ClientConcepts.Connection
 {
 	public class CustomConnections
 	{
-		/**== Custom Connection Implementations
+		/**[[custom-connections]]
+		* == Custom Connection Implementations
 		*
 		* The client abstracts sending the request and creating a response behind `IConnection`
 		*
 		* By default the client will use a WebRequest based version on the desktop CLR (.NET 4.5 and up targets)
-		* and a HttpClient based HttpConnection specifically build for the Core CLR (netstandard 1.6).
+		* and a HttpClient based connection specifically built for the Core CLR (netstandard 1.3).
 		*
-		* The reason for the split is because WebRequest and ServicePoint are not directly available on netstandard 1.6
+		* The reason for the split is because `WebRequest` and `ServicePoint` are not directly available on netstandard 1.3.
 		*
-		* However the implementation written against WebRequest is the most matured implementation that we weren't ready to it give up.
+		* The dekstop CLR implementation using `WebRequest` is the most matured implementation that we weren't ready to it give up.
 		* There are also a couple of important toggles that are easy to set against a `ServicePoint` that we'd have to give up
 		* had we jumped on the `HttpClient` completely.
 		*
@@ -46,7 +47,6 @@ namespace Tests.ClientConcepts.Connection
 		 * We pass it an `InMemoryConnection` which using this constructor will return 200 for everything and never actually perform any IO.
 		 *
 		 * `InMemoryConnection` is great to write unit tests with as there is another overload that takes a fixed response stream to return.
-		 *
 		 *
 		 * === ServicePoint hacking
 		 *

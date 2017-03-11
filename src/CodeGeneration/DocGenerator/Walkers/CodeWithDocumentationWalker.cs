@@ -13,7 +13,7 @@ using DocGenerator.Documentation.Blocks;
 
 namespace DocGenerator.Walkers
 {
-	class CodeWithDocumentationWalker : CSharpSyntaxWalker
+	public class CodeWithDocumentationWalker : CSharpSyntaxWalker
 	{
 		private bool _firstVisit = true;
 		private string _code;

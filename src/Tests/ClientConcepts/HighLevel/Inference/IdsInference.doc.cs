@@ -8,12 +8,12 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 	public class IdsInference
 	{
 		/**[[ids-inference]]
-		 *== Ids Inference
+		 *=== Ids Inference
 		 *
-		 * === Implicit Conversions
+		 * ==== Implicit Conversion
 		 *
-		 * Several places in the Elasticsearch API expect an `Id` object to be passed.
-		 * This is a special box type that you can implicitly convert to from the following types
+		 * Several places in the Elasticsearch API expect an instance of the `Id` type to be passed.
+		 * This is a special type that you can implicitly convert to from the following types
 		 *
 		 * - `Int32`
 		 * - `Int64`
@@ -35,7 +35,8 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 			Expect("d70bd3cf-4e38-46f3-91ca-fcbef29b148e").WhenSerializing(idFromGuid);
 		}
 
-		/** === Inferring from a Type
+		/**
+		* ==== Inferring from a Type
 		*
 		* Sometimes a method takes an object and we need an Id from that object to build up a path.
 		* There is no implicit conversion from any object to Id but we can call `Id.From`.
@@ -84,7 +85,8 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 			).Expect("y").WhenInferringIdOn(dto);
 		}
 
-		/** === Using the ElasticsearchType attribute
+		/**
+		* ==== Using the ElasticsearchType attribute
 		*
 		* Another way is to mark the type with an `ElasticsearchType` attribute, setting `IdProperty`
 		* to the name of the property that should be used for the document id
@@ -109,7 +111,8 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 
 			Expect("x").WhenInferringIdOn(dto);
 
-			/** === Using Mapping inference on ConnectionSettings
+			/**
+			* ==== Using Mapping inference on ConnectionSettings
 			*
 			* This attribute *is* cached statically/globally, however an inference rule on the `ConnectionSettings` for the type will
 			* still win over the attribute. Here we demonstrate this by creating a different `ConnectionSettings` instance

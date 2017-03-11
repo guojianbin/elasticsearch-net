@@ -1,7 +1,7 @@
 :output-dir: client-concepts/high-level
 
 [[nest]]
-= Client Concepts - NEST
+= NEST - High level client
 
 ////
 IMPORTANT NOTE
@@ -41,13 +41,36 @@ There are a number of conventions that NEST uses for inference of
 
 * <<features-inference, API features>>
 
-In addition to features such as
+As well as a number of types for working with
+
+* <<time-units, Time Units>>
+
+* <<distance-units, Distance Units>>
+
+* <<date-math-expressions, Date Math>>
+
+And features such as
 
 * <<auto-map, Auto Mapping C# types>>
 
 * <<covariant-search-results, Covariant Search Results>>
 
 --
+
+[[nest-getting-started]]
+== Getting started
+
+Some parargraphs in here about how to connect, etc.
+
+include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
+
+[[mapping]]
+== Mapping
+
+include::{output-dir}/mapping/auto-map.asciidoc[]
+
+[[common-types]]
+== Common Types
 
 include::{output-dir}/inference/index-name-inference.asciidoc[]
 
@@ -63,7 +86,9 @@ include::{output-dir}/inference/document-paths.asciidoc[]
 
 include::{output-dir}/inference/features-inference.asciidoc[]
 
-include::{output-dir}/mapping/auto-map.asciidoc[]
+include::common-options/time-unit/time-units.asciidoc[]
 
-include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
+include::common-options/distance-unit/distance-units.asciidoc[]
+
+include::common-options/date-math/date-math-expressions.asciidoc[]
 

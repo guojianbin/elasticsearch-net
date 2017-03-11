@@ -37,6 +37,7 @@ namespace Tests.QueryDsl.BoolDsl
 		*.hadouken indenting
 		*image::hadouken-indentation.jpg[hadouken indenting]
 		*
+		*[float]
 		*=== Operator Overloading
 		*
 		*For this reason, NEST introduces **operator overloading** so complex bool queries become easier to write.
@@ -114,7 +115,8 @@ namespace Tests.QueryDsl.BoolDsl
 			Assert(q => +q.Query() && +q.Query(), +Query && +Query, c => c.Bool.Filter.Should().HaveCount(2));
 		}
 
-		/** === Combining/Merging bool queries
+		/**[float]
+		* === Combining/Merging bool queries
 		*
 		* When combining multiple queries some or all possibly marked as `must_not` or `filter`, NEST still combines to a single bool query
 		*
@@ -254,7 +256,7 @@ namespace Tests.QueryDsl.BoolDsl
 		* Also note that using shoulds as boosting factors can be really powerful so if you need this
 		*always remember that you can mix and match an actual bool query with the bool dsl.
 		*
-		* There is another subtle situation where NEST will not blindly merge 2 bool queries with only should clauses. Imagine the following:
+		* There is another subtle situation where NEST will not blindly merge 2 bool queries with only should clauses. Consider the following
 		*
 		* [source,shell]
 		* ----
@@ -287,7 +289,8 @@ namespace Tests.QueryDsl.BoolDsl
 				});
 		}
 
-		/** === Locked bool queries
+		/**[float]
+		* === Locked bool queries
 		*
 		* NEST will not combine `bool` queries if any of the query metadata is set e.g if metadata such as `boost` or `name` are set,
 		* NEST will treat these as locked.
@@ -363,7 +366,8 @@ namespace Tests.QueryDsl.BoolDsl
 
 
 
-		/** === Perfomance considerations
+		/**[float]
+		* === Perfomance considerations
 		*
 		* If you have a requirement of combining many many queries using the bool dsl please take the following into account.
 		*

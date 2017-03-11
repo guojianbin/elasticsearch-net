@@ -6,14 +6,59 @@
 [partintro]
 --
 NEST exposes all of the query DSL endpoints available in Elasticsearch
+
+- <<full-text-queries, Full text queries>>
+- <<term-level-queries, Term level queries>>
+- <<compound-queries, Compound queries>>
+- <<joining-queries, Joining queries>>
+- <<geo-queries, Geo queries>>
+- <<specialized-queries, Specialized queries>>
+- <<span-queries, Span queries>>
+- <<nest-specific-queries, NEST specific queries>>
 --
 
 include::{output-dir}/bool-dsl/bool-dsl.asciidoc[]
 
+[[full-text-queries]]
+== Full text queries 
+
+include::full-text-queries.asciidoc[]
+
+[[term-level-queries]]
+== Term level queries
+
+include::term-level-queries.asciidoc[]
+
+[[compound-queries]]
+== Compound queries
+
+include::compound-queries.asciidoc[]
+
+[[joining-queries]]
+== Joining queries
+
+include::joining-queries.asciidoc[]
+
+[[geo-queries]]
+== Geo queries
+
+include::geo-queries.asciidoc[]
+
+[[specialized-queries]]
+== Specialized queries
+ 
+include::specialized-queries.asciidoc[]
+
+[[span-queries]]
+== Span queries
+
+include::span-queries.asciidoc[]
+
+[[nest-specific-queries]]
+== NEST specific queries
+
+include::nest-specific-queries.asciidoc[]
+
 include::{output-dir}/verbatim/verbatim-and-strict-query-usage.asciidoc[]
-
-include::query-dsl-usage.asciidoc[]
-
-
 
 

@@ -7,7 +7,6 @@ There are a number of breaking changes when going from 2.x to 5.x
 * <<elasticsearch-net-breaking-changes, Elasticsearch.Net Breaking Changes>>
 
 * <<nest-breaking-changes, NEST Breaking Changes>>
-
 --
 
 include::5.0-breaking-changes/elasticsearch-net-breaking-changes.asciidoc[]

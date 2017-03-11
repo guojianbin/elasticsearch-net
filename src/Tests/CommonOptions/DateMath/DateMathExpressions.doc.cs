@@ -8,7 +8,8 @@ namespace Tests.CommonOptions.DateMath
 {
 	public class DateMathEpressions
 	{
-		/** == Date Math Expressions
+		/**[[date-math-expressions]]
+		 * === Date Math Expressions
 		 * The date type supports using date math expression when using it in a query/filter
 		 * Whenever durations need to be specified, eg for a timeout parameter, the duration can be specified
 		 *
@@ -30,7 +31,8 @@ namespace Tests.CommonOptions.DateMath
 		 */
 		[U] public void SimpleExpressions()
 		{
-			/** === Simple Expressions
+			/**
+			 * ==== Simple Expressions
 			* You can create simple expressions using any of the static methods on `DateMath`
 			*/
 			Expect("now").WhenSerializing(Nest.DateMath.Now);
@@ -65,7 +67,8 @@ namespace Tests.CommonOptions.DateMath
 
 		[U] public void ComplexExpressions()
 		{
-			/** === Complex Expressions
+			/**
+			 * ==== Complex Expressions
 			* Ranges can be chained on to simple expressions
 			*/
 			Expect("now+1d").WhenSerializing(
@@ -92,7 +95,8 @@ namespace Tests.CommonOptions.DateMath
 
 		[U] public void FractionalsUnitsAreDroppeToIntegerPart()
 		{
-			/** === Fractional times
+			/**
+			* ==== Fractional times
 			* DateMath expressions do not support fractional numbers so unlike `Time` DateMath will
 			* pick the biggest integer unit it can represent
 			*/
@@ -113,9 +117,6 @@ namespace Tests.CommonOptions.DateMath
 
 			Expect("now+52w").WhenSerializing(
 				Nest.DateMath.Now.Add(TimeSpan.FromDays(7 * 52)));
-
 		}
-
-
 	}
 }

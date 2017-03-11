@@ -48,7 +48,8 @@ namespace Tests.ClientConcepts.HighLevel.CovariantHits
 
 		[U] public void UsingTypes()
 		{
-			/** === Using Types
+			/**[float]
+			* === Using Types
 			* The most straightforward way to search over multiple types is to
 			* type the response to the parent interface or base class
 			* and pass the actual types we want to search over using `.Type()`
@@ -91,7 +92,8 @@ namespace Tests.ClientConcepts.HighLevel.CovariantHits
 
 		[U] public void UsingConcreteTypeSelector()
 		{
-			/** === Using ConcreteTypeSelector
+			/**[float]
+			* === Using ConcreteTypeSelector
 			* A more low level approach is to inspect the hit yourself and determine the CLR type to deserialize to
 			*/
 			var result = this._client.Search<ISearchResult>(s => s
@@ -132,7 +134,8 @@ namespace Tests.ClientConcepts.HighLevel.CovariantHits
 			cDocuments.Should().OnlyContain(a => a.PropertyOnC > 0);
 		}
 
-		/** === Using CovariantTypes()
+		/**[float]
+		* === Using CovariantTypes()
 		*/
 		[U] public void UsingCovariantTypesOnScroll()
 		{

@@ -1,0 +1,38 @@
+:includes-from-dirs: aggregations/metric
+
+////
+IMPORTANT NOTE
+==============
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/metric-aggregations.asciidoc. 
+If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
+please modify the original csharp file found at the link and submit the PR with that change. Thanks!
+////
+
+include::aggregations/metric/average/average-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/cardinality/cardinality-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/extended-stats/extended-stats-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/geo-bounds/geo-bounds-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/geo-centroid/geo-centroid-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/max/max-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/min/min-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/percentile-ranks/percentile-ranks-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/percentiles/percentiles-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/scripted-metric/scripted-metric-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/stats/stats-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/sum/sum-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/top-hits/top-hits-aggregation-usage.asciidoc[]
+
+include::aggregations/metric/value-count/value-count-aggregation-usage.asciidoc[]
+

@@ -13,22 +13,24 @@ namespace Tests.Aggregations
 {
 	/**
 	*== Reserved Aggregation Names
-	* NEST uses a heuristics based parser to parse the aggregations back in to typed responses
-	* Therefor some of the key properties we use to make a decision on are not allowed as key names
+	* NEST uses a heuristics based parser to parse the aggregations back in to typed responses.
+	* Because of this, some of the key properties we use to make decisions about parsing are not allowed as key names
+	* for aggregations in a request.
 	*
 	* Elasticsearch 5.x will at some point get a flag that returns the aggregations in a parsable
-	* fashion at which point this limitation will be lifted
+	* fashion. when this happens, this limitation will be lifted but until that time, avoid the following names for
+	* aggregation keys:
 	*/
-	public class ReservedAggNames : DocumentationTestBase
+	public class ReservedAggregationNames : DocumentationTestBase
 	{
-		private readonly string[] _reserved = {"score", "value_as_string", "keys", "max_score"};
+		public string[] Reserved => new []{"score", "value_as_string", "keys", "max_score"}; //<1> Reserved Aggregation key names
 
 		private TermsAggregation Terms(string name) => new TermsAggregation(name) {Field = "x"};
 
 		//hide
 		[U] public void ReservedKeyWordsThrow()
 		{
-			foreach (var key in _reserved)
+			foreach (var key in Reserved)
 			{
 				ThrowsOn(key, this.SearchFluent, nameof(SearchFluent));
 				ThrowsOn(key, this.SearchInitializer, nameof(SearchInitializer));
@@ -44,7 +46,7 @@ namespace Tests.Aggregations
 		//hide
 		[U] public void NonReservedKeywordsDoNotThrow()
 		{
-			foreach (var key in _reserved.Select(r => r + "1"))
+			foreach (var key in Reserved.Select(r => r + "1"))
 			{
 				DoesNotThrowOn(key, this.SearchFluent, nameof(SearchFluent));
 				DoesNotThrowOn(key, this.SearchInitializer, nameof(SearchInitializer));

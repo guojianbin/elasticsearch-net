@@ -19,9 +19,11 @@ namespace Tests.ClientConcepts.LowLevel
 {
 	public class Connecting
 	{
-		/**== Connecting
+		/**[[configuration-options]]
+		 * === Connecting
 		 * Connecting to Elasticsearch with `Elasticsearch.Net` is quite easy and there a few options to suit a number of different use cases.
 		 *
+		 * [float]
 		 * [[connection-strategies]]
 		 * === Choosing the right Connection Strategy
 		 * If you simply new an `ElasticLowLevelClient`, it will be a non-failover connection to `http://localhost:9200`
@@ -62,6 +64,7 @@ namespace Tests.ClientConcepts.LowLevel
 		 * which will use our `node` to find out the rest of the available cluster nodes.
 		 * Be sure to read more about <<connection-pooling, Connection Pooling and Cluster Failover>>.
 		 *
+		 * [float]
 		 * === Configuration Options
 		 *
 		 *Besides either passing a `Uri` or `IConnectionPool` to `ConnectionConfiguration`, you can also fluently control many more options. For instance:
@@ -120,6 +123,7 @@ namespace Tests.ClientConcepts.LowLevel
 			/**
 			*...but this may become tedious when using connection pooling with multiple nodes.
 			*
+			* [float]
 			* [[thrown-exceptions]]
 			* === Exceptions
 			* There are three categories of exceptions that may be thrown:
@@ -141,7 +145,8 @@ namespace Tests.ClientConcepts.LowLevel
 			*/
 		}
 
-		/** === OnRequestCompleted
+		/**[float]
+		 * === OnRequestCompleted
 		 * You can pass a callback of type `Action<IApiCallDetails>` that can eavesdrop every time a response (good or bad) is created.
 		 * If you have complex logging needs this is a good place to add that in.
 		*/
@@ -173,7 +178,8 @@ namespace Tests.ClientConcepts.LowLevel
 			counter.Should().Be(2);
 		}
 
-		/** [[complex-logging]]
+		/**[float]
+		* [[complex-logging]]
 		* === Complex logging with OnRequestCompleted
 		* Here's an example of using `OnRequestCompleted()` for complex logging. Remember, if you would also like
 		* to capture the request and/or response bytes, you also need to set `.DisableDirectStreaming()` to `true`
@@ -249,7 +255,7 @@ namespace Tests.ClientConcepts.LowLevel
 
 		public void ConfiguringSSL()
 		{
-			/**
+			/**[float]
 			 * [[configuring-ssl]]
 			 * === Configuring SSL
 			 * SSL can be configured via the `ServerCertificateValidationCallback` property on either `ServerPointManager` or `HttpClientHandler`
@@ -286,7 +292,8 @@ namespace Tests.ClientConcepts.LowLevel
 		}
 #endif
 
-		/**=== Overriding Json.NET settings
+		/**[float]
+		* === Overriding Json.NET settings
 		*
 		* Overriding the default Json.NET behaviour in NEST is an expert behavior but if you need to get to the nitty gritty, this can be really useful.
 		*/
