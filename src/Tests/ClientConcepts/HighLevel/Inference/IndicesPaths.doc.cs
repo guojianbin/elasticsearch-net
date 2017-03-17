@@ -71,12 +71,12 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 
 			singleIndexFromType.Match(
 				all => all.Should().BeNull(),
-				many => many.Indices.Should().HaveCount(1).And.Contain("project")
+				many => many.Indices.Should().HaveCount(1).And.Contain(typeof(Project))
 			);
 
 			singleIndexFromIndexName.Match(
 				all => all.Should().BeNull(),
-				many => many.Indices.Should().HaveCount(1).And.Contain("project")
+				many => many.Indices.Should().HaveCount(1).And.Contain(typeof(Project))
 			);
 		}
 
