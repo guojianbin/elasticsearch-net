@@ -7,9 +7,9 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.Geo.Shape.MultiLineString
 {
-	public class GeoMultiLineStringUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapeMultiLineStringQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoMultiLineStringUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapeMultiLineStringQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly IEnumerable<IEnumerable<GeoCoordinate>> _coordinates = new[]
 		{

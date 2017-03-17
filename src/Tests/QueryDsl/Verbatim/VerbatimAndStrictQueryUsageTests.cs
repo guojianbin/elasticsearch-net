@@ -13,7 +13,15 @@ using Xunit;
 
 namespace Tests.QueryDsl.Verbatim
 {
-	/** `IsVerbatim` should be set on individual queries to take effect */
+	/**[[verbatim-and-strict-query-usage]]
+	 * === Verbatim and Strict Query Usage
+	 *
+	 * [float]
+	 * === Verbatim Query Usage
+	 *
+	 * An individual query can be marked as verbatim in order take effect; a verbatim query will be serialized and
+	 * sent in the request to Elasticsearch, bypassing NEST's conditionless checks.
+	 */
 	public class CompoundVerbatimQueryUsageTests : QueryDslUsageTestsBase
 	{
 		protected override bool SupportsDeserialization => false;
@@ -79,7 +87,7 @@ namespace Tests.QueryDsl.Verbatim
 			);
 	}
 
-	/** Setting `IsVerbatim` on a compound query is still supported though */
+	/** A compound query can also be marked as verbatim, demonstrated here with a `bool` query. */
 	public class QueryContainerVerbatimSupportedUsageTests : QueryDslUsageTestsBase
 	{
 		protected override bool SupportsDeserialization => false;
@@ -217,6 +225,13 @@ namespace Tests.QueryDsl.Verbatim
 			);
 	}
 
+	/**[float]
+	 * === Strict Query Usage
+	 *
+	 * A query can be marked as strict meaning that if it is determined to be conditionless, it will throw an
+	 * exception. The following example demonstrates this by trying to send an empty string as the value for
+	 * a `term` query that is marked as strict
+	 */
 	public class StrictQueryUsageTests
 	{
 		[U]

@@ -11,9 +11,9 @@ namespace Tests.QueryDsl.Joining.ParentId
 	 *
 	 * See the Elasticsearch documentation on {ref_current}/query-dsl-parent-id-query.html[parent_id query] for more details.
 	 */
-	public class ParentIdUsageTests : QueryDslUsageTestsBase
+	public class ParentIdQueryUsageTests : QueryDslUsageTestsBase
 	{
-		public ParentIdUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public ParentIdQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		protected override object QueryJson => new
 		{

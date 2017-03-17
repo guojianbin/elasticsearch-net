@@ -387,10 +387,8 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 		/**
 		 *....
-		 * |===
 		 * |     Median|     StdDev|       Gen 0|  Gen 1|  Gen 2|  Bytes Allocated/Op
 		 * |  1.8507 ms|  0.1878 ms|    1,793.00|  21.00|      -|        1.872.672,28
-		 * |===
 		 *....
 		 *
 		 * As you can see while still fast its causes a lot of allocations to happen because with each iteration
@@ -411,20 +409,22 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 		/**
 		 *....
-		 * |===
 	 	 * |      Median|     StdDev|   Gen 0|  Gen 1|  Gen 2|  Bytes Allocated/Op
 		 * |  31.4610 us|  0.9495 us|  439.00|      -|      -|            7.912,95
-		 * |===
 		 *....
 		 *
-		 *  The drop both in performance and allocations is tremendous!
+		 * The drop both in performance and allocations is tremendous!
 		 *
-		 * NOTE: If you assigning many bool queries prior to NEST 2.4.6 into a bigger bool using an assignment loop
-		 * the client did not do a good job flattening the result in the most optimal way and could
-		 * cause a stackoverflow when doing ~2000 iterations. This only applied to bitwise assigning many `boolean` queries.
-		 * Other queries behave fine in earlier versions. Since NEST 2.4.6 you can combine as many bool queries
-		 * as you'd like this way too.
+		 * [NOTE]
+		 * ====
+		 * If you assigning many `bool` queries prior to NEST 2.4.6 into a bigger `bool` query using an assignment loop,
+		 * the client did not do a good job of flattening the result in the most optimal way and could
+		 * cause a stackoverflow when doing ~2000 iterations. This only applied to bitwise assigning many `bool` queries,
+		 * other queries were not affected.
+		 *
+		 * Since NEST 2.4.6 you can combine as many bool queries as you'd like this way too.
 		 * See https://github.com/elastic/elasticsearch-net/pull/2235[PR #2335 on github for more information]
+		 * ====
 		 */
 		private static void Dummy() { }
 

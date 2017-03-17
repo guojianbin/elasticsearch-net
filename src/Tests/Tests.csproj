@@ -582,15 +582,15 @@
     <Compile Include=".\QueryDsl\Geo\Distance\GeoDistanceQueryUsageTests.cs" />
     <Compile Include=".\QueryDsl\Geo\HashCell\GeoHashCellQueryUsageTests.cs" />
     <Compile Include=".\QueryDsl\Geo\Polygon\GeoPolygonQueryUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\Circle\GeoShapeCircleUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\Envelope\GeoEnvelopeUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\IndexedShape\GeoIndexedShapeUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\LineString\GeoLineStringUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\MultiLineString\GeoMultiLineStringUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\MultiPoint\GeoMultiPointUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\Point\GeoPointUsageTests.cs" />
-    <Compile Include=".\QueryDsl\Geo\Shape\Polygon\GeoPolygonUsageTests.cs" />
-    <Compile Include="QueryDsl\Geo\Shape\GeometryCollection\GeoGeometryCollectionUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\Circle\GeoShapeCircleQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\Envelope\GeoShapeEnvelopeQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\IndexedShape\GeoShapeIndexedShapeQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\LineString\GeoShapeLineStringQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\MultiLineString\GeoShapeMultiLineStringQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\MultiPoint\GeoShapeMultiPointQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\Point\GeoShapePointQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\Polygon\GeoShapePolygonQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\GeometryCollection\GeoShapeGeometryCollectionQueryUsageTests.cs" />
     <Compile Include="QueryDsl\Geo\Shape\GeoShapeQueryUsageTestsBase.cs" />
     <Compile Include=".\QueryDsl\Joining\HasChild\HasChildQueryUsageTests.cs" />
     <Compile Include=".\QueryDsl\Joining\HasParent\HasParentQueryUsageTests.cs" />
@@ -716,8 +716,8 @@
     <Compile Include="Framework\EndpointTests\TestState\ClientMethod.cs" />
     <Compile Include="Framework\ManagedElasticsearch\Process\ElasticsearchConsoleOut.cs" />
     <Compile Include="QueryDsl\ConditionlessWhen.cs" />
-    <Compile Include="QueryDsl\Geo\Shape\MultiPolygon\GeoMultiPolygonUsageTests.cs" />
-    <Compile Include="QueryDsl\Joining\ParentId\ParentIdUsageTests.cs" />
+    <Compile Include="QueryDsl\Geo\Shape\MultiPolygon\GeoShapeMultiPolygonQueryUsageTests.cs" />
+    <Compile Include="QueryDsl\Joining\ParentId\ParentIdQueryUsageTests.cs" />
     <Compile Include="QueryDsl\MatchNoneQueryUsageTests.cs" />
     <Compile Include="QueryDsl\NotConditionlessWhen.cs" />
     <Compile Include="QueryDsl\Specialized\Percolate\PercolateQueryUsageTests.cs" />
@@ -823,14 +823,6 @@
     <Compile Include="XPack\Watcher\StopWatcher\StopWatcherUrlTests.cs" />
     <Compile Include="XPack\Watcher\WatcherStats\WatcherStatsApiTests.cs" />
     <Compile Include="XPack\Watcher\WatcherStats\WatcherStatsUrlTests.cs" />
-    <None Include="nest-specific-queries.asciidoc" />
-    <None Include="span-queries.asciidoc" />
-    <None Include="specialized-queries.asciidoc" />
-    <None Include="geo-queries.asciidoc" />
-    <None Include="matrix-aggregations.asciidoc" />
-    <None Include="pipeline-aggregations.asciidoc" />
-    <None Include="bucket-aggregations.asciidoc" />
-    <None Include="metric-aggregations.asciidoc" />
     <None Include="aggregations.asciidoc" />
     <None Include="breaking-changes.asciidoc" />
     <None Include="connection-pooling.asciidoc" />
@@ -840,12 +832,7 @@
     <None Include="intro.asciidoc" />
     <None Include="low-level.asciidoc" />
     <None Include="paket.references" />
-    <None Include="full-text-queries.asciidoc" />
-    <None Include="compound-queries.asciidoc" />
-    <None Include="joining-queries.asciidoc" />
-    <None Include="term-level-queries.asciidoc" />
     <None Include="query-dsl.asciidoc" />
-    <None Include="search-usage.asciidoc" />
     <None Include="search.asciidoc" />
   </ItemGroup>
   <ItemGroup>

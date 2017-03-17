@@ -3,7 +3,7 @@ using Tests.Framework.MockData;
 
 namespace Tests.Aggregations.Bucket.Children
 {
-	/** == Child Aggregation Mapping */
+	/** === Child Aggregation Mapping */
 	public class ChildrenAggregationMapping
 	{
 		private void MappingExample()

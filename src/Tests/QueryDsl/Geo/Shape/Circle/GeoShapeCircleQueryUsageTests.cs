@@ -6,9 +6,9 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.Geo.Shape.Circle
 {
-	public class GeoShapeCircleUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapeCircleQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoShapeCircleUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapeCircleQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly GeoCoordinate _coordinates = new GeoCoordinate(-45.0, 45.0);
 

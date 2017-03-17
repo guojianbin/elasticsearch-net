@@ -6,9 +6,9 @@ using Tests.Framework.MockData;
 
 namespace Tests.QueryDsl.Geo.Shape.GeometryCollection
 {
-	public class GeoGeometryCollectionUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapeGeometryCollectionQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoGeometryCollectionUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapeGeometryCollectionQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly IEnumerable<GeoCoordinate> _lineStringCoordinates = new GeoCoordinate[]
 		{

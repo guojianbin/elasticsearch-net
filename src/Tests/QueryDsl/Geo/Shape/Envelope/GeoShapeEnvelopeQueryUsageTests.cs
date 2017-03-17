@@ -7,9 +7,9 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.Geo.Shape.Envelope
 {
-	public class GeoEnvelopeUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapeEnvelopeQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoEnvelopeUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapeEnvelopeQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly IEnumerable<GeoCoordinate> _coordinates = new GeoCoordinate[]
 		{

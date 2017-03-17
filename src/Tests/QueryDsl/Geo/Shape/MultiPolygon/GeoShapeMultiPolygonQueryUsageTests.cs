@@ -7,9 +7,9 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.Geo.Shape.MultiPolygon
 {
-	public class GeoMultiPolygonUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapeMultiPolygonQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoMultiPolygonUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapeMultiPolygonQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly IEnumerable<IEnumerable<IEnumerable<GeoCoordinate>>> _coordinates = new[]
 		{

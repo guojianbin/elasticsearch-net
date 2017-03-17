@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[child-aggregation-mapping]]
-== Child Aggregation Mapping 
+=== Child Aggregation Mapping 
 
 To use the {ref_current}/search-aggregations-bucket-children-aggregation.html[Children Aggregation],
 you have to make sure a `_parent` mapping is in place.

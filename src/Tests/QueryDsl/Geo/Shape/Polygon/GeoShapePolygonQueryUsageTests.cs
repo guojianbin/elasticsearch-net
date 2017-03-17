@@ -7,9 +7,9 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.Geo.Shape.Polygon
 {
-	public class GeoPolygonUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapePolygonQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoPolygonUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapePolygonQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly IEnumerable<IEnumerable<GeoCoordinate>> _coordinates = new[]
 		{
@@ -34,7 +34,7 @@ namespace Tests.QueryDsl.Geo.Shape.Polygon
 			Name = "named_query",
 			Boost = 1.1,
 			Field = Field<Project>(p => p.Location),
-			Shape = new PolygonGeoShape(this._coordinates) { },
+			Shape = new PolygonGeoShape(this._coordinates),
 			Relation = GeoShapeRelation.Intersects,
 			IgnoreUnmapped = false
 		};

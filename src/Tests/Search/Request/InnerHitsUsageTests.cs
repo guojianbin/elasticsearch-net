@@ -112,8 +112,9 @@ namespace Tests.Search.Request
 		}
 	}
 
-	/**[[inner-hits-usage]]
-	*=== Inner Hits Usage
+	/**
+	 * [[inner-hits-usage]]
+	*== Inner Hits Usage
 	*
 	* The {ref_current}/mapping-parent-field.html[parent/child] and {ref_current}/nested.html[nested] features allow the
 	* return of documents that have matches in a different scope.
@@ -133,7 +134,7 @@ namespace Tests.Search.Request
 	public abstract class InnerHitsApiTestsBase<TRoyal> : ApiIntegrationTestBase<IntrusiveOperationCluster, ISearchResponse<TRoyal>, ISearchRequest, SearchDescriptor<TRoyal>, SearchRequest<TRoyal>>
 		where TRoyal : class, IRoyal
 	{
-		public InnerHitsApiTestsBase(IntrusiveOperationCluster cluster, EndpointUsage usage) : base(cluster, usage) { }
+		protected InnerHitsApiTestsBase(IntrusiveOperationCluster cluster, EndpointUsage usage) : base(cluster, usage) { }
 
 		protected abstract IndexName Index { get; }
 		protected override void IntegrationSetup(IElasticClient client, CallUniqueValues values) => new RoyalSeeder(this.Client, Index).Seed();

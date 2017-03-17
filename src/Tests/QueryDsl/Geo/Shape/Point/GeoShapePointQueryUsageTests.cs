@@ -6,9 +6,9 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.Geo.Shape.Point
 {
-	public class GeoPointUsageTests : GeoShapeQueryUsageTestsBase
+	public class GeoShapePointQueryUsageTests : GeoShapeQueryUsageTestsBase
 	{
-		public GeoPointUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
+		public GeoShapePointQueryUsageTests(ReadOnlyCluster i, EndpointUsage usage) : base(i, usage) { }
 
 		private readonly GeoCoordinate _coordinates = new[] { -77.03653, 38.897676 };
 
