@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include=".\Aggregations\AggregationUsageTestBase.cs" />
-    <Compile Include=".\Aggregations\Bucket\Children\ChildrenAggregationMapping.doc.cs" />
     <Compile Include=".\Aggregations\Bucket\Children\ChildrenAggregationUsageTests.cs" />
     <Compile Include=".\Aggregations\Bucket\DateHistogram\DateHistogramAggregationUsageTests.cs" />
     <Compile Include=".\Aggregations\Bucket\DateRange\DateRangeAggregationUsageTests.cs" />
@@ -240,6 +239,7 @@
     <Compile Include="ClientConcepts\DebuggerDisplayTests.cs" />
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
+    <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskApiTests.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskUrlTests.cs" />
     <Compile Include="CodeStandards\Responses.doc.cs" />

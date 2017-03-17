@@ -57,34 +57,54 @@ And features such as
 
 --
 
-[[nest-getting-started]]
-== Getting started
-
-Some parargraphs in here about how to connect, etc.
-
-include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
+include::{output-dir}/getting-started.asciidoc[]
 
 [[mapping]]
 == Mapping
 
 include::{output-dir}/mapping/auto-map.asciidoc[]
 
+[[conventions]]
+== Conventions
+
+There are a number of conventions that NEST uses for inference of
+
+:anchor-list: client-concepts/high-level/inference
+
+* <<document-paths,Document Paths>>
+
+* <<features-inference,Features Inference>>
+
+* <<field-inference,Field Inference>>
+
+* <<ids-inference,Ids Inference>>
+
+* <<index-name-inference,Index Name Inference>>
+
+* <<indices-paths,Indices Paths>>
+
+* <<property-inference,Property Inference>>
+
+:includes-from-dirs: client-concepts/high-level/inference
+
+include::client-concepts/high-level/inference/document-paths.asciidoc[]
+
+include::client-concepts/high-level/inference/features-inference.asciidoc[]
+
+include::client-concepts/high-level/inference/field-inference.asciidoc[]
+
+include::client-concepts/high-level/inference/ids-inference.asciidoc[]
+
+include::client-concepts/high-level/inference/index-name-inference.asciidoc[]
+
+include::client-concepts/high-level/inference/indices-paths.asciidoc[]
+
+include::client-concepts/high-level/inference/property-inference.asciidoc[]
+
+include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
+
 [[common-types]]
 == Common Types
-
-include::{output-dir}/inference/index-name-inference.asciidoc[]
-
-include::{output-dir}/inference/indices-paths.asciidoc[]
-
-include::{output-dir}/inference/field-inference.asciidoc[]
-
-include::{output-dir}/inference/property-inference.asciidoc[]
-
-include::{output-dir}/inference/ids-inference.asciidoc[]
-
-include::{output-dir}/inference/document-paths.asciidoc[]
-
-include::{output-dir}/inference/features-inference.asciidoc[]
 
 include::common-options/time-unit/time-units.asciidoc[]
 

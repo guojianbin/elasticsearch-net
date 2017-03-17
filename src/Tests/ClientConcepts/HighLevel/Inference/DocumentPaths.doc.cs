@@ -10,9 +10,9 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 		/**[[document-paths]]
 		 * === Document Paths
 		 *
-		 * Many API's in Elasticsearch describe a path to a document. In NEST, besides generating a constructor that takes
-		 * and Index, Type and Id separately, we also generate a constructor taking a `DocumentPath` that allows you to describe the path
-		 * to your document more succinctly
+		 * Many APIs in Elasticsearch describe a path to a document. In NEST, besides generating a constructor that takes
+		 * and Index, Type and Id separately, we also generate a constructor that allows you to describe the path
+		 * to your document more succinctly using a an instance of the `DocumentPath<T>` type.
 		 */
 
 		/**
@@ -81,12 +81,16 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 			request = new IndexRequest<Project>(project) { };
 
 			/** when comparing with the full blown constructor and passing document manually,
-			* `DocumentPath<T>`'s benefits become apparent.
+			* `DocumentPath<T>`'s benefits become apparent. Compare the following request that doesn't
+			* use `DocumentPath<T>` with the former examples
 			*/
 			request = new IndexRequest<Project>(IndexName.From<Project>(), TypeName.From<Project>(), 2)
 			{
 				Document = project
 			};
+			/**
+			 * Much more verbose, wouldn't you agree?
+			 */
 		}
 	}
 }

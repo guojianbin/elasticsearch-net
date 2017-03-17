@@ -14,12 +14,6 @@ namespace DocGenerator.AsciiDoc
 	{
 		private readonly FileInfo _source;
 		private readonly FileInfo _destination;
-
-		private static readonly Dictionary<string, string> IncludeDirectories = new Dictionary<string, string>
-		{
-			{ "search.asciidoc", "search-usage.asciidoc" },
-		};
-
 		private Document _document;
 
 		public RawAsciidocVisitor(FileInfo source, FileInfo destination)
@@ -47,28 +41,6 @@ namespace DocGenerator.AsciiDoc
 					   "If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,\r\n" +
 					   "please modify the original csharp file found at the link and submit the PR with that change. Thanks!"
 			});
-
-			// check if this document has generated includes to other files
-			//var includeAttribute = document.Attributes.FirstOrDefault(a => a.Name == "includes-from-dirs");
-
-			//if (includeAttribute != null)
-			//{
-			//	var thisFileUri = new Uri(_destination.FullName);
-			//	var directories = includeAttribute.Value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-			//	foreach (var directory in directories)
-			//	{
-			//		foreach (var file in Directory.EnumerateFiles(Path.Combine(Program.OutputDirPath, directory), "*.asciidoc", SearchOption.AllDirectories))
-			//		{
-			//			var fileInfo = new FileInfo(file);
-			//			var referencedFileUri = new Uri(fileInfo.FullName);
-			//			var relativePath = thisFileUri.MakeRelativeUri(referencedFileUri);
-			//			var include = new Include(relativePath.OriginalString);
-
-			//			document.Add(include);
-			//		}
-			//	}
-			//}
 
 			base.Visit(document);
 		}
@@ -112,7 +84,7 @@ namespace DocGenerator.AsciiDoc
 
 				foreach (var directory in directories)
 				{
-					foreach (var file in Directory.EnumerateFiles(Path.Combine(Program.OutputDirPath, directory), "*usage.asciidoc", SearchOption.AllDirectories))
+					foreach (var file in Directory.EnumerateFiles(Path.Combine(Program.OutputDirPath, directory), "*.asciidoc", SearchOption.AllDirectories))
 					{
 						var fileInfo = new FileInfo(file);
 						var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.Name);
@@ -133,7 +105,6 @@ namespace DocGenerator.AsciiDoc
 					_document.Add(list);
 				}
 			}
-
 
 			base.Visit(attributeEntry);
 		}

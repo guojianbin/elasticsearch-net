@@ -9,7 +9,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 {
 	public class ConnectionPooling
 	{
-		/**=== Connection Pooling
+		/**[[connection-pooling]]
+		 * === Connection pools
 		 * Connection pooling is the internal mechanism that takes care of registering what nodes there are in the cluster and which
 		 * NEST can use to issue client calls on. There are four types of connection pool
 		 *
@@ -34,13 +35,12 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			var node = pool.Nodes.First();
 			node.Uri.Port.Should().Be(9201);
 
-			/** This type of pool is hardwired to opt out of reseeding (and hence sniffing)*/
+			/** This type of pool is hardwired to opt out of reseeding (thus, sniffing) as well as pinging */
 			pool.SupportsReseeding.Should().BeFalse();
-			/** and pinging */
 			pool.SupportsPinging.Should().BeFalse();
 
 			/** When you use the low ceremony `ElasticClient` constructor that takes a single `Uri`,
-			* We default to using `SingleNodeConnectionPool` */
+			* internally a `SingleNodeConnectionPool` is used */
 			var client = new ElasticClient(uri);
 			client.ConnectionSettings.ConnectionPool.Should().BeOfType<SingleNodeConnectionPool>();
 
