@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using AsciiDocNet;
+using DocGenerator.XmlDocs;
+using Elasticsearch.Net;
+using Nest;
+using NuDoq;
+using Container = AsciiDocNet.Container;
+using Exception = System.Exception;
 
 namespace DocGenerator.AsciiDoc
 {
@@ -299,6 +307,64 @@ namespace DocGenerator.AsciiDoc
 
 			base.Visit(sectionTitle);
 		}
+
+	    public override void Visit(AttributeEntry attributeEntry)
+	    {
+	        if (attributeEntry.Name == "xml-docs")
+	        {
+	            var value = attributeEntry.Value;
+
+	            if (string.IsNullOrEmpty(value))
+	            {
+	                base.Visit(attributeEntry);
+	                return;
+	            }
+
+	            var parts = value.Split(':');
+	            var assemblyName = parts[0];
+	            var typeName = parts[1];
+
+	            string xmlDocsFile;
+	            Assembly assembly;
+	            string assemblyNamespace;
+
+	            switch (assemblyName.ToLowerInvariant())
+	            {
+                    case "elasticsearch.net":
+                        xmlDocsFile = Path.GetFullPath(Path.Combine(Program.OutputDirPath,
+                                @"..\build\output\v4.6\Elasticsearch.Net\Elasticsearch.Net.XML"));
+	                    assembly = typeof(ElasticLowLevelClient).Assembly;
+	                    assemblyNamespace = typeof(ElasticLowLevelClient).Namespace;
+                        break;
+                    default:
+                        xmlDocsFile = Path.GetFullPath(Path.Combine(Program.OutputDirPath,
+                                @"..\build\output\v4.6\Nest\Nest.XML"));
+                        assembly = typeof(ElasticClient).Assembly;
+                        assemblyNamespace = typeof(ElasticClient).Namespace;
+                        break;
+                }
+
+                if (!File.Exists(xmlDocsFile))
+                    throw new FileNotFoundException(
+                        $"Expected to find an XML documentation file at " +
+                        $"{xmlDocsFile}, but does not exist. Please build the solution using build.bat in the directory root.");
+
+                var assemblyMembers = DocReader.Read(assembly, xmlDocsFile);
+	            var type = assembly.GetType(assemblyNamespace + "." + typeName);
+                var visitor = new XmlDocsVisitor(type);
+
+                visitor.VisitAssembly(assemblyMembers);
+	            if (visitor.LabeledListItems.Any())
+	            {
+	                var labeledList = new LabeledList();
+	                foreach (var item in visitor.LabeledListItems.OrderBy(l => l.Label))
+	                {
+	                    labeledList.Items.Add(item);
+	                }
+	                _newDocument.Insert(_newDocument.IndexOf(attributeEntry), labeledList);
+	            }
+	        }
+	    }
 
 		private void RemoveDocDirectoryAttribute(Document document)
 		{

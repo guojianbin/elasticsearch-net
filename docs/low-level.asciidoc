@@ -25,17 +25,10 @@ Or by searching for https://www.nuget.org/packages/Elasticsearch.Net[Elasticsear
 
 --
 
-[[elasticsearch-net-getting-started]]
-== Getting started
+include::client-concepts/low-level/getting-started.asciidoc[]
 
-Some parargraphs in here about how to connect, etc.
-
-[[connecting]]
-== Connecting
-
-include::client-concepts/low-level/connecting.asciidoc[]
-
-include::connection-pooling.asciidoc[]
+[[elasticsearch-net-conventions]]
+== Conventions
 
 include::client-concepts/low-level/lifetimes.asciidoc[]
 

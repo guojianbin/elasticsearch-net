@@ -9,12 +9,16 @@ using Tests.Framework;
 namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 {
 	public class UnexpectedExceptions
-	{
-		/** == Unexpected exceptions 
-		* When a client call throws an exception that the IConnction can not handle, this exception will bubble
-		* out the client as an UnexpectedElasticsearchClientException, regardless whether the client is configured to throw or not.
-		* An IConnection is in charge of knowning what exceptions it can recover from or not. The default IConnection that is based on WebRequest can and 
-		* will recover from WebExceptions but others will be grounds for immediately exiting the pipeline.
+    {
+		/**=== Unexpected exceptions 
+        * 
+		* When a client call throws an exception that the `IConnection` cannot handle, the exception will bubble
+		* out of the client as an UnexpectedElasticsearchClientException, regardless whether the client is configured to 
+        * throw or not.
+        * 
+		* An `IConnection` is in charge of knowing what exceptions it can recover from or not, and the default `IConnection` 
+        * that is based on `WebRequest` can and will recover from `WebExceptions` but others will be grounds for 
+        * immediately exiting the pipeline.
 		*/
 
 		[U] public async Task UnexpectedExceptionsBubbleOut()
@@ -83,9 +87,10 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 		}
 
 		/**
-		* An unexpected hard exception on ping and sniff is something we *do* try to revover from and failover.
-		* Here pinging nodes on first use is enabled and 9200 throws on ping, we still fallover to 9201's ping succeeds.
-		* However the client call on 9201 throws a hard exception we can not recover from
+		* An unexpected hard exception on ping and sniff is something we *do* try to recover from and failover.
+		* Here, pinging nodes on first use is enabled and the node on port 9200 throws on ping; in this scenario, 
+        * we still fallover to node on port 9201, whose ping succeeds.
+		* Following this, the client call on 9201 throws a hard exception that we cannot recover from
 		*/
 
 		[U] public async Task PingUnexceptedExceptionDoesFailOver()
@@ -125,7 +130,6 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 					var pingException = e.AuditTrail.First(a => a.Event == AuditEvent.PingFailure).Exception;
 					pingException.Should().NotBeNull();
 					pingException.Message.Should().Be("ping exception");
-
 				}
 			);
 		}

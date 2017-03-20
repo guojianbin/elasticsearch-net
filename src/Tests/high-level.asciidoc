@@ -43,6 +43,18 @@ And features such as
 
 include::{output-dir}/getting-started.asciidoc[]
 
+[[connecting]]
+== Connecting
+
+include::client-concepts/connection/configuration-options.asciidoc[]
+
+include::client-concepts/connection-pooling/building-blocks/connection-pooling.asciidoc[]
+
+[[serialization]]
+== Serialization
+
+include::{output-dir}/serialization/changing-serializers.asciidoc[]
+
 [[mapping]]
 == Mapping
 
@@ -67,3 +79,23 @@ include::common-options/time-unit/time-units.asciidoc[]
 include::common-options/distance-unit/distance-units.asciidoc[]
 
 include::common-options/date-math/date-math-expressions.asciidoc[]
+
+[[thrown-exceptions]]
+== Exceptions
+There are three categories of exceptions that may be thrown:
+
+`ElasticsearchClientException`:: These are known exceptions, either an exception that occurred in the request pipeline
+(such as max retries or timeout reached, bad authentication, etc...) or Elasticsearch itself returned an error (could
+not parse the request, bad query, missing field, etc...). If it is an Elasticsearch error, the `ServerError` property
+on the response will contain the the actual error that was returned.  The inner exception will always contain the
+root causing exception.
+
+`UnexpectedElasticsearchClientException`:: These are unknown exceptions, for instance a response from Elasticsearch not
+properly deserialized.  These are sometimes bugs and {github}/issues[should be reported]. This exception also inherits from `ElasticsearchClientException`
+so an additional catch block isn't necessary, but can be helpful in distinguishing between the two.
+
+Development time exceptions:: These are CLR exceptions like `ArgumentException`, `ArgumentOutOfRangeException`, etc.
+that are thrown when an API in the client is misused.  The `.ThrowExceptions()` setting has no bearing on these as
+they will always be thrown, and also should not be handled by a consumer.
+
+:includes-from-dirs: client-concepts/connection-pooling/exceptions

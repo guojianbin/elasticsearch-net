@@ -13,10 +13,11 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 {
 	public class UnrecoverableExceptions
 	{
-		/** == Unrecoverable exceptions 
+		/**=== Unrecoverable exceptions 
 		* Unrecoverable exceptions are _excepted_ exceptions that are grounds to exit the client pipeline immediately. 
-		* By default, the client won't throw on any `ElasticsearchClientException` but instead return an invalid response which
-		* can be detected by checking `.IsValid` on the response 
+		* By default, the client won't throw on any `ElasticsearchClientException` but instead return an invalid response 
+        * which can be detected by checking `.IsValid` on the response.
+        *  
 		* You can configure the client to throw using `ThrowExceptions()` on `ConnectionSettings`. The following test
 		* both a client that throws and one that returns an invalid response with an `.OriginalException` exposed 
 		*/
@@ -74,7 +75,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 			);
 		}
 
-		private static byte[] ResponseHtml = Encoding.UTF8.GetBytes(@"<html>
+		private static byte[] HtmlNginx401Response = Encoding.UTF8.GetBytes(@"<html>
 <head><title>401 Authorization Required</title></head>
 <body bgcolor=""white"">
 <center><h1>401 Authorization Required</h1></center>
@@ -87,7 +88,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 			var audit = new Auditor(() => Framework.Cluster
 				.Nodes(10)
 				.Ping(r => r.SucceedAlways())
-				.ClientCalls(r => r.FailAlways(401).ReturnResponse(ResponseHtml))
+				.ClientCalls(r => r.FailAlways(401).ReturnResponse(HtmlNginx401Response))
 				.StaticConnectionPool()
 				.AllDefaults()
 			);
@@ -111,7 +112,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 			var audit = new Auditor(() => Framework.Cluster
 				.Nodes(10)
 				.Ping(r => r.SucceedAlways())
-				.ClientCalls(r => r.FailAlways(401).ReturnResponse(ResponseHtml))
+				.ClientCalls(r => r.FailAlways(401).ReturnResponse(HtmlNginx401Response))
 				.StaticConnectionPool()
 				.Settings(s=>s.DisableDirectStreaming())
 			);
@@ -138,7 +139,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Exceptions
 			var audit = new Auditor(() => Framework.Cluster
 				.Nodes(10)
 				.Ping(r => r.SucceedAlways())
-				.ClientCalls(r => r.FailAlways(401).ReturnResponse(ResponseHtml))
+				.ClientCalls(r => r.FailAlways(401).ReturnResponse(HtmlNginx401Response))
 				.StaticConnectionPool()
 				.Settings(s=>s.DisableDirectStreaming().DefaultIndex("default-index"))
 				.ClientProxiesTo(

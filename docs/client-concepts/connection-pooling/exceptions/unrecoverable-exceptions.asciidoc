@@ -15,11 +15,12 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[unrecoverable-exceptions]]
-== Unrecoverable exceptions 
+=== Unrecoverable exceptions 
 
 Unrecoverable exceptions are _excepted_ exceptions that are grounds to exit the client pipeline immediately. 
-By default, the client won't throw on any `ElasticsearchClientException` but instead return an invalid response which
-can be detected by checking `.IsValid` on the response 
+By default, the client won't throw on any `ElasticsearchClientException` but instead return an invalid response 
+which can be detected by checking `.IsValid` on the response.
+
 You can configure the client to throw using `ThrowExceptions()` on `ConnectionSettings`. The following test
 both a client that throws and one that returns an invalid response with an `.OriginalException` exposed 
 
@@ -89,7 +90,7 @@ audit = await audit.TraceElasticsearchException(
 var audit = new Auditor(() => Framework.Cluster
     .Nodes(10)
     .Ping(r => r.SucceedAlways())
-    .ClientCalls(r => r.FailAlways(401).ReturnResponse(ResponseHtml))
+    .ClientCalls(r => r.FailAlways(401).ReturnResponse(HtmlNginx401Response))
     .StaticConnectionPool()
     .AllDefaults()
 );
@@ -119,7 +120,7 @@ e.Response.ResponseBodyInBytes.Should().BeNull();
 var audit = new Auditor(() => Framework.Cluster
     .Nodes(10)
     .Ping(r => r.SucceedAlways())
-    .ClientCalls(r => r.FailAlways(401).ReturnResponse(ResponseHtml))
+    .ClientCalls(r => r.FailAlways(401).ReturnResponse(HtmlNginx401Response))
     .StaticConnectionPool()
     .Settings(s=>s.DisableDirectStreaming())
 );
@@ -158,7 +159,7 @@ e.DebugInformation.Should().Contain("nginx/");
 var audit = new Auditor(() => Framework.Cluster
     .Nodes(10)
     .Ping(r => r.SucceedAlways())
-    .ClientCalls(r => r.FailAlways(401).ReturnResponse(ResponseHtml))
+    .ClientCalls(r => r.FailAlways(401).ReturnResponse(HtmlNginx401Response))
     .StaticConnectionPool()
     .Settings(s=>s.DisableDirectStreaming().DefaultIndex("default-index"))
     .ClientProxiesTo(

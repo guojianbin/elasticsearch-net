@@ -13,15 +13,16 @@ namespace Tests.ClientConcepts.LowLevel
 {
 	public class Lifetimes
 	{
-		/**== Lifetimes
+		/**=== Lifetimes
 		*
-		* If you are using an IOC container its always useful to know the best practices around the lifetime of your objects
+		* If you are using an IOC/Dependency Injection container, it's always useful to know the best practices around 
+        * the lifetime of your objects.
 		*
-		* In general we advise folks to register their ElasticClient instances as singletons. The client is thread safe
+		* In general we advise folks to register their `ElasticClient` instances as singletons. The client is thread safe
 		* so sharing an instance between threads is fine.
 		*
-		* Zooming in however the actual moving part that benefits the most from being static for most of the duration of your
-		* application is `ConnectionSettings`; caches are __per__ `ConnectionSettings`.
+		* The actual moving part that benefits the most from being static for most of the duration of your
+		* application is `ConnectionSettings`; **caches are __per__ `ConnectionSettings`**.
 		*
 		* In some applications it could make perfect sense to have multiple singleton `ElasticClient`'s registered with different
 		* connection settings. e.g if you have 2 functionally isolated Elasticsearch clusters.
@@ -81,7 +82,7 @@ namespace Tests.ClientConcepts.LowLevel
 		}
 
 		/**
-		* Disposing `ConnectionSettings` will also dispose the `IConnectionPool` and `IConnection` it uses
+		* Disposing an instance of `ConnectionSettings` will also dispose the `IConnectionPool` and `IConnection` it uses
 		*/
 		[U] public void DisposingSettingsDisposesMovingParts()
 		{

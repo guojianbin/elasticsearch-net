@@ -8,8 +8,6 @@
 :request-overrides: {output-dir}/request-overrides
 :exceptions: {output-dir}/exceptions
 
-include::{building-blocks}/connection-pooling.asciidoc[]
-
 include::{building-blocks}/request-pipelines.asciidoc[]
 
 include::{building-blocks}/transports.asciidoc[]

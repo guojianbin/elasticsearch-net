@@ -147,7 +147,6 @@
     <Compile Include=".\ClientConcepts\Exceptions\ExceptionTests.cs" />
     <Compile Include=".\ClientConcepts\HighLevel\CovariantHits\CovariantSearchResults.doc.cs" />
     <Compile Include=".\ClientConcepts\HighLevel\Mapping\AutoMap.doc.cs" />
-    <Compile Include=".\ClientConcepts\LowLevel\Connecting.doc.cs" />
     <Compile Include=".\ClientConcepts\LowLevel\DirectStreaming.cs" />
     <Compile Include=".\ClientConcepts\LowLevel\Lifetimes.doc.cs" />
     <Compile Include=".\ClientConcepts\LowLevel\PostData.doc.cs" />
@@ -234,12 +233,15 @@
     <Compile Include="ClientConcepts\Certificates\WorkingWithCertificates.doc.cs" />
     <Compile Include="ClientConcepts\ConnectionPooling\Dispose\ResponseBuilderDisposeTests.cs" />
     <Compile Include="ClientConcepts\ConnectionPooling\Sniffing\AddressParsing.doc.cs" />
+    <Compile Include="ClientConcepts\Connection\ConfigurationOptions.doc.cs" />
     <Compile Include="ClientConcepts\Connection\CustomConnections.doc.cs" />
     <Compile Include="ClientConcepts\Connection\HttpConnectionTests.cs" />
     <Compile Include="ClientConcepts\DebuggerDisplayTests.cs" />
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
     <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Serialization\ChangingSerializers.doc.cs" />
+    <Compile Include="ClientConcepts\LowLevel\GettingStarted.doc.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskApiTests.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskUrlTests.cs" />
     <Compile Include="CodeStandards\Responses.doc.cs" />
