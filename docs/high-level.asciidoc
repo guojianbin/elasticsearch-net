@@ -66,10 +66,24 @@ include::client-concepts/connection/configuration-options.asciidoc[]
 
 include::client-concepts/connection-pooling/building-blocks/connection-pooling.asciidoc[]
 
+include::client-concepts/connection/configuring-ssl.asciidoc[]
+
+include::client-concepts/connection/modifying-default-connection.asciidoc[]
+
 [[serialization]]
 == Serialization
 
-include::{output-dir}/serialization/changing-serializers.asciidoc[]
+:anchor-list: client-concepts/high-level/serialization
+
+* <<changing-serializers,Changing Serializers>>
+
+* <<modifying-default-serializer,Modifying Default Serializer>>
+
+:includes-from-dirs: client-concepts/high-level/serialization
+
+include::client-concepts/high-level/serialization/changing-serializers.asciidoc[]
+
+include::client-concepts/high-level/serialization/modifying-default-serializer.asciidoc[]
 
 [[mapping]]
 == Mapping

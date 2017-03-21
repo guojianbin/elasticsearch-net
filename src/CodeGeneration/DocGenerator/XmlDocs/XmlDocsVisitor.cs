@@ -2,16 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using AsciiDocNet;
 using NuDoq;
 
 namespace DocGenerator.XmlDocs
 {
+    /// <summary>
+    /// Visits XML Documentation file to build an AsciiDoc
+    /// a collection of labeled list items to include in documentation
+    /// </summary>
+    /// <seealso cref="NuDoq.Visitor" />
     public class XmlDocsVisitor : Visitor
     {
         private LabeledListItem _labeledListItem;
         private readonly Type _type;
+
+        // AsciiDocNet does not current have a type for list item continuations, so mimic here
+        // for the moment
         private const string ListItemContinuation = "\r\n+\r\n";
 
         public List<LabeledListItem> LabeledListItems { get; } = new List<LabeledListItem>();
@@ -46,7 +53,7 @@ namespace DocGenerator.XmlDocs
 
         public override void VisitParam(Param param)
         {
-            // TODO: add to docs
+            // TODO: add to docs. Omit for moment.
         }
 
         public override void VisitPara(Para para)
@@ -96,7 +103,7 @@ namespace DocGenerator.XmlDocs
             if (value == null)
                 return string.Empty;
 
-            var endOfToken = value.IndexOf("(");
+            var endOfToken = value.IndexOf("(", StringComparison.Ordinal);
             if (endOfToken == -1)
                 endOfToken = value.Length;
 
@@ -113,17 +120,7 @@ namespace DocGenerator.XmlDocs
             var length = endOfToken - index;
             var lastToken = value.Substring(index, length);
 
-            var indexOfBackTick = lastToken.IndexOf("`");
-            if (indexOfBackTick > -1)
-            {
-                var arity = lastToken[indexOfBackTick + 1];
-                lastToken = lastToken.Substring(0, indexOfBackTick);
-
-                return Enumerable.Range(1, int.Parse(arity.ToString()))
-                    .Aggregate(lastToken + "<", (l, i) => l = l + (i == 1 ? "T" : $"T{i}")) + ">";
-            }
-
-            return lastToken;
+            return lastToken.ReplaceArityWithGenericSignature();
         }
 
         private string EncloseInMarks(string value) => $"`{value}`";
@@ -142,135 +139,11 @@ namespace DocGenerator.XmlDocs
                         if (_labeledListItem != null)
                             LabeledListItems.Add(_labeledListItem);
 
-                        _labeledListItem = new LabeledListItem(EncloseInMarks(methodInfo.GetSignature()), 0);
+                        _labeledListItem = new LabeledListItem(EncloseInMarks(methodInfo.Name), 0);
                         base.VisitMember(member);
                     }
                 }
             }
         }
-    }
-
-    public static class MethodInfoExtensions
-    {
-        /// <summary>
-        /// Return the method signature as a string.
-        /// </summary>
-        /// <param name="method">The Method</param>
-        /// <param name="callable">Return as an callable string(public void a(string b) would return a(b))</param>
-        /// <returns>Method signature</returns>
-        public static string GetSignature(this MethodInfo method, bool callable = false)
-        {
-            var firstParam = true;
-            var sigBuilder = new StringBuilder();
-            sigBuilder.Append(method.Name);
-
-            // Add method generics
-            if (method.IsGenericMethod)
-            {
-                sigBuilder.Append("<");
-                foreach (var g in method.GetGenericArguments())
-                {
-                    if (firstParam)
-                        firstParam = false;
-                    else
-                        sigBuilder.Append(", ");
-                    sigBuilder.Append(TypeName(g));
-                }
-                sigBuilder.Append(">");
-            }
-            sigBuilder.Append("(");
-            firstParam = true;
-            var secondParam = false;
-            foreach (var param in method.GetParameters())
-            {
-                if (firstParam)
-                {
-                    firstParam = false;
-                    if (method.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), false))
-                    {
-                        if (callable)
-                        {
-                            secondParam = true;
-                            continue;
-                        }
-                        sigBuilder.Append("this ");
-                    }
-                }
-                else if (secondParam == true)
-                    secondParam = false;
-                else
-                    sigBuilder.Append(", ");
-                if (param.ParameterType.IsByRef)
-                    sigBuilder.Append("ref ");
-                else if (param.IsOut)
-                    sigBuilder.Append("out ");
-                if (!callable)
-                {
-                    sigBuilder.Append(TypeName(param.ParameterType));
-                    sigBuilder.Append(' ');
-                }
-                sigBuilder.Append(param.Name);
-
-                if (param.HasDefaultValue)
-                {
-                    object defaultValue;
-                    if (param.ParameterType == typeof(bool))
-                    {
-                        defaultValue = (bool) param.DefaultValue ? "true" : "false";
-                    }
-                    else
-                    {
-                        defaultValue = param.DefaultValue;
-                    }
-
-                    sigBuilder.Append(" = " + defaultValue);
-                }
-
-            }
-            sigBuilder.Append(")");
-            return sigBuilder.ToString();
-        }
-
-        /// <summary>
-        /// Get full type name with full namespace names
-        /// </summary>
-        /// <param name="type">Type. May be generic or nullable</param>
-        /// <returns>Full type name, fully qualified namespaces</returns>
-        public static string TypeName(Type type)
-        {
-            var nullableType = Nullable.GetUnderlyingType(type);
-            if (nullableType != null)
-                return nullableType.Name + "?";
-
-            if (!type.IsGenericType)
-                switch (type.Name)
-                {
-                    case "String": return "string";
-                    case "Int32": return "int";
-                    case "Decimal": return "decimal";
-                    case "Object": return "object";
-                    case "Void": return "void";
-                    default:
-                        {
-                            return string.IsNullOrWhiteSpace(type.FullName) ? type.Name : type.FullName;
-                        }
-                }
-
-            var sb = new StringBuilder(type.Name.Substring(0,
-            type.Name.IndexOf('`'))
-            );
-            sb.Append('<');
-            var first = true;
-            foreach (var t in type.GetGenericArguments())
-            {
-                if (!first)
-                    sb.Append(',');
-                sb.Append(TypeName(t));
-                first = false;
-            }
-            sb.Append('>');
-            return sb.ToString();
-        }
-
     }
 }

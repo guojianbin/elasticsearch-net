@@ -123,7 +123,7 @@
     <Compile Include=".\Cat\CatPlugins\CatPluginsUrlTests.cs" />
     <Compile Include=".\Cat\CatRecovery\CatRecoveryApiTests.cs" />
     <Compile Include=".\Cat\CatRecovery\CatRecoveryUrlTests.cs" />
-    <Compile Include=".\ClientConcepts\ConnectionPooling\BuildingBlocks\ConnectionPooling.Doc.cs" />
+    <Compile Include="ClientConcepts\ConnectionPooling\BuildingBlocks\ConnectionPooling.doc.cs" />
     <Compile Include=".\ClientConcepts\ConnectionPooling\BuildingBlocks\DateTimeProviders.Doc.cs" />
     <Compile Include=".\ClientConcepts\ConnectionPooling\BuildingBlocks\KeepingTrackOfNodes.Doc.cs" />
     <Compile Include=".\ClientConcepts\ConnectionPooling\BuildingBlocks\RequestPipelines.doc.cs" />
@@ -234,12 +234,14 @@
     <Compile Include="ClientConcepts\ConnectionPooling\Dispose\ResponseBuilderDisposeTests.cs" />
     <Compile Include="ClientConcepts\ConnectionPooling\Sniffing\AddressParsing.doc.cs" />
     <Compile Include="ClientConcepts\Connection\ConfigurationOptions.doc.cs" />
-    <Compile Include="ClientConcepts\Connection\CustomConnections.doc.cs" />
+    <Compile Include="ClientConcepts\Connection\ConfiguringSSL.doc.cs" />
     <Compile Include="ClientConcepts\Connection\HttpConnectionTests.cs" />
+    <Compile Include="ClientConcepts\Connection\ModifyingDefaultConnection.doc.cs" />
     <Compile Include="ClientConcepts\DebuggerDisplayTests.cs" />
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
     <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Serialization\ModifyingDefaultSerializer.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Serialization\ChangingSerializers.doc.cs" />
     <Compile Include="ClientConcepts\LowLevel\GettingStarted.doc.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskApiTests.cs" />

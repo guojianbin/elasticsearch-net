@@ -9,10 +9,24 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 {
 	public class ConnectionPooling
 	{
-		/**[[connection-pooling]]
+        /**[[connection-pooling]]
 		 * === Connection pools
 		 * Connection pooling is the internal mechanism that takes care of registering what nodes there are in the cluster and which
-		 * NEST can use to issue client calls on. There are four types of connection pool
+		 * NEST can use to issue client calls on. 
+         * 
+         * Despite the name, a connection pool in NEST is **not** like connection pooling that you may be familiar with from
+         * https://msdn.microsoft.com/en-us/library/bb399543(v=vs.110).aspx[interacting with a database using ADO.Net]; for example,
+         * a connection pool in NEST is **not** responsible for managing an underlying pool of TCP connections to Elasticsearch,
+         * this is https://blogs.msdn.microsoft.com/adarshk/2005/01/02/understanding-system-net-connection-management-and-servicepointmanager/[handled by the ServicePointManager in Desktop CLR]
+         * and can be controlled by <<servicepoint-behaviour,changing the ServicePoint behaviour>> on `HttpConnection`.
+         * 
+         * So, what is a connection pool in NEST responsible for? It is responsible for managing the nodes in an Elasticsearch
+         * cluster to which a connection can be made and there is one instance of an `IConnectionPool` associated with an 
+         * instance of `ConnectionSettings`. Since a <<lifetimes,single client and connection settings instance is recommended for the 
+         * life of the application>>, the lifetime of a single connection pool instance will also be bound to the lifetime
+         * of the application.
+         * 
+         * There are four types of connection pool
 		 *
 		 * - <<single-node-connection-pool,SingleNodeConnectionPool>>
 		 * - <<static-connection-pool,StaticConnectionPool>>
@@ -20,14 +34,15 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		 * - <<sticky-connection-pool,StickyConnectionPool>>
 		 */
 
-		/**
+        /**
 		* [[single-node-connection-pool]]
 		* ==== SingleNodeConnectionPool
 		* The simplest of all connection pools, this takes a single `Uri` and uses that to connect to Elasticsearch for all the calls
-		* It doesn't opt in to sniffing and pinging behavior, and will never mark nodes dead or alive. The one `Uri` it holds is always
-		* ready to go.
+		* It doesn't opt in to sniffing and pinging behavior, and will never mark nodes dead or alive. 
+        * 
+        * The one `Uri` it holds is always ready to go.
 		*/
-		[U] public void SingleNode()
+        [U] public void SingleNode()
 		{
 			var uri = new Uri("http://localhost:9201");
 			var pool = new SingleNodeConnectionPool(uri);
@@ -65,7 +80,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			/** a connection pool can be seeded using an enumerable of `Uri`s */
 			var pool = new StaticConnectionPool(uris);
 
-			/** Or using an enumerable of `Node`s */
+			/** Or using an enumerable of ``Node``s */
 			var nodes = uris.Select(u => new Node(u));
 			pool = new StaticConnectionPool(nodes);
 
@@ -94,7 +109,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			/** a connection pool can be seeded using an enumerable of `Uri` */
 			var pool = new SniffingConnectionPool(uris);
 
-			/** Or using an enumerable of `Node`s.
+			/** Or using an enumerable of ``Node``s.
 			* A major benefit here is you can include known node roles when seeding and
 			* NEST can use this information to favour sniffing on master eligible nodes first
 			* and take master only nodes out of rotation for issuing client calls on.
@@ -117,8 +132,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 
 		/**[[sticky-connection-pool]]
 		* ==== StickyConnectionPool
-		* A type of `IConnectionPool` that returns the first live node such that it is sticky between
-		* requests.
+		* A type of `IConnectionPool` that returns the first live node such that is sticky between requests.
 		* It uses https://msdn.microsoft.com/en-us/library/system.threading.interlocked(v=vs.110).aspx[`System.Threading.Interlocked`]
 		* to keep an _indexer_ to the last live node in a thread safe manner.
 		*/

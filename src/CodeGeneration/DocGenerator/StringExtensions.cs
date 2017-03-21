@@ -217,5 +217,19 @@ namespace DocGenerator
 				return true;
 			}
 		}
+
+	    public static string ReplaceArityWithGenericSignature(this string value)
+	    {
+            var indexOfBackTick = value.IndexOf("`");
+
+            if (indexOfBackTick == -1)
+                return value;
+
+            var arity = value[indexOfBackTick + 1];
+            value = value.Substring(0, indexOfBackTick);
+
+            return Enumerable.Range(1, int.Parse(arity.ToString()))
+                .Aggregate(value + "<", (l, i) => l = l + (i == 1 ? "T" : $"T{i}")) + ">";
+	    }
 	}
 }
