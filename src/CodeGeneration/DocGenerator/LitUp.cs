@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using DocGenerator.Documentation.Files;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace DocGenerator
 {
@@ -21,9 +22,22 @@ namespace DocGenerator
 		{
 			get
 			{
-				yield return InputFiles("*.doc.cs");
-				yield return InputFiles("*UsageTests.cs");
-				yield return InputFiles("*.png");
+			    var workspace = MSBuildWorkspace.Create();
+
+                var project = workspace
+                    .OpenProjectAsync(Path.Combine(Program.InputDirPath, "Tests.csproj")).Result;
+
+			    yield return project.Documents
+			        .Where(d => Path.GetFileName(d.FilePath)
+			            .EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
+			        .Select(d => new WorkspaceProjectDocumentationFile(workspace, d));
+
+                yield return project.Documents
+                    .Where(d => Path.GetFileName(d.FilePath)
+                        .EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
+                    .Select(d => new WorkspaceProjectDocumentationFile(workspace, d));
+
+                yield return InputFiles("*.png");
 				yield return InputFiles("*.gif");
 				yield return InputFiles("*.jpg");
 				// process asciidocs last as they may have generated

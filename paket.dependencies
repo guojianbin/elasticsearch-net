@@ -5,6 +5,7 @@ nuget Newtonsoft.Json
 //codegen
 nuget ShellProgressBar 
 nuget Microsoft.CodeAnalysis.CSharp 
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces
 nuget CsQuery 
 nuget RazorMachine 2.6.1
 nuget System.Collections.Immutable

@@ -241,6 +241,7 @@
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
     <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Mapping\FluentMapping.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Serialization\ModifyingDefaultSerializer.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Serialization\ChangingSerializers.doc.cs" />
     <Compile Include="ClientConcepts\LowLevel\GettingStarted.doc.cs" />

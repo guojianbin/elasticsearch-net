@@ -11,13 +11,13 @@ using AsciiDocNet;
 
 namespace DocGenerator.Documentation.Files
 {
-	public class CSharpDocumentationFile : DocumentationFile
+    public class CSharpDocumentationFile : DocumentationFile
 	{
 		internal CSharpDocumentationFile(FileInfo fileLocation) : base(fileLocation)
 		{
 		}
 
-		private string RenderBlocksToDocumentation(IEnumerable<IDocumentationBlock> blocks)
+        protected string RenderBlocksToDocumentation(IEnumerable<IDocumentationBlock> blocks)
 		{
 			var builder = new StringBuilder();
 			var lastBlockWasCodeBlock = false;
@@ -112,7 +112,7 @@ namespace DocGenerator.Documentation.Files
 			}
 		}
 
-		private List<IDocumentationBlock> MergeAdjacentCodeBlocks(IEnumerable<IDocumentationBlock> unmergedBlocks)
+        protected List<IDocumentationBlock> MergeAdjacentCodeBlocks(IEnumerable<IDocumentationBlock> unmergedBlocks)
 		{
 			var blocks = new List<IDocumentationBlock>();
 			List<string> collapseCodeBlocks = null;
@@ -188,7 +188,7 @@ namespace DocGenerator.Documentation.Files
 			CleanDocumentAndWriteToFile(body, docFile);
 		}
 
-		private void CleanDocumentAndWriteToFile(string body, FileInfo destination)
+        protected void CleanDocumentAndWriteToFile(string body, FileInfo destination)
 		{
 			var document = Document.Parse(body);
 			var visitor = new GeneratedAsciidocVisitor(this.FileLocation, destination);

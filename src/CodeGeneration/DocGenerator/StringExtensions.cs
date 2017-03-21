@@ -14,6 +14,10 @@ namespace DocGenerator
 {
 	public static class StringExtensions
 	{
+        private static readonly Regex LeadingSpacesAndAsterisk = new Regex(@"^(?<value>[ \t]*\*\s?).*", RegexOptions.Compiled);
+        private static readonly Regex LeadingMultiLineComment = new Regex(@"^(?<value>[ \t]*\/\*)", RegexOptions.Compiled);
+        private static readonly Regex TrailingMultiLineComment = new Regex(@"(?<value>\*\/[ \t]*)$", RegexOptions.Compiled);
+
 		public static string PascalToHyphen(this string input)
 		{
 			if (string.IsNullOrEmpty(input)) return string.Empty;
@@ -21,12 +25,15 @@ namespace DocGenerator
 			return Regex.Replace(
 				Regex.Replace(
 					Regex.Replace(input, @"([A-Z]+)([A-Z][a-z])", "$1-$2"), @"([a-z\d])([A-Z])", "$1-$2")
-				, @"[-\s]+", "-").TrimEnd('-').ToLower();
+				, @"[-\s]+", "-", RegexOptions.Compiled).TrimEnd('-').ToLower();
 		}
 
 		public static string LowercaseHyphenToPascal(this string lowercaseHyphenatedInput)
 		{
-			return Regex.Replace(lowercaseHyphenatedInput.Replace("-", " "), @"\b([a-z])", m => m.Captures[0].Value.ToUpper());
+			return Regex.Replace(
+                lowercaseHyphenatedInput.Replace("-", " "), 
+                @"\b([a-z])", 
+                m => m.Captures[0].Value.ToUpper());
 		}
 
 		public static string TrimEnd(this string input, string trim)
@@ -40,14 +47,14 @@ namespace DocGenerator
 
 		public static string RemoveLeadingAndTrailingMultiLineComments(this string input)
 		{
-			var match = Regex.Match(input, @"^(?<value>[ \t]*\/\*)");
+			var match = LeadingMultiLineComment.Match(input);
 
 			if (match.Success)
 			{
 				input = input.Substring(match.Groups["value"].Value.Length);
 			}
 
-			match = Regex.Match(input, @"(?<value>\*\/[ \t]*)$");
+			match = TrailingMultiLineComment.Match(input);
 
 			if (match.Success)
 			{
@@ -59,8 +66,7 @@ namespace DocGenerator
 
 		public static string RemoveLeadingSpacesAndAsterisk(this string input)
 		{
-			var match = Regex.Match(input, @"^(?<value>[ \t]*\*\s?).*");
-
+			var match = LeadingSpacesAndAsterisk.Match(input);
 			if (match.Success)
 			{
 				input = input.Substring(match.Groups["value"].Value.Length);
@@ -77,6 +83,7 @@ namespace DocGenerator
 			{
 				return input;
 			}
+
 			int count = 0;
 			char firstNonTabCharacter = Char.MinValue;
 

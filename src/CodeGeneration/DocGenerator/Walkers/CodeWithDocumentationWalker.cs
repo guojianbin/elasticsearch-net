@@ -50,12 +50,26 @@ namespace DocGenerator.Walkers
 				var repeatedTabs = 2 + ClassDepth;
 				var language = Language.CSharp;
 
+			    var serializeToJson = node.ShouldBeConvertedToJson();
+			    if (serializeToJson)
+			    {
+                    // find the first anonymous object expression
+			        var creationExpressionSyntax = node.DescendantNodes()
+                        .OfType<AnonymousObjectCreationExpressionSyntax>()
+                        .FirstOrDefault();
 
+			        _code = creationExpressionSyntax != null 
+                        ? creationExpressionSyntax.ToFullString() 
+                        : node.WithoutLeadingTrivia().WithTrailingTrivia().ToFullString();
+			    }
+			    else
+			    {
+                    _code = node.WithoutLeadingTrivia().WithTrailingTrivia().ToFullString();
+                }
 
-				_code = node.WithoutLeadingTrivia().WithTrailingTrivia().ToFullString();
 				_code = _code.RemoveNumberOfLeadingTabsAfterNewline(repeatedTabs);
 
-				if (_propertyOrMethodName == "ExpectJson" || _propertyOrMethodName == "QueryJson")
+				if (_propertyOrMethodName == "ExpectJson" || _propertyOrMethodName == "QueryJson" || serializeToJson)
 				{
 					// try to get the json for the anonymous type.
 					// Only supports system types and Json.Net LINQ objects e.g. JObject
