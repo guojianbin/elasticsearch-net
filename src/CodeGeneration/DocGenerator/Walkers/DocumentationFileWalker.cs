@@ -38,7 +38,8 @@ namespace DocGenerator.Walkers
 		{
 			if (node.ShouldBeHidden()) return;
 
-			if (node.ChildNodes().All(childNode => childNode is PropertyDeclarationSyntax || childNode is AttributeListSyntax))
+			if (node.ChildNodes().All(childNode => childNode.IsKind(SyntaxKind.PropertyDeclaration)|| 
+                                                   childNode.IsKind(SyntaxKind.AttributeList)))
 			{
 				// simple nested interface	
 				var line = node.SyntaxTree.GetLineSpan(node.Span).StartLinePosition.Line;
@@ -57,8 +58,9 @@ namespace DocGenerator.Walkers
 			{
 				base.VisitClassDeclaration(node);
 			}				
-			else if (node.ChildNodes().All(childNode => childNode is PropertyDeclarationSyntax || childNode is AttributeListSyntax))
-			{
+			else if (node.ChildNodes().All(childNode => childNode.IsKind(SyntaxKind.PropertyDeclaration) ||
+                                                        childNode.IsKind(SyntaxKind.AttributeList)))
+            {
 				// simple nested POCO	
 				var line = node.SyntaxTree.GetLineSpan(node.Span).StartLinePosition.Line;
 				var walker = new CodeWithDocumentationWalker(ClassDepth - 2, line);
@@ -154,7 +156,7 @@ namespace DocGenerator.Walkers
 				}
 
 				var allchildren = node.DescendantNodesAndTokens(descendIntoTrivia: true);
-				if (allchildren.Any(a => a.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
+				if (allchildren.Any(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)))
 				{
 					var walker = new CodeWithDocumentationWalker(ClassDepth, line, _propertyOrMethodName);
 					walker.Visit(node.WithAdditionalAnnotations());
@@ -178,7 +180,7 @@ namespace DocGenerator.Walkers
 				var allchildren = node.DescendantNodesAndTokens(descendIntoTrivia: true);
 				var linePositionSpan = node.SyntaxTree.GetLineSpan(node.Span);
 				var line = linePositionSpan.StartLinePosition.Line;
-				if (allchildren.Any(a => a.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
+				if (allchildren.Any(a => a.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)))
 				{
 					var walker = new CodeWithDocumentationWalker(ClassDepth, line, _propertyOrMethodName);
 					walker.Visit(node.WithAdditionalAnnotations());
@@ -189,7 +191,7 @@ namespace DocGenerator.Walkers
 				code = code.RemoveNumberOfLeadingTabsAfterNewline(ClassDepth + 2);
 				this.Blocks.Add(new CodeBlock(code, line, Language.CSharp, _propertyOrMethodName));
 
-				if (allchildren.Any(a => a.Kind() == SyntaxKind.SimpleLambdaExpression))
+				if (allchildren.Any(a => a.IsKind(SyntaxKind.SimpleLambdaExpression)))
 				{
 					// nested lambda inside this local declaration
 					this.IncludeMethodBlockContainsLambda = true;
@@ -215,7 +217,7 @@ namespace DocGenerator.Walkers
 
 		public override void VisitTrivia(SyntaxTrivia trivia)
 		{
-			if (trivia.Kind() != SyntaxKind.MultiLineDocumentationCommentTrivia)
+			if (!trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
 			{
 				base.VisitTrivia(trivia);
 				return;

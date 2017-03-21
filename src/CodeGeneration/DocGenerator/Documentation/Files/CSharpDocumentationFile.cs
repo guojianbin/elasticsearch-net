@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using DocGenerator.Documentation.Blocks;
 using DocGenerator.Walkers;
@@ -171,7 +172,7 @@ namespace DocGenerator.Documentation.Files
 			return blocks;
 		}
 
-		public override void SaveToDocumentationFolder()
+		public override async Task SaveToDocumentationFolderAsync()
 		{
 			var code = File.ReadAllText(this.FileLocation.FullName);
 			var ast = CSharpSyntaxTree.ParseText(code);
@@ -185,10 +186,10 @@ namespace DocGenerator.Documentation.Files
 			var body = this.RenderBlocksToDocumentation(mergedBlocks);
 			var docFile = this.CreateDocumentationLocation();
 
-			CleanDocumentAndWriteToFile(body, docFile);
+			await CleanDocumentAndWriteToFileAsync(body, docFile);
 		}
 
-        protected void CleanDocumentAndWriteToFile(string body, FileInfo destination)
+        protected Task CleanDocumentAndWriteToFileAsync(string body, FileInfo destination)
 		{
 			var document = Document.Parse(body);
 			var visitor = new GeneratedAsciidocVisitor(this.FileLocation, destination);
@@ -197,9 +198,10 @@ namespace DocGenerator.Documentation.Files
 			// add attributes and write to destination
 			using (var file = new StreamWriter(destination.FullName))
 			{
-
 				document.Accept(new AsciiDocVisitor(file));
 			}
+
+            return Task.FromResult(0);
 		}
 	}
 }

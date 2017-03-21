@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DocGenerator.Documentation.Files;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace DocGenerator
 {
 	public static class LitUp
 	{
-		private static readonly string[] SkipFolders = { "Nest.Tests.Literate", "Debug", "Release" };
+		private static readonly string[] SkipFolders = { "Debug", "Release" };
 
 		public static IEnumerable<DocumentationFile> InputFiles(string path) =>
 			from f in Directory.GetFiles(Program.InputDirPath, $"{path}", SearchOption.AllDirectories)
@@ -18,24 +20,15 @@ namespace DocGenerator
 			where dir?.Parent != null && !SkipFolders.Contains(dir.Parent.Name)
 			select DocumentationFile.Load(new FileInfo(f));
 
-		public static IEnumerable<IEnumerable<DocumentationFile>> Input
+		public static IEnumerable<IEnumerable<DocumentationFile>> GetDocumentFiles(Project project)
 		{
-			get
-			{
-			    var workspace = MSBuildWorkspace.Create();
-
-                var project = workspace
-                    .OpenProjectAsync(Path.Combine(Program.InputDirPath, "Tests.csproj")).Result;
-
 			    yield return project.Documents
-			        .Where(d => Path.GetFileName(d.FilePath)
-			            .EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
-			        .Select(d => new WorkspaceProjectDocumentationFile(workspace, d));
+			        .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
+			        .Select(d => new WorkspaceProjectDocumentationFile(d));
 
                 yield return project.Documents
-                    .Where(d => Path.GetFileName(d.FilePath)
-                        .EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
-                    .Select(d => new WorkspaceProjectDocumentationFile(workspace, d));
+                    .Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
+                    .Select(d => new WorkspaceProjectDocumentationFile(d));
 
                 yield return InputFiles("*.png");
 				yield return InputFiles("*.gif");
@@ -43,14 +36,16 @@ namespace DocGenerator
 				// process asciidocs last as they may have generated
 				// includes to other output asciidocs
 				yield return InputFiles("*.asciidoc");
-			}
 		}
 
-		public static void Go(string[] args)
+		public static async Task GoAsync(string[] args)
 		{
-			foreach (var file in Input.SelectMany(s => s))
+            var workspace = MSBuildWorkspace.Create();
+            var project = await workspace.OpenProjectAsync(Path.Combine(Program.InputDirPath, "Tests.csproj"));
+
+            foreach (var file in GetDocumentFiles(project).SelectMany(s => s))
 			{
-				file.SaveToDocumentationFolder();
+				await file.SaveToDocumentationFolderAsync();
 			}
 
 			Console.ForegroundColor = ConsoleColor.Green;

@@ -23,6 +23,6 @@ namespace DocGenerator
 
 		public static string OutputDirPath { get; }
 
-		static void Main(string[] args) => LitUp.Go(args);
+		static void Main(string[] args) => LitUp.GoAsync(args).Wait();
 	}
 }

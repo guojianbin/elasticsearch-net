@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace DocGenerator.Documentation.Files
 {
@@ -7,15 +8,18 @@ namespace DocGenerator.Documentation.Files
 	{
 		public ImageDocumentationFile(FileInfo fileLocation) : base(fileLocation) { }
 
-		public override void SaveToDocumentationFolder()
+		public override async Task SaveToDocumentationFolderAsync()
 		{
 			var docFileName = this.CreateDocumentationLocation();
 
-			// copy for asciidoc to work when viewing a single asciidoc in the browser (path is relative to file)
-			this.FileLocation.CopyTo(docFileName.FullName, true);
+            // copy for asciidoc to work when viewing a single asciidoc in the browser (path is relative to file)
+            var copyRelativeTask = CopyFileAsync(this.FileLocation.FullName, docFileName.FullName);
 
-			// copy to the root as well, for the doc generation process (path is relative to root)
-			this.FileLocation.CopyTo(Path.Combine(Program.OutputDirPath, docFileName.Name), true);
+            // copy to the root as well, for the doc generation process (path is relative to root)
+            var copyRootTask = CopyFileAsync(this.FileLocation.FullName, Path.Combine(Program.OutputDirPath, docFileName.Name));
+
+		    await copyRelativeTask;
+		    await copyRootTask;
 		}
 
 		protected override FileInfo CreateDocumentationLocation()
@@ -32,5 +36,12 @@ namespace DocGenerator.Documentation.Files
 				Directory.CreateDirectory(fileInfo.Directory.FullName);
 			return fileInfo;
 		}
-	}
+
+        public static async Task CopyFileAsync(string sourceFile, string destinationFile)
+        {
+            using (var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
+            using (var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
+                await sourceStream.CopyToAsync(destinationStream);
+        }
+    }
 }

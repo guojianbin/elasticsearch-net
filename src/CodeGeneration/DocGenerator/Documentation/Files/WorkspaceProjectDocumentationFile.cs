@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DocGenerator.Walkers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,17 +9,15 @@ namespace DocGenerator.Documentation.Files
 {
     public class WorkspaceProjectDocumentationFile : CSharpDocumentationFile
     {
-        private readonly Workspace _workspace;
         private readonly Document _document;
 
-        public WorkspaceProjectDocumentationFile(Workspace workspace, Document document) 
+        public WorkspaceProjectDocumentationFile(Document document) 
             : base(new FileInfo(document.FilePath))
         {
-            _workspace = workspace;
             _document = document;
         }
 
-        public override void SaveToDocumentationFolder()
+        public override async Task SaveToDocumentationFolderAsync()
         {
             var ast = _document.GetSyntaxTreeAsync().Result;
 
@@ -31,7 +30,7 @@ namespace DocGenerator.Documentation.Files
             var body = this.RenderBlocksToDocumentation(mergedBlocks);
             var docFile = this.CreateDocumentationLocation();
 
-            CleanDocumentAndWriteToFile(body, docFile);
+            await CleanDocumentAndWriteToFileAsync(body, docFile);
         }
     }
 }
