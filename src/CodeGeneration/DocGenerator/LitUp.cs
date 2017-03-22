@@ -43,6 +43,7 @@ namespace DocGenerator
             var workspace = MSBuildWorkspace.Create();
             var project = await workspace.OpenProjectAsync(Path.Combine(Program.InputDirPath, "Tests.csproj"));
 
+            // TODO: this throws OutOfMemory occasionally...
 		    Compilation compilation = null; //await project.GetCompilationAsync();
 
             foreach (var file in GetDocumentFiles(project, compilation).SelectMany(s => s))
