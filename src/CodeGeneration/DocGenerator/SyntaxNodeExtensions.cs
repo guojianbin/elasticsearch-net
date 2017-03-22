@@ -43,5 +43,13 @@ namespace DocGenerator
             
             return SingleLineJsonComment.IsMatch(leadingTrivia.ElementAt(singleLineCommentIndex).ToFullString());
         }
+
+        /// <summary>
+        /// Determines if the node is preceded by any multiline documentation.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        public static bool HasMultiLineDocumentationCommentTrivia(this SyntaxNode node) => 
+            node.HasLeadingTrivia &&
+	        node.GetLeadingTrivia().Any(c => c.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
 	}
 }

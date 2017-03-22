@@ -79,9 +79,24 @@ will cause Elasticsearch to infer the mapping).
 
 Here are the ways to control mapping in NEST:
 
-:anchor-list: client-concepts/high-level/mapping
+- <<auto-map, Inferred mapping>>
+- <<attribute-mapping, Attribute mapping>>
+- <<fluent-mapping, Fluent mapping>>
+- <<visitor-pattern-mapping, through the Visitor Pattern>>
 
-:includes-from-dirs: client-concepts/high-level/mapping
+as well as how to control:
+
+- <<ignoring-properties, Ignoring properties>>
+- <<multi-fields, Multi fields>>
+
+include::client-concepts/high-level/mapping/auto-map.asciidoc[]
+include::client-concepts/high-level/mapping/attribute-mapping.asciidoc[]
+include::client-concepts/high-level/mapping/fluent-mapping.asciidoc[]
+include::client-concepts/high-level/mapping/visitor-pattern-mapping.asciidoc[]
+
+include::client-concepts/high-level/mapping/ignoring-properties.asciidoc[]
+include::client-concepts/high-level/mapping/multi-fields.asciidoc[]
+
 
 [[conventions]]
 == Conventions

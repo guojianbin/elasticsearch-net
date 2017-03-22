@@ -131,6 +131,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         *
         * This is where the fluent mapping in conjunction with automapping comes in.
         * 
+        * [[auto-map-with-overrides]]
         * ==== Auto mapping with fluent overrides
         * 
         * In most cases, you'll want to map more than just the vanilla datatypes and also provide
@@ -216,12 +217,229 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         }
 
         /**
+         * Just as we were able to override the inferred properties in the previous example, fluent mapping
+         * also take precedence over <<attribute-mapping, Attribute Mapping>>. We'll demonstrate with an example.
+         * 
+         * Consider the following two POCOS
+         */
+        [ElasticsearchType(Name = "company")]
+        public class CompanyWithAttributes
+        {
+            [Keyword(NullValue = "null", Similarity = "BM25")]
+            public string Name { get; set; }
+
+            [Text(Name = "office_hours")]
+            public TimeSpan? HeadOfficeHours { get; set; }
+
+            [Object(Store = false)]
+            public List<Employee> Employees { get; set; }
+        }
+
+        [ElasticsearchType(Name = "employee")]
+        public class EmployeeWithAttributes
+        {
+            [Text(Name = "first_name")]
+            public string FirstName { get; set; }
+
+            [Text(Name = "last_name")]
+            public string LastName { get; set; }
+
+            [Number(DocValues = false, IgnoreMalformed = true, Coerce = true)]
+            public int Salary { get; set; }
+
+            [Date(Format = "MMddyyyy")]
+            public DateTime Birthday { get; set; }
+
+            [Boolean(NullValue = false, Store = true)]
+            public bool IsManager { get; set; }
+
+            [Nested]
+            [JsonProperty("empl")]
+            public List<Employee> Employees { get; set; }
+        }
+
+        /**
+         * Now when mapping, `AutoMap()` is called to infer the mapping from the POCO property types and
+         * attributes, and inferred mappings are overridden with fluent mapping.
+         */
+        [U]
+        public void OverridingAutoMappedAttributes()
+        {
+            var descriptor = new CreateIndexDescriptor("myindex")
+                .Mappings(ms => ms
+                    .Map<CompanyWithAttributes>(m => m
+                        .AutoMap() // <1> Automap company
+                        .Properties(ps => ps // <2> Override company inferred mappings
+                            .Nested<Employee>(n => n
+                                .Name(c => c.Employees)
+                            )
+                        )
+                    )
+                    .Map<EmployeeWithAttributes>(m => m
+                        .AutoMap() // <3> Auto map employee
+                        .Properties(ps => ps // <4> Override employee inferred mappings
+                            .Text(s => s
+                                .Name(e => e.FirstName)
+                                .Fields(fs => fs
+                                    .Keyword(ss => ss
+                                        .Name("firstNameRaw")
+                                    )
+                                    .TokenCount(t => t
+                                        .Name("length")
+                                        .Analyzer("standard")
+                                    )
+                                )
+                            )
+                            .Number(n => n
+                                .Name(e => e.Salary)
+                                .Type(NumberType.Double)
+                                .IgnoreMalformed(false)
+                            )
+                            .Date(d => d
+                                .Name(e => e.Birthday)
+                                .Format("MM-dd-yy")
+                            )
+                        )
+                    )
+                );
+
+            /**
+             */
+            // json
+            var expected = new
+            {
+                mappings = new
+                {
+                    company = new
+                    {
+                        properties = new
+                        {
+                            employees = new
+                            {
+                                type = "nested"
+                            },
+                            name = new
+                            {
+                                null_value = "null",
+                                similarity = "BM25",
+                                type = "keyword"
+                            },
+                            office_hours = new
+                            {
+                                type = "text"
+                            }
+                        }
+                    },
+                    employee = new
+                    {
+                        properties = new
+                        {
+                            birthday = new
+                            {
+                                format = "MM-dd-yy",
+                                type = "date"
+                            },
+                            empl = new
+                            {
+                                properties = new
+                                {
+                                    birthday = new
+                                    {
+                                        type = "date"
+                                    },
+                                    employees = new
+                                    {
+                                        properties = new { },
+                                        type = "object"
+                                    },
+                                    firstName = new
+                                    {
+                                        fields = new
+                                        {
+                                            keyword = new
+                                            {
+                                                type = "keyword",
+                                                ignore_above = 256
+                                            }
+                                        },
+                                        type = "text"
+                                    },
+                                    hours = new
+                                    {
+                                        type = "long"
+                                    },
+                                    isManager = new
+                                    {
+                                        type = "boolean"
+                                    },
+                                    lastName = new
+                                    {
+                                        fields = new
+                                        {
+                                            keyword = new
+                                            {
+                                                type = "keyword",
+                                                ignore_above = 256
+                                            }
+                                        },
+                                        type = "text"
+                                    },
+                                    salary = new
+                                    {
+                                        type = "integer"
+                                    }
+                                },
+                                type = "nested"
+                            },
+                            first_name = new
+                            {
+                                fields = new
+                                {
+                                    firstNameRaw = new
+                                    {
+                                        type = "keyword"
+                                    },
+                                    length = new
+                                    {
+                                        analyzer = "standard",
+                                        type = "token_count"
+                                    }
+                                },
+                                type = "text"
+                            },
+                            isManager = new
+                            {
+                                null_value = false,
+                                store = true,
+                                type = "boolean"
+                            },
+                            last_name = new
+                            {
+                                type = "text"
+                            },
+                            salary = new
+                            {
+                                ignore_malformed = false,
+                                type = "double"
+                            }
+                        }
+                    }
+                }
+            };
+
+            // hide
+            Expect(expected).WhenSerializing((ICreateIndexRequest)descriptor);
+        }
+
+
+        /**
         * ==== Auto mapping overrides down the object graph
         * 
-        * You may have noticed in the previous example that the properties of the `Employees` property
-        * were not mapped. This is because the automapping was applied only at the root of the `Company` mapping.
+        * You may have noticed in the <<auto-map-with-overrides, Automap with fluent overrides example>> 
+        * that the properties of the `Employees` property were not mapped. This is because the automapping 
+        * was applied only at the root level of the `Company` mapping.
         * 
-        * By calling `.AutoMap()` inside of the `.Nested<Employee>` mapping, you can also automap the 
+        * By calling `.AutoMap()` inside of the `.Nested<Employee>` mapping, it is possible to auto map the 
         * `Employee` nested properties and again, override any inferred mapping from the automapping process,
         * through manual mapping
         */

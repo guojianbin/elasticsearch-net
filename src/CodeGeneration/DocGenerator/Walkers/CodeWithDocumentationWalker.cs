@@ -93,9 +93,8 @@ namespace DocGenerator.Walkers
 
 				base.Visit(node);
 
-				var nodeHasLeadingTriva = node.HasLeadingTrivia &&
-					node.GetLeadingTrivia().Any(c => c.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia);
-				var blocks = codeBlocks.Intertwine<IDocumentationBlock>(this.TextBlocks, swap: nodeHasLeadingTriva);
+				var hasleadingMultilineComment = node.HasMultiLineDocumentationCommentTrivia();
+				var blocks = codeBlocks.Intertwine<IDocumentationBlock>(this.TextBlocks, swap: hasleadingMultilineComment);
 				this.Blocks.Add(new CombinedBlock(blocks, line));
 				return;
 			}
@@ -129,7 +128,7 @@ namespace DocGenerator.Walkers
 
 		public override void VisitTrivia(SyntaxTrivia trivia)
 		{
-			if (trivia.Kind() != SyntaxKind.MultiLineDocumentationCommentTrivia)
+			if (!trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
 			{
 				base.VisitTrivia(trivia);
 				return;

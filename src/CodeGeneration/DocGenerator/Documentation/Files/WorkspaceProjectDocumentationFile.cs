@@ -10,16 +10,18 @@ namespace DocGenerator.Documentation.Files
     public class WorkspaceProjectDocumentationFile : CSharpDocumentationFile
     {
         private readonly Document _document;
+        private readonly Compilation _compilation;
 
-        public WorkspaceProjectDocumentationFile(Document document) 
+        public WorkspaceProjectDocumentationFile(Document document, Compilation compilation) 
             : base(new FileInfo(document.FilePath))
         {
             _document = document;
+            _compilation = compilation;
         }
 
         public override async Task SaveToDocumentationFolderAsync()
         {
-            var ast = _document.GetSyntaxTreeAsync().Result;
+            var ast = await _document.GetSyntaxTreeAsync();
 
             var walker = new DocumentationFileWalker();
             walker.Visit(ast.GetRoot());

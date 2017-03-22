@@ -20,30 +20,32 @@ namespace DocGenerator
 			where dir?.Parent != null && !SkipFolders.Contains(dir.Parent.Name)
 			select DocumentationFile.Load(new FileInfo(f));
 
-		public static IEnumerable<IEnumerable<DocumentationFile>> GetDocumentFiles(Project project)
+		public static IEnumerable<IEnumerable<DocumentationFile>> GetDocumentFiles(Project project, Compilation compilation)
 		{
-			    yield return project.Documents
-			        .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
-			        .Select(d => new WorkspaceProjectDocumentationFile(d));
+            yield return project.Documents
+               .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
+               .Select(d => new WorkspaceProjectDocumentationFile(d, compilation));
 
-                yield return project.Documents
-                    .Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
-                    .Select(d => new WorkspaceProjectDocumentationFile(d));
+            yield return project.Documents
+                .Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
+                .Select(d => new WorkspaceProjectDocumentationFile(d, compilation));
 
-                yield return InputFiles("*.png");
-				yield return InputFiles("*.gif");
-				yield return InputFiles("*.jpg");
-				// process asciidocs last as they may have generated
-				// includes to other output asciidocs
-				yield return InputFiles("*.asciidoc");
-		}
+            yield return InputFiles("*.png");
+			yield return InputFiles("*.gif");
+			yield return InputFiles("*.jpg");
+			// process asciidocs last as they may have generated
+			// includes to other output asciidocs
+			yield return InputFiles("*.asciidoc");
+	    }
 
 		public static async Task GoAsync(string[] args)
 		{
             var workspace = MSBuildWorkspace.Create();
             var project = await workspace.OpenProjectAsync(Path.Combine(Program.InputDirPath, "Tests.csproj"));
 
-            foreach (var file in GetDocumentFiles(project).SelectMany(s => s))
+		    Compilation compilation = null; //await project.GetCompilationAsync();
+
+            foreach (var file in GetDocumentFiles(project, compilation).SelectMany(s => s))
 			{
 				await file.SaveToDocumentationFolderAsync();
 			}

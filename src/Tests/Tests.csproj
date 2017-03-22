@@ -241,6 +241,10 @@
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
     <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Mapping\AttributeMapping.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Mapping\VisitorPatternMapping.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Mapping\MultiFields.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Mapping\IgnoringProperties.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Mapping\FluentMapping.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Serialization\ModifyingDefaultSerializer.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Serialization\ChangingSerializers.doc.cs" />
