@@ -118,7 +118,7 @@ namespace DocGenerator
 			return input.Split(new[] { "\r\n", "\n" }, options);
 		}
 
-		// TODO: Hack of replacements in anonymous types that represent json. This can be resolved by referencing tests assembly when building the dynamic assembly,
+		// TODO: Total Hack of replacements in anonymous types that represent json. This can be resolved by referencing tests assembly when building the dynamic assembly,
 		// but might want to put doc generation at same directory level as Tests to reference project directly.
 		private static Dictionary<string, string> Substitutions = new Dictionary<string, string>
 		{

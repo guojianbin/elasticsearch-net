@@ -140,10 +140,8 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
                 }
             };
 
-            //hide
-            var actual = JObject.Parse(Encoding.UTF8.GetString(searchResponse.ApiCall.RequestBodyInBytes));
             // hide
-            JObject.DeepEquals(JObject.FromObject(expected), actual).Should().BeTrue();
+            JObject.DeepEquals(JObject.FromObject(expected), JObject.Parse(Encoding.UTF8.GetString(searchResponse.ApiCall.RequestBodyInBytes))).Should().BeTrue();
         }
 
 

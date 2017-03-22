@@ -22,8 +22,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 	{
 		/**== Sniffing role detection
 		*
-		* When we sniff the cluster state, we detect the role of the node, whether it's master eligible and holds data.
-		* We use this information when selecting a node to perform an API call on.
+		* When we sniff the cluster state, we detect the role of the node, for example, 
+        * whether it's master eligible and holds data.
+		* We then use this information when selecting a node to perform an API call on.
 		*/
 		[U, SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
 		public async Task DetectsMasterNodes()

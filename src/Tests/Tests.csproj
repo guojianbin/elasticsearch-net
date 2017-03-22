@@ -239,6 +239,7 @@
     <Compile Include="ClientConcepts\Connection\ModifyingDefaultConnection.doc.cs" />
     <Compile Include="ClientConcepts\DebuggerDisplayTests.cs" />
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Analysis\WritingAnalyzers.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
     <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Mapping\AttributeMapping.doc.cs" />
@@ -860,6 +861,7 @@
   <ItemGroup>
     <Content Include="App.config" />
     <Content Include="ClientConcepts\ConnectionPooling\BuildingBlocks\timeoutplot.png" />
+    <Content Include="ClientConcepts\HighLevel\Analysis\analysis-chain.png" />
     <Content Include="ClientConcepts\LowLevel\class.png" />
     <Content Include="ClientConcepts\LowLevel\pipeline.png" />
     <Content Include="ClientConcepts\LowLevel\pipeline.xml" />

@@ -17,8 +17,9 @@ please modify the original csharp file found at the link and submit the PR with 
 [[sniffing-role-detection]]
 == Sniffing role detection
 
-When we sniff the cluster state, we detect the role of the node, whether it's master eligible and holds data.
-We use this information when selecting a node to perform an API call on.
+When we sniff the cluster state, we detect the role of the node, for example, 
+whether it's master eligible and holds data.
+We then use this information when selecting a node to perform an API call on.
 
 [source,csharp]
 ----
