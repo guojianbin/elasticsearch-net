@@ -168,7 +168,6 @@ response.IsValid.Should().BeTrue();
 var states = response.Aggs.Terms("states");
 states.Should().NotBeNull();
 states.Buckets.Should().NotBeNullOrEmpty();
-
 foreach(var state in states.Buckets)
 {
     state.Key.Should().NotBeNullOrEmpty();

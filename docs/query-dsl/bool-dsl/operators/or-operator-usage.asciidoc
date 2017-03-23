@@ -19,18 +19,6 @@ please modify the original csharp file found at the link and submit the PR with 
 
 [source,csharp]
 ----
-var lotsOfOrs = Enumerable.Range(0, Iterations).Aggregate(new QueryContainer(), (q, c) => q || Query, q => q);
-
-LotsOfOrs(lotsOfOrs);
-----
-
-[source,csharp]
-----
-QueryContainer container = null;
-----
-
-[source,csharp]
-----
 ReturnsBool(Query || Query, q => q.Query() || q.Query(), b =>
 {
     b.Should.Should().NotBeEmpty().And.HaveCount(2);
@@ -38,10 +26,6 @@ ReturnsBool(Query || Query, q => q.Query() || q.Query(), b =>
     b.MustNot.Should().BeNull();
     b.Filter.Should().BeNull();
 });
-b.Should.Should().NotBeEmpty().And.HaveCount(2);
-b.Must.Should().BeNull();
-b.MustNot.Should().BeNull();
-b.Filter.Should().BeNull();
 ReturnsBool(Query || Query || ConditionlessQuery, q => q.Query() || q.Query() || q.ConditionlessQuery(), b =>
 {
     b.Should.Should().NotBeEmpty().And.HaveCount(2);
@@ -49,10 +33,6 @@ ReturnsBool(Query || Query || ConditionlessQuery, q => q.Query() || q.Query() ||
     b.MustNot.Should().BeNull();
     b.Filter.Should().BeNull();
 });
-b.Should.Should().NotBeEmpty().And.HaveCount(2);
-b.Must.Should().BeNull();
-b.MustNot.Should().BeNull();
-b.Filter.Should().BeNull();
 ReturnsBool(Query || Query || ConditionlessQuery, q => q.Query() || q.Query() || q.ConditionlessQuery(), b =>
 {
     b.Should.Should().NotBeEmpty().And.HaveCount(2);
@@ -60,10 +40,6 @@ ReturnsBool(Query || Query || ConditionlessQuery, q => q.Query() || q.Query() ||
     b.MustNot.Should().BeNull();
     b.Filter.Should().BeNull();
 });
-b.Should.Should().NotBeEmpty().And.HaveCount(2);
-b.Must.Should().BeNull();
-b.MustNot.Should().BeNull();
-b.Filter.Should().BeNull();
 ReturnsSingleQuery(Query || ConditionlessQuery, q => q.Query() || q.ConditionlessQuery(),
     c => c.Term.Value.Should().NotBeNull());
 ReturnsSingleQuery(ConditionlessQuery || Query, q => q.ConditionlessQuery() || q.Query(),
@@ -95,31 +71,30 @@ ReturnsNull(
 
 [source,csharp]
 ----
+var lotsOfOrs = Enumerable.Range(0, Iterations).Aggregate(new QueryContainer(), (q, c) => q || Query, q => q);
+LotsOfOrs(lotsOfOrs);
+----
+
+[source,csharp]
+----
+QueryContainer container = null;
 foreach(var i in Enumerable.Range(0, Iterations))
     container |= Query;
-
 LotsOfOrs(container);
 ----
 
 [source,csharp]
 ----
 var container = new QueryContainer();
-----
-
-[source,csharp]
-----
 foreach(var i in Enumerable.Range(0, Iterations))
     container |= Query;
-
 LotsOfOrs(container);
 ----
 
 [source,csharp]
 ----
 lotsOfOrs.Should().NotBeNull();
-
 lotsOfOrs.Bool.Should().NotBeNull();
-
 lotsOfOrs.Bool.Should.Should().NotBeEmpty().And.HaveCount(Iterations);
 ----
 

@@ -19,7 +19,12 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
      *
      * Whilst JSON.Net does a good job of serialization, you may wish to use your own JSON serializer for a particular
      * reason. Elasticsearch.Net and NEST make it easy to replace the default serializer with your own.
-     *
+     * 
+     * [NOTE]
+     * --
+     * If you are looking to change how the default serializer works, check out
+     * <<modifying-default-serializer,Modifying the default serializer>>.
+     * --
      */
     public class ChangingSerializers
     {
@@ -54,7 +59,8 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
             }
         }
 
-        /**
+        /**==== Changing serializers in Elasticsearch.Net
+         * 
          * For Elasticsearch.Net, an implementation of `IElasticsearchSerializer` is all that is needed and a delegate can
 		 * be passed to `ConnectionConfiguration` that will be called to construct an instance of the serializer
          */
@@ -68,7 +74,8 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
 			var lowlevelClient = new ElasticLowLevelClient(connectionConfiguration);
         }
 
-        /**
+        /**==== Changing serializers in NEST
+         * 
          * With NEST however, an implementation of `ISerializerFactory` in addition to an implementation
          * of `IElasticsearchSerializer` is required.
          */

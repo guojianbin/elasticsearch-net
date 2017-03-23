@@ -33,38 +33,35 @@ var audit = new Auditor(() => Framework.Cluster
     .SniffingConnectionPool()
     .Settings(s => s.SniffOnStartup()) <1>
 );
-----
-<1> sniff on startup
 
-Now We disable sniffing on the request so even though it's our first call, we do not want to sniff on startup 
 
-Instead, the sniff on startup is deferred to the second call into the cluster that
-does not disable sniffing on a per request basis
-
-And after that no sniff on startup will happen again 
-
-[source,csharp]
-----
 audit = await audit.TraceCalls(
-new ClientCall(r => r.DisableSniffing()) <1>
+    /** Now We disable sniffing on the request so even though it's our first call, we do not want to sniff on startup */
+    new ClientCall(r => r.DisableSniffing()) <1>
     {
         { PingSuccess, 9200 }, <2>
         { HealthyResponse, 9200 }
     },
-new ClientCall()
+    /** Instead, the sniff on startup is deferred to the second call into the cluster that
+    * does not disable sniffing on a per request basis
+    */
+    new ClientCall()
     {
         { SniffOnStartup }, <3>
         { SniffSuccess, 9200 },
         { PingSuccess, 9200 },
         { HealthyResponse, 9200 }
     },
-new ClientCall()
+    /** And after that no sniff on startup will happen again */
+    new ClientCall()
     {
         { PingSuccess, 9201 },
         { HealthyResponse, 9201 }
     }
 );
 ----
+<1> sniff on startup
+
 <1> disable sniffing
 
 <2> first call is a successful ping
@@ -81,6 +78,7 @@ var audit = new Auditor(() => Framework.Cluster
     .SniffingConnectionPool()
     .Settings(s => s.SniffOnStartup())
 );
+
 audit = await audit.TraceCall(
     new ClientCall(r => r.DisablePing()) <1>
     {

@@ -31,6 +31,7 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .AllDefaults()
 );
+
 audit = await audit.TraceCalls(
     new ClientCall { { PingSuccess, 9200 }, { HealthyResponse, 9200 } },
     new ClientCall { { PingSuccess, 9201 }, { HealthyResponse, 9201 } },
@@ -48,12 +49,15 @@ audit = await audit.TraceCalls(
         { pool => pool.Nodes.First(n=>!n.IsAlive).DeadUntil.Should().BeAfter(DateTime.UtcNow) }
     }
 );
+
 audit = await audit.TraceCalls(
     new ClientCall { { HealthyResponse, 9201 } },
     new ClientCall { { HealthyResponse, 9200 } },
     new ClientCall { { HealthyResponse, 9201 } }
 );
+
 audit.ChangeTime(d => d.AddMinutes(20));
+
 audit = await audit.TraceCalls(
     new ClientCall { { HealthyResponse, 9201 } },
     new ClientCall {

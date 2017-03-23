@@ -111,7 +111,6 @@ new SearchRequest<Project>
 [source,csharp]
 ----
 response.ShouldBeValid();
-
 foreach (var hit in response.Hits)
     hit.Source.Should().BeNull();
 ----

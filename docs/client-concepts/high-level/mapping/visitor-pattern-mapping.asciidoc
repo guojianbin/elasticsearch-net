@@ -144,14 +144,11 @@ public class EverythingIsAStringPropertyVisitor : NoopPropertyVisitor
 {
     public override IProperty Visit(PropertyInfo propertyInfo, ElasticsearchPropertyAttributeBase attribute) => new TextProperty();
 }
-----
 
-[source,csharp]
-----
 var descriptor = new CreateIndexDescriptor("myindex")
-    .Mappings(ms => ms
-        .Map<Employee>(m => m.AutoMap(new EverythingIsAStringPropertyVisitor()))
-    );
+        .Mappings(ms => ms
+            .Map<Employee>(m => m.AutoMap(new EverythingIsAStringPropertyVisitor()))
+        );
 ----
 
 [source,javascript]

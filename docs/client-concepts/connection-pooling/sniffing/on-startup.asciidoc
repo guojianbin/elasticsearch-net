@@ -41,6 +41,25 @@ with a sniff failure on 9200 and 9201, followed by a sniff success on 9202. A pi
 [source,csharp]
 ----
 await audit.TraceCall(new ClientCall
+             {
+{ SniffOnStartup},
+{ SniffFailure, 9200},
+{ SniffFailure, 9201},
+{ SniffSuccess, 9202},
+{ PingSuccess , 9200},
+{ HealthyResponse, 9200}
+            });
+
+var audit = new Auditor(() => Framework.Cluster
+.Nodes(10)
+.Sniff(s => s.Fails(Always))
+.Sniff(s => s.OnPort(9202).Succeeds(Always))
+.SniffingConnectionPool()
+.AllDefaults()
+            );
+
+await audit.TraceCalls(
+ new ClientCall
  {
     { SniffOnStartup},
     { SniffFailure, 9200},
@@ -48,18 +67,21 @@ await audit.TraceCall(new ClientCall
     { SniffSuccess, 9202},
     { PingSuccess , 9200},
     { HealthyResponse, 9200}
-});
-----
+},
+new ClientCall
+{
+    { PingSuccess, 9201},
+    { HealthyResponse, 9201}
+}
+            );
 
-[source,csharp]
-----
 var audit = new Auditor(() => Framework.Cluster
-    .Nodes(10)
-    .Sniff(s => s.Fails(Always))
-    .Sniff(s => s.OnPort(9202).Succeeds(Always, Framework.Cluster.Nodes(8, startFrom: 9204)))
-    .SniffingConnectionPool()
-    .AllDefaults()
-);
+.Nodes(10)
+.Sniff(s => s.Fails(Always))
+.Sniff(s => s.OnPort(9202).Succeeds(Always, Framework.Cluster.Nodes(8, startFrom: 9204)))
+.SniffingConnectionPool()
+.AllDefaults()
+            );
 
 await audit.TraceCall(new ClientCall {
 { SniffOnStartup},
@@ -69,17 +91,14 @@ await audit.TraceCall(new ClientCall {
 { PingSuccess, 9204},
 { HealthyResponse, 9204}
             });
-----
 
-[source,csharp]
-----
 var audit = new Auditor(() => Framework.Cluster
-    .Nodes(10)
-    .Sniff(s => s.Fails(Always))
-    .Sniff(s => s.OnPort(9209).Succeeds(Always))
-    .SniffingConnectionPool()
-    .AllDefaults()
-);
+.Nodes(10)
+.Sniff(s => s.Fails(Always))
+.Sniff(s => s.OnPort(9209).Succeeds(Always))
+.SniffingConnectionPool()
+.AllDefaults()
+            );
 
 await audit.TraceCall(new ClientCall {
 { SniffOnStartup},
@@ -96,20 +115,17 @@ await audit.TraceCall(new ClientCall {
 { PingSuccess, 9200},
 { HealthyResponse, 9200}
             });
-----
 
-[source,csharp]
-----
 var audit = new Auditor(() => Framework.Cluster
-    .Nodes(new[] {
-        new Node(new Uri("http://localhost:9200")) { MasterEligible = false },
-        new Node(new Uri("http://localhost:9201")) { MasterEligible = false },
-        new Node(new Uri("http://localhost:9202")) { MasterEligible = true },
-    })
-    .Sniff(s => s.Succeeds(Always))
-    .SniffingConnectionPool()
-    .AllDefaults()
-);
+.Nodes(new[] {
+    new Node(new Uri("http://localhost:9200")) { MasterEligible = false },
+    new Node(new Uri("http://localhost:9201")) { MasterEligible = false },
+    new Node(new Uri("http://localhost:9202")) { MasterEligible = true },
+})
+.Sniff(s => s.Succeeds(Always))
+.SniffingConnectionPool()
+.AllDefaults()
+            );
 
 await audit.TraceCall(new ClientCall {
 { SniffOnStartup},
@@ -117,21 +133,18 @@ await audit.TraceCall(new ClientCall {
 { PingSuccess, 9200},
 { HealthyResponse, 9200}
             });
-----
 
-[source,csharp]
-----
 var audit = new Auditor(() => Framework.Cluster
-    .Nodes(new[] {
-        new Node(new Uri("http://localhost:9200")) { MasterEligible = true },
-        new Node(new Uri("http://localhost:9201")) { MasterEligible = true },
-        new Node(new Uri("http://localhost:9202")) { MasterEligible = false },
-    })
-    .Sniff(s => s.Fails(Always))
-    .Sniff(s => s.OnPort(9202).Succeeds(Always))
-    .SniffingConnectionPool()
-    .AllDefaults()
-);
+.Nodes(new[] {
+    new Node(new Uri("http://localhost:9200")) { MasterEligible = true },
+    new Node(new Uri("http://localhost:9201")) { MasterEligible = true },
+    new Node(new Uri("http://localhost:9202")) { MasterEligible = false },
+})
+.Sniff(s => s.Fails(Always))
+.Sniff(s => s.OnPort(9202).Succeeds(Always))
+.SniffingConnectionPool()
+.AllDefaults()
+            );
 
 await audit.TraceCall(new ClientCall {
 { SniffOnStartup},
@@ -141,32 +154,5 @@ await audit.TraceCall(new ClientCall {
 { PingSuccess, 9200},
 { HealthyResponse, 9200}
             });
-----
-
-[source,csharp]
-----
-var audit = new Auditor(() => Framework.Cluster
-    .Nodes(10)
-    .Sniff(s => s.Fails(Always))
-    .Sniff(s => s.OnPort(9202).Succeeds(Always))
-    .SniffingConnectionPool()
-    .AllDefaults()
-);
-await audit.TraceCalls(
-     new ClientCall
-     {
-        { SniffOnStartup},
-        { SniffFailure, 9200},
-        { SniffFailure, 9201},
-        { SniffSuccess, 9202},
-        { PingSuccess , 9200},
-        { HealthyResponse, 9200}
-    },
-    new ClientCall
-    {
-        { PingSuccess, 9201},
-        { HealthyResponse, 9201}
-    }
-);
 ----
 

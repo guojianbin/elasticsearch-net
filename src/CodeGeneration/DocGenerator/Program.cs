@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace DocGenerator
 {
@@ -23,6 +24,16 @@ namespace DocGenerator
 
 		public static string OutputDirPath { get; }
 
-		static void Main(string[] args) => LitUp.GoAsync(args).Wait();
+		static void Main(string[] args)
+		{
+		    try
+		    {
+                LitUp.GoAsync(args).Wait();
+            }
+		    catch (AggregateException ae)
+		    {
+                throw ae.InnerException ?? ae;
+            }
+		}
 	}
 }

@@ -48,7 +48,6 @@ default values for `timeout` and `maxTimeout` are
 [source,csharp]
 ----
 var timeout = TimeSpan.FromMinutes(1);
-
 var maxTimeout = TimeSpan.FromMinutes(30);
 ----
 

@@ -122,7 +122,8 @@ namespace Tests.CommonOptions.TimeUnit
 			(new Time("-1") == Time.MinusOne).Should().BeTrue();
 		}
 
-		private class StringParsingTestCases : List<Tuple<string, TimeSpan, string>>
+        // hide
+        private class StringParsingTestCases : List<Tuple<string, TimeSpan, string>>
 		{
 			public void Add(string original, TimeSpan expect, string toString) =>
 				this.Add(Tuple.Create(original, expect, toString));
@@ -131,6 +132,7 @@ namespace Tests.CommonOptions.TimeUnit
 				this.Add(Tuple.Create(bad, TimeSpan.FromDays(1), argumentExceptionContains));
 		}
 
+        // hide
 		[U]public void StringImplicitConversionParsing()
 		{
 			var testCases = new StringParsingTestCases
@@ -159,7 +161,9 @@ namespace Tests.CommonOptions.TimeUnit
 				time.ToString().Should().Be(testCase.Item3);
 			}
 		}
-		[U]public void StringParseExceptions()
+
+        // hide
+        [U]public void StringParseExceptions()
 		{
 			var testCases = new StringParsingTestCases
 			{

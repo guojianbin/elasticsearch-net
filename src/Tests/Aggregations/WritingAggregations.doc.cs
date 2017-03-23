@@ -175,7 +175,7 @@ namespace Tests.Aggregations
 	public class AndMultipleDescriptorsUsage : Usage
 	{
 		/**
-		* Combining multipe `AggregationDescriptor`'s is also possible using the bitwise `&&` operator
+		* Combining multiple ``AggregationDescriptor``'s is also possible using the bitwise `&&` operator
 		*/
 		protected override Func<SearchDescriptor<Project>, ISearchRequest> Fluent
 		{

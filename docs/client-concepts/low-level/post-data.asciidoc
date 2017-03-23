@@ -40,7 +40,6 @@ You can implicitly convert from the following types
 [source,csharp]
 ----
 var fromString = ImplicitlyConvertsFrom(@string);
-
 var fromByteArray = ImplicitlyConvertsFrom(bytes);
 var fromListOfString = ImplicitlyConvertsFrom(listOfStrings);
 var fromListOfObject = ImplicitlyConvertsFrom(listOfObjects);
@@ -65,11 +64,11 @@ and passing a `PostData<object>` object to a method taking `PostData<object>` sh
 [source,csharp]
 ----
 fromString = ImplicitlyConvertsFrom(fromString);
-
 fromByteArray = ImplicitlyConvertsFrom(fromByteArray);
 fromListOfString = ImplicitlyConvertsFrom(fromListOfString);
 fromListOfObject = ImplicitlyConvertsFrom(fromListOfObject);
 fromObject = ImplicitlyConvertsFrom(fromObject);
+
 fromString.Type.Should().Be(PostType.LiteralString);
 fromByteArray.Type.Should().Be(PostType.ByteArray);
 fromListOfString.Type.Should().Be(PostType.EnumerableOfString);

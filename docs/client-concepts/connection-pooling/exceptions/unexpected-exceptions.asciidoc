@@ -34,11 +34,13 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .Settings(s => s.DisablePing())
 );
+
 audit = await audit.TraceCall(
     new ClientCall {
         { AuditEvent.HealthyResponse, 9200 },
     }
 );
+
 audit = await audit.TraceUnexpectedException(
     new ClientCall {
         { AuditEvent.BadResponse, 9201 },
@@ -50,9 +52,6 @@ audit = await audit.TraceUnexpectedException(
         e.InnerException.Message.Should().Be("boom!");
     }
 );
-e.FailureReason.Should().Be(PipelineFailure.Unexpected);
-e.InnerException.Should().NotBeNull();
-e.InnerException.Message.Should().Be("boom!");
 ----
 
 Sometimes an unexpected exception happens further down in the pipeline, this is why we 
@@ -87,12 +86,6 @@ audit = await audit.TraceUnexpectedException(
         e.InnerException.Message.Should().Be("boom!");
     }
 );
-
-e.FailureReason.Should().Be(PipelineFailure.Unexpected);
-
-e.InnerException.Should().NotBeNull();
-
-e.InnerException.Message.Should().Be("boom!");
 ----
 
 An unexpected hard exception on ping and sniff is something we *do* try to recover from and failover.
@@ -110,10 +103,7 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .AllDefaults()
 );
-----
 
-[source,csharp]
-----
 audit = await audit.TraceUnexpectedException(
     new ClientCall {
         { AuditEvent.PingFailure, 9200 },
@@ -123,13 +113,21 @@ audit = await audit.TraceUnexpectedException(
     (e) =>
     {
         e.FailureReason.Should().Be(PipelineFailure.Unexpected);
-e.InnerException.Should().NotBeNull();
+
+        /** InnerException is the exception that brought the request down */
+        e.InnerException.Should().NotBeNull();
         e.InnerException.Message.Should().Be("boom!");
-e.SeenExceptions.Should().NotBeEmpty();
+
+        /** The hard exception that happened on ping is still available though */
+        e.SeenExceptions.Should().NotBeEmpty();
         var pipelineException = e.SeenExceptions.First();
         pipelineException.FailureReason.Should().Be(PipelineFailure.PingFailure);
         pipelineException.InnerException.Message.Should().Be("ping exception");
-var pingException = e.AuditTrail.First(a => a.Event == AuditEvent.PingFailure).Exception;
+
+        /** Seen exception is hard to relate back to a point in time, the exception is also 
+        * available on the audit trail
+        */
+        var pingException = e.AuditTrail.First(a => a.Event == AuditEvent.PingFailure).Exception;
         pingException.Should().NotBeNull();
         pingException.Message.Should().Be("ping exception");
     }

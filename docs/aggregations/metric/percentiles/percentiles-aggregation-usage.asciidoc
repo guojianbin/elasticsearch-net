@@ -91,7 +91,6 @@ response.ShouldBeValid();
 var commitsOutlier = response.Aggs.Percentiles("commits_outlier");
 commitsOutlier.Should().NotBeNull();
 commitsOutlier.Items.Should().NotBeNullOrEmpty();
-
 foreach (var item in commitsOutlier.Items)
     item.Value.Should().BeGreaterThan(0);
 ----

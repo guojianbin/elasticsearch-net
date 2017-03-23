@@ -25,9 +25,9 @@ Let's look at a few examples. for each, we use the following simple POCO
 [source,csharp]
 ----
 public class Person
-        {
-            public string Name { get; set; }
-        }
+{
+    public string Name { get; set; }
+}
 ----
 
 ==== Default mapping for String properties
@@ -38,11 +38,11 @@ POCO type is a `text` datatype with multi fields including a `keyword` sub field
 [source,csharp]
 ----
 var descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(ms => ms
-                    .Map<Person>(m => m
-                        .AutoMap()
-                    )
-                );
+    .Mappings(ms => ms
+        .Map<Person>(m => m
+            .AutoMap()
+        )
+    );
 ----
 
 [source,javascript]
@@ -73,21 +73,21 @@ as well as for structured search, sorting and aggregations
 [source,csharp]
 ----
 var searchResponse = client.Search<Person>(s => s
-                .Query(q => q
-                    .Match(m => m
-                        .Field(f => f.Name)
-                        .Query("Russ")
-                    )
-                )
-                .Sort(ss => ss
-                    .Descending(f => f.Name.Suffix("keyword")) <1>
-                )
-                .Aggregations(a => a
-                    .Terms("peoples_names", t => t
-                        .Field(f => f.Name.Suffix("keyword"))
-                    )
-                )
-            );
+    .Query(q => q
+        .Match(m => m
+            .Field(f => f.Name)
+            .Query("Russ")
+        )
+    )
+    .Sort(ss => ss
+        .Descending(f => f.Name.Suffix("keyword")) <1>
+    )
+    .Aggregations(a => a
+        .Terms("peoples_names", t => t
+            .Field(f => f.Name.Suffix("keyword"))
+        )
+    )
+);
 ----
 <1> Use the keyword subfield on `Name`
 
@@ -135,29 +135,29 @@ Multi fields can be created on a mapping using the `.Fields()` method within a f
 [source,csharp]
 ----
 var descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(ms => ms
-                    .Map<Person>(m => m
-                        .Properties(p => p 
-                            .Text(t => t
-                                .Name(n => n.Name)
-                                .Fields(ff => ff
-                                    .Text(tt => tt
-                                        .Name("stop") <1>
-                                        .Analyzer("stop") 
-                                    )
-                                    .Text(tt => tt
-                                        .Name("shingles")
-                                        .Analyzer("name_shingles") <2>
-                                    )
-                                    .Keyword(k => k
-                                        .Name("keyword") <3>
-                                        .IgnoreAbove(256)
-                                    )
-                                )
-                            )
+    .Mappings(ms => ms
+        .Map<Person>(m => m
+            .Properties(p => p 
+                .Text(t => t
+                    .Name(n => n.Name)
+                    .Fields(ff => ff
+                        .Text(tt => tt
+                            .Name("stop") <1>
+                            .Analyzer("stop") 
+                        )
+                        .Text(tt => tt
+                            .Name("shingles")
+                            .Analyzer("name_shingles") <2>
+                        )
+                        .Keyword(k => k
+                            .Name("keyword") <3>
+                            .IgnoreAbove(256)
                         )
                     )
-                );
+                )
+            )
+        )
+    );
 ----
 <1> Use the stop analyzer on this sub field
 

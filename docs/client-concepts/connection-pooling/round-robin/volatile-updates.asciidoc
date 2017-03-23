@@ -20,19 +20,17 @@ please modify the original csharp file found at the link and submit the PR with 
 [source,csharp]
 ----
 var uris = Enumerable.Range(9200, NumberOfNodes).Select(p => new Uri("http://localhost:" + p));
+var sniffingPool = new SniffingConnectionPool(uris, randomize: false);
 
+Action callSniffing = () => this.AssertCreateView(sniffingPool);
+
+callSniffing.ShouldNotThrow();
+
+var uris = Enumerable.Range(9200, NumberOfNodes).Select(p => new Uri("http://localhost:" + p));
 var staticPool = new StaticConnectionPool(uris, randomize: false);
 
 Action callStatic = () => this.AssertCreateView(staticPool);
 
 callStatic.ShouldNotThrow();
-----
-
-[source,csharp]
-----
-var uris = Enumerable.Range(9200, NumberOfNodes).Select(p => new Uri("http://localhost:" + p));
-var sniffingPool = new SniffingConnectionPool(uris, randomize: false);
-Action callSniffing = () => this.AssertCreateView(sniffingPool);
-callSniffing.ShouldNotThrow();
 ----
 

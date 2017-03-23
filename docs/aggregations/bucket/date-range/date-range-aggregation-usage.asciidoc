@@ -118,7 +118,6 @@ We specified three ranges so we expect to have three of them in the response
 [source,csharp]
 ----
 dateHistogram.Buckets.Count.Should().Be(3);
-
 foreach (var item in dateHistogram.Buckets)
 {
     item.DocCount.Should().BeGreaterThan(0);

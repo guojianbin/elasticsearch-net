@@ -92,7 +92,8 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 			settings.Expect(expected).WhenSerializing((ICreateIndexRequest)descriptor);
 		}
 
-        /**
+        /**==== Ignoring inherited properties
+         * 
          * By using the infer mapping configuration for a POCO on the `ConnectionSettings`, it is possible to
          * ignore inherited properties too.
          * 

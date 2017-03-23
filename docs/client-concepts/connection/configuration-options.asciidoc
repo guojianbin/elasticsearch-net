@@ -200,6 +200,7 @@ var connectionConfiguration = new ConnectionConfiguration()
     .DisableDirectStreaming()
     .PrettyJson()
     .RequestTimeout(TimeSpan.FromMinutes(2));
+
 var client = new ElasticLowLevelClient(connectionConfiguration);
 ----
 
@@ -210,7 +211,6 @@ Basic Authentication credentials can alternatively be specified on the node URI 
 [source,csharp]
 ----
 var uri = new Uri("http://username:password@localhost:9200");
-
 var settings = new ConnectionConfiguration(uri);
 ----
 
@@ -228,15 +228,10 @@ If you have complex logging needs this is a good place to add that in.
 [source,csharp]
 ----
 var counter = 0;
-
 var client = TestClient.GetInMemoryClient(s => s.OnRequestCompleted(r => counter++));
-
 client.RootNodeInfo();
-
 counter.Should().Be(1);
-
 client.RootNodeInfoAsync();
-
 counter.Should().Be(2);
 ----
 
@@ -245,18 +240,13 @@ counter.Should().Be(2);
 [source,csharp]
 ----
 var counter = 0;
-
 var client = TestClient.GetFixedReturnClient(new { }, 500, s => s
     .ThrowExceptions()
     .OnRequestCompleted(r => counter++)
 );
-
 Assert.Throws<ElasticsearchClientException>(() => client.RootNodeInfo());
-
 counter.Should().Be(1);
-
 Assert.ThrowsAsync<ElasticsearchClientException>(() => client.RootNodeInfoAsync());
-
 counter.Should().Be(2);
 ----
 
@@ -270,7 +260,6 @@ to capture the request and/or response bytes, you also need to set `.DisableDire
 [source,csharp]
 ----
 var list = new List<string>();
-
 var connectionPool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
 
 var settings = new ConnectionSettings(connectionPool, new InMemoryConnection()) <1>
@@ -327,7 +316,6 @@ var asyncResponse = await client.SearchAsync<object>(s => s
 );
 
 list.Count.Should().Be(4);
-
 list.ShouldAllBeEquivalentTo(new[]
 {
     "POST http://localhost:9200/_search?scroll=2m \n{\"sort\":[{\"_doc\":{\"order\":\"asc\"}}]}",

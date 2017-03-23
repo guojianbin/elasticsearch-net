@@ -38,6 +38,7 @@ Id idFromInt = 1;
 Id idFromLong = 2L;
 Id idFromString = "hello-world";
 Id idFromGuid = new Guid("D70BD3CF-4E38-46F3-91CA-FCBEF29B148E");
+
 Expect(1).WhenSerializing(idFromInt);
 Expect(2).WhenSerializing(idFromLong);
 Expect("hello-world").WhenSerializing(idFromString);

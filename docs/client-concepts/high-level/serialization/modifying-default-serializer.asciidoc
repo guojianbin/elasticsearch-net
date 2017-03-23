@@ -31,13 +31,12 @@ the settings for JSON.Net serializers created by the factory
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
 var connection = new HttpConnection();
 var connectionSettings =
-                new ConnectionSettings(pool, connection, new SerializerFactory((settings, values) => <1>
-                {
-                    settings.NullValueHandling = NullValueHandling.Include;
-                    settings.TypeNameHandling = TypeNameHandling.Objects;
-                }));
-settings.NullValueHandling = NullValueHandling.Include;
-settings.TypeNameHandling = TypeNameHandling.Objects;
+    new ConnectionSettings(pool, connection, new SerializerFactory((settings, values) => <1>
+    {
+        settings.NullValueHandling = NullValueHandling.Include;
+        settings.TypeNameHandling = TypeNameHandling.Objects;
+    }));
+
 var client = new ElasticClient(connectionSettings);
 ----
 <1> delegate will be passed `JsonSerializerSettings` and `IConnectionSettingsValues`
@@ -57,35 +56,35 @@ First, the custom factory and serializer are implemented
 [source,csharp]
 ----
 public class CustomJsonNetSerializerFactory : ISerializerFactory
-        {
-            public IElasticsearchSerializer Create(IConnectionSettingsValues settings)
-            {
-                return new CustomJsonNetSerializer(settings);
-            }
-            public IElasticsearchSerializer CreateStateful(IConnectionSettingsValues settings, JsonConverter converter)
-            {
-                return new CustomJsonNetSerializer(settings, converter);
-            }
-        }
+{
+    public IElasticsearchSerializer Create(IConnectionSettingsValues settings)
+    {
+        return new CustomJsonNetSerializer(settings);
+    }
+    public IElasticsearchSerializer CreateStateful(IConnectionSettingsValues settings, JsonConverter converter)
+    {
+        return new CustomJsonNetSerializer(settings, converter);
+    }
+}
 
 public class CustomJsonNetSerializer : JsonNetSerializer
-        {
-            public CustomJsonNetSerializer(IConnectionSettingsValues settings) : base(settings)
-            {
-                base.OverwriteDefaultSerializers(ModifyJsonSerializerSettings);
-            }
-            public CustomJsonNetSerializer(IConnectionSettingsValues settings, JsonConverter statefulConverter) :
-                base(settings, statefulConverter)
-            {
-                base.OverwriteDefaultSerializers(ModifyJsonSerializerSettings);
-            }
+{
+    public CustomJsonNetSerializer(IConnectionSettingsValues settings) : base(settings)
+    {
+        base.OverwriteDefaultSerializers(ModifyJsonSerializerSettings);
+    }
+    public CustomJsonNetSerializer(IConnectionSettingsValues settings, JsonConverter statefulConverter) :
+        base(settings, statefulConverter)
+    {
+        base.OverwriteDefaultSerializers(ModifyJsonSerializerSettings);
+    }
 
-            private void ModifyJsonSerializerSettings(JsonSerializerSettings settings, IConnectionSettingsValues connectionSettings)
-            {
-                settings.NullValueHandling = NullValueHandling.Include;
-                settings.TypeNameHandling = TypeNameHandling.Objects;
-            }
-        }
+    private void ModifyJsonSerializerSettings(JsonSerializerSettings settings, IConnectionSettingsValues connectionSettings)
+    {
+        settings.NullValueHandling = NullValueHandling.Include;
+        settings.TypeNameHandling = TypeNameHandling.Objects;
+    }
+}
 ----
 
 Then, create a new instance of the factory to `ConnectionSettings`
@@ -93,11 +92,9 @@ Then, create a new instance of the factory to `ConnectionSettings`
 [source,csharp]
 ----
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
 var connection = new HttpConnection();
-
 var connectionSettings =
-                new ConnectionSettings(pool, connection, new CustomJsonNetSerializerFactory());
+    new ConnectionSettings(pool, connection, new CustomJsonNetSerializerFactory());
 
 var client = new ElasticClient(connectionSettings);
 ----

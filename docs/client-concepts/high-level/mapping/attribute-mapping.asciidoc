@@ -34,40 +34,40 @@ Here we define the same two types as before, but this time using attributes to d
 [source,csharp]
 ----
 [ElasticsearchType(Name = "company")]
-        public class Company
-        {
-            [Keyword(NullValue = "null", Similarity = "BM25")]
-            public string Name { get; set; }
+public class Company
+{
+    [Keyword(NullValue = "null", Similarity = "BM25")]
+    public string Name { get; set; }
 
-            [Text(Name = "office_hours")]
-            public TimeSpan? HeadOfficeHours { get; set; }
+    [Text(Name = "office_hours")]
+    public TimeSpan? HeadOfficeHours { get; set; }
 
-            [Object(Store = false)]
-            public List<Employee> Employees { get; set; }
-        }
+    [Object(Store = false)]
+    public List<Employee> Employees { get; set; }
+}
 
 [ElasticsearchType(Name = "employee")]
-        public class Employee
-        {
-            [Text(Name = "first_name")]
-            public string FirstName { get; set; }
+public class Employee
+{
+    [Text(Name = "first_name")]
+    public string FirstName { get; set; }
 
-            [Text(Name = "last_name")]
-            public string LastName { get; set; }
+    [Text(Name = "last_name")]
+    public string LastName { get; set; }
 
-            [Number(DocValues = false, IgnoreMalformed = true, Coerce = true)]
-            public int Salary { get; set; }
+    [Number(DocValues = false, IgnoreMalformed = true, Coerce = true)]
+    public int Salary { get; set; }
 
-            [Date(Format = "MMddyyyy")]
-            public DateTime Birthday { get; set; }
+    [Date(Format = "MMddyyyy")]
+    public DateTime Birthday { get; set; }
 
-            [Boolean(NullValue = false, Store = true)]
-            public bool IsManager { get; set; }
+    [Boolean(NullValue = false, Store = true)]
+    public bool IsManager { get; set; }
 
-            [Nested]
-            [JsonProperty("empl")]
-            public List<Employee> Employees { get; set; }
-        }
+    [Nested]
+    [JsonProperty("empl")]
+    public List<Employee> Employees { get; set; }
+}
 ----
 
 Then we map the types by calling `.AutoMap()` 

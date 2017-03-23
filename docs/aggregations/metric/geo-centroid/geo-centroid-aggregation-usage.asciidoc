@@ -66,6 +66,7 @@ response.ShouldBeValid();
 var centroid = response.Aggs.GeoCentroid("centroid");
 centroid.Should().NotBeNull();
 centroid.Location.Should().NotBeNull();
+
 centroid.Location.Latitude.Should().NotBe(0);
 centroid.Location.Longitude.Should().NotBe(0);
 ----
@@ -133,6 +134,7 @@ new SearchRequest<Project>
 [source,csharp]
 ----
 response.IsValid.Should().BeTrue();
+
 var projects = response.Aggs.Terms("projects");
 
 foreach (var bucket in projects.Buckets)

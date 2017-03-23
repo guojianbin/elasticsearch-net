@@ -28,21 +28,21 @@ To demonstrate, we'll define two POCOS
 [source,csharp]
 ----
 public class Company
-        {
-            public string Name { get; set; }
-            public List<Employee> Employees { get; set; }
-        }
+{
+    public string Name { get; set; }
+    public List<Employee> Employees { get; set; }
+}
 
 public class Employee
-        {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public int Salary { get; set; }
-            public DateTime Birthday { get; set; }
-            public bool IsManager { get; set; }
-            public List<Employee> Employees { get; set; }
-            public TimeSpan Hours { get; set; }
-        }
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public int Salary { get; set; }
+    public DateTime Birthday { get; set; }
+    public bool IsManager { get; set; }
+    public List<Employee> Employees { get; set; }
+    public TimeSpan Hours { get; set; }
+}
 ----
 
 ==== Manual mapping
@@ -53,30 +53,30 @@ and map each property explicitly
 [source,csharp]
 ----
 var descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(ms => ms
-                    .Map<Company>(m => m
-                        .Properties(ps => ps
-                            .Text(s => s
-                                .Name(c => c.Name)
-                            )
-                            .Object<Employee>(o => o
-                                .Name(c => c.Employees)
-                                .Properties(eps => eps
-                                    .Text(s => s
-                                        .Name(e => e.FirstName)
-                                    )
-                                    .Text(s => s
-                                        .Name(e => e.LastName)
-                                    )
-                                    .Number(n => n
-                                        .Name(e => e.Salary)
-                                        .Type(NumberType.Integer)
-                                    )
-                                )
-                            )
+    .Mappings(ms => ms
+        .Map<Company>(m => m
+            .Properties(ps => ps
+                .Text(s => s
+                    .Name(c => c.Name)
+                )
+                .Object<Employee>(o => o
+                    .Name(c => c.Employees)
+                    .Properties(eps => eps
+                        .Text(s => s
+                            .Name(e => e.FirstName)
+                        )
+                        .Text(s => s
+                            .Name(e => e.LastName)
+                        )
+                        .Number(n => n
+                            .Name(e => e.Salary)
+                            .Type(NumberType.Integer)
                         )
                     )
-                );
+                )
+            )
+        )
+    );
 ----
 
 Here, the Name property of the `Company` type has been mapped as a {ref_current}/text.html[text datatype] and
@@ -137,16 +137,16 @@ CLR property types but then we're overriding the `Employees` property to make it
 [source,csharp]
 ----
 var descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(ms => ms
-                    .Map<Company>(m => m
-                        .AutoMap()
-                        .Properties(ps => ps
-                            .Nested<Employee>(n => n
-                                .Name(c => c.Employees)
-                            )
-                        )
-                    )
-                );
+    .Mappings(ms => ms
+        .Map<Company>(m => m
+            .AutoMap()
+            .Properties(ps => ps
+                .Nested<Employee>(n => n
+                    .Name(c => c.Employees)
+                )
+            )
+        )
+    );
 ----
 
 [source,javascript]
@@ -181,16 +181,16 @@ generates the same mapping as the previous
 [source,csharp]
 ----
 descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(ms => ms
-                    .Map<Company>(m => m
-                        .Properties(ps => ps
-                            .Nested<Employee>(n => n
-                                .Name(c => c.Employees)
-                            )
-                        )
-                        .AutoMap()
-                    )
-                );
+    .Mappings(ms => ms
+        .Map<Company>(m => m
+            .Properties(ps => ps
+                .Nested<Employee>(n => n
+                    .Name(c => c.Employees)
+                )
+            )
+            .AutoMap()
+        )
+    );
 ----
 
 Just as we were able to override the inferred properties in the previous example, fluent mapping
@@ -201,40 +201,40 @@ Consider the following two POCOS
 [source,csharp]
 ----
 [ElasticsearchType(Name = "company")]
-        public class CompanyWithAttributes
-        {
-            [Keyword(NullValue = "null", Similarity = "BM25")]
-            public string Name { get; set; }
+public class CompanyWithAttributes
+{
+    [Keyword(NullValue = "null", Similarity = "BM25")]
+    public string Name { get; set; }
 
-            [Text(Name = "office_hours")]
-            public TimeSpan? HeadOfficeHours { get; set; }
+    [Text(Name = "office_hours")]
+    public TimeSpan? HeadOfficeHours { get; set; }
 
-            [Object(Store = false)]
-            public List<Employee> Employees { get; set; }
-        }
+    [Object(Store = false)]
+    public List<Employee> Employees { get; set; }
+}
 
 [ElasticsearchType(Name = "employee")]
-        public class EmployeeWithAttributes
-        {
-            [Text(Name = "first_name")]
-            public string FirstName { get; set; }
+public class EmployeeWithAttributes
+{
+    [Text(Name = "first_name")]
+    public string FirstName { get; set; }
 
-            [Text(Name = "last_name")]
-            public string LastName { get; set; }
+    [Text(Name = "last_name")]
+    public string LastName { get; set; }
 
-            [Number(DocValues = false, IgnoreMalformed = true, Coerce = true)]
-            public int Salary { get; set; }
+    [Number(DocValues = false, IgnoreMalformed = true, Coerce = true)]
+    public int Salary { get; set; }
 
-            [Date(Format = "MMddyyyy")]
-            public DateTime Birthday { get; set; }
+    [Date(Format = "MMddyyyy")]
+    public DateTime Birthday { get; set; }
 
-            [Boolean(NullValue = false, Store = true)]
-            public bool IsManager { get; set; }
+    [Boolean(NullValue = false, Store = true)]
+    public bool IsManager { get; set; }
 
-            [Nested]
-            [JsonProperty("empl")]
-            public List<Employee> Employees { get; set; }
-        }
+    [Nested]
+    [JsonProperty("empl")]
+    public List<Employee> Employees { get; set; }
+}
 ----
 
 Now when mapping, `AutoMap()` is called to infer the mapping from the POCO property types and
@@ -243,42 +243,42 @@ attributes, and inferred mappings are overridden with fluent mapping.
 [source,csharp]
 ----
 var descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(ms => ms
-                    .Map<CompanyWithAttributes>(m => m
-                        .AutoMap() <1>
-                        .Properties(ps => ps <2>
-                            .Nested<Employee>(n => n
-                                .Name(c => c.Employees)
-                            )
+    .Mappings(ms => ms
+        .Map<CompanyWithAttributes>(m => m
+            .AutoMap() <1>
+            .Properties(ps => ps <2>
+                .Nested<Employee>(n => n
+                    .Name(c => c.Employees)
+                )
+            )
+        )
+        .Map<EmployeeWithAttributes>(m => m
+            .AutoMap() <3>
+            .Properties(ps => ps <4>
+                .Text(s => s
+                    .Name(e => e.FirstName)
+                    .Fields(fs => fs
+                        .Keyword(ss => ss
+                            .Name("firstNameRaw")
+                        )
+                        .TokenCount(t => t
+                            .Name("length")
+                            .Analyzer("standard")
                         )
                     )
-                    .Map<EmployeeWithAttributes>(m => m
-                        .AutoMap() <3>
-                        .Properties(ps => ps <4>
-                            .Text(s => s
-                                .Name(e => e.FirstName)
-                                .Fields(fs => fs
-                                    .Keyword(ss => ss
-                                        .Name("firstNameRaw")
-                                    )
-                                    .TokenCount(t => t
-                                        .Name("length")
-                                        .Analyzer("standard")
-                                    )
-                                )
-                            )
-                            .Number(n => n
-                                .Name(e => e.Salary)
-                                .Type(NumberType.Double)
-                                .IgnoreMalformed(false)
-                            )
-                            .Date(d => d
-                                .Name(e => e.Birthday)
-                                .Format("MM-dd-yy")
-                            )
-                        )
-                    )
-                );
+                )
+                .Number(n => n
+                    .Name(e => e.Salary)
+                    .Type(NumberType.Double)
+                    .IgnoreMalformed(false)
+                )
+                .Date(d => d
+                    .Name(e => e.Birthday)
+                    .Format("MM-dd-yy")
+                )
+            )
+        )
+    );
 ----
 <1> Automap company
 
@@ -395,28 +395,28 @@ through manual mapping
 [source,csharp]
 ----
 var descriptor = new CreateIndexDescriptor("myindex")
-                .Mappings(m => m
-                    .Map<Company>(mm => mm
-                        .AutoMap() <1>
-                        .Properties(p => p <2>
-                            .Nested<Employee>(n => n
-                                .Name(c => c.Employees)
-                                .AutoMap() <3>
-                                .Properties(pp => pp <4>
-                                    .Text(t => t
-                                        .Name(e => e.FirstName)
-                                    )
-                                    .Text(t => t
-                                        .Name(e => e.LastName)
-                                    )
-                                    .Nested<Employee>(nn => nn
-                                        .Name(e => e.Employees)
-                                    )
-                                )
-                            )
+    .Mappings(m => m
+        .Map<Company>(mm => mm
+            .AutoMap() <1>
+            .Properties(p => p <2>
+                .Nested<Employee>(n => n
+                    .Name(c => c.Employees)
+                    .AutoMap() <3>
+                    .Properties(pp => pp <4>
+                        .Text(t => t
+                            .Name(e => e.FirstName)
+                        )
+                        .Text(t => t
+                            .Name(e => e.LastName)
+                        )
+                        .Nested<Employee>(nn => nn
+                            .Name(e => e.Employees)
                         )
                     )
-                );
+                )
+            )
+        )
+    );
 ----
 <1> Automap `Company`
 

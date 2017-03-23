@@ -42,9 +42,7 @@ resolves to the last token
 [source,csharp]
 ----
 Expression<Func<Project, object>> expression = p => p.Name;
-
 expression = expression.AppendSuffix("raw");
-
 Expect("raw").WhenSerializing<PropertyName>(expression);
 ----
 

@@ -23,3 +23,9 @@ Therefor some of the key properties we use to make a decision on are not allowed
 Elasticsearch 5.x will at some point get a flag that returns the aggregations in a parsable
 fashion at which point this limitation will be lifted
 
+[source,csharp]
+----
+new []{"score", "value_as_string", "keys", "max_score"}
+new TermsAggregation(name) {Field = "x"}
+----
+

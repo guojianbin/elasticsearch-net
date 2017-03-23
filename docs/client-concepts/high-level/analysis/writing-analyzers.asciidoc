@@ -57,17 +57,17 @@ which maps to the `Name` POCO property on the `Project` type, uses the `whitespa
 [source,csharp]
 ----
 var createIndexResponse = client.CreateIndex("my-index", c => c
-                .Mappings(m => m
-                    .Map<Project>(mm => mm
-                        .Properties(p => p
-                            .Text(t => t
-                                .Name(n => n.Name)
-                                .Analyzer("whitespace")
-                            )
-                        )
-                    )    
+    .Mappings(m => m
+        .Map<Project>(mm => mm
+            .Properties(p => p
+                .Text(t => t
+                    .Name(n => n.Name)
+                    .Analyzer("whitespace")
                 )
-            );
+            )
+        )    
+    )
+);
 ----
 
 ==== Configuring a built-in analyzer
@@ -80,26 +80,26 @@ Configuring a built-in analyzer requires creating an analyzer based on the built
 [source,csharp]
 ----
 var createIndexResponse = client.CreateIndex("my-index", c => c
-                .Settings(s => s
-                    .Analysis(a => a
-                        .Analyzers(aa => aa
-                            .Standard("standard_english", sa => sa
-                                .StopWords("_english_") <1>
-                            )
-                        )
-                    )
+    .Settings(s => s
+        .Analysis(a => a
+            .Analyzers(aa => aa
+                .Standard("standard_english", sa => sa
+                    .StopWords("_english_") <1>
                 )
-                .Mappings(m => m
-                    .Map<Project>(mm => mm
-                        .Properties(p => p
-                            .Text(t => t
-                                .Name(n => n.Name)
-                                .Analyzer("standard_english") <2>
-                            )
-                        )
-                    )
+            )
+        )
+    )
+    .Mappings(m => m
+        .Map<Project>(mm => mm
+            .Properties(p => p
+                .Text(t => t
+                    .Name(n => n.Name)
+                    .Analyzer("standard_english") <2>
                 )
-            );
+            )
+        )
+    )
+);
 ----
 <1> Pre-defined list of English stopwords within Elasticsearch
 
@@ -148,15 +148,12 @@ is HTML and contains source code
 [source,csharp]
 ----
 public class Question
-        {
-            public int Id { get; set; }
-
-            public DateTimeOffset CreationDate { get; set; }
-
-            public int Score { get; set; }
-
-            public string Body { get; set; }
-        }
+{
+    public int Id { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public int Score { get; set; }
+    public string Body { get; set; }
+}
 ----
 
 Based on our domain knowledge of programming languages, we would like to be able to search questions
@@ -167,38 +164,38 @@ We can solve our issue with a custom analyzer
 [source,csharp]
 ----
 var createIndexResponse = client.CreateIndex("questions", c => c
-                .Settings(s => s
-                    .Analysis(a => a
-                        .CharFilters(cf => cf
-                            .Mapping("programming_language", mca => mca
-                                .Mappings(new []
-                                {
-                                    "c# => csharp",
-                                    "C# => Csharp"
-                                })
-                            )
-                        )
-                        .Analyzers(an => an
-                            .Custom("question", ca => ca
-                                .CharFilters("html_strip", "programming_language")
-                                .Tokenizer("standard")
-                                .Filters("standard", "lowercase", "stop")
-                            )
-                        )
-                    )
+    .Settings(s => s
+        .Analysis(a => a
+            .CharFilters(cf => cf
+                .Mapping("programming_language", mca => mca
+                    .Mappings(new []
+                    {
+                        "c# => csharp",
+                        "C# => Csharp"
+                    })
                 )
-                .Mappings(m => m
-                    .Map<Question>(mm => mm
-                        .AutoMap()
-                        .Properties(p => p
-                            .Text(t => t
-                                .Name(n => n.Body)
-                                .Analyzer("question")
-                            )
-                        )
-                    )
+            )
+            .Analyzers(an => an
+                .Custom("question", ca => ca
+                    .CharFilters("html_strip", "programming_language")
+                    .Tokenizer("standard")
+                    .Filters("standard", "lowercase", "stop")
                 )
-            );
+            )
+        )
+    )
+    .Mappings(m => m
+        .Map<Question>(mm => mm
+            .AutoMap()
+            .Properties(p => p
+                .Text(t => t
+                    .Name(n => n.Body)
+                    .Analyzer("question")
+                )
+            )
+        )
+    )
+);
 ----
 
 Our custom `question` analyzer will apply the following analysis to a question body
@@ -230,45 +227,48 @@ use at query time
 [source,csharp]
 ----
 var createIndexResponse = client.CreateIndex("questions", c => c
-                .Settings(s => s
-                    .Analysis(a => a
-                        .CharFilters(cf => cf
-                            .Mapping("programming_language", mca => mca
-                                .Mappings(new[]
-                                {
-                                    "c# => csharp",
-                                    "C# => Csharp"
-                                })
-                            )
-                        )
-                        .Analyzers(an => an
-                            .Custom("index_question", ca => ca
-                                .CharFilters("html_strip", "programming_language")
-                                .Tokenizer("standard")
-                                .Filters("standard", "lowercase", "stop")
-                            )
-                            .Custom("search_question", ca => ca
-                                .CharFilters("programming_language")
-                                .Tokenizer("standard")
-                                .Filters("standard", "lowercase", "stop")
-                            )
-                        )
-                    )
+    .Settings(s => s
+        .Analysis(a => a
+            .CharFilters(cf => cf
+                .Mapping("programming_language", mca => mca
+                    .Mappings(new[]
+                    {
+                        "c# => csharp",
+                        "C# => Csharp"
+                    })
                 )
-                .Mappings(m => m
-                    .Map<Question>(mm => mm
-                        .AutoMap()
-                        .Properties(p => p
-                            .Text(t => t
-                                .Name(n => n.Body)
-                                .Analyzer("index_question")
-                                .SearchAnalyzer("search_question")
-                            )
-                        )
-                    )
+            )
+            .Analyzers(an => an
+                .Custom("index_question", ca => ca <1>
+                    .CharFilters("html_strip", "programming_language")
+                    .Tokenizer("standard")
+                    .Filters("standard", "lowercase", "stop")
                 )
-            );
+                .Custom("search_question", ca => ca <2>
+                    .CharFilters("programming_language")
+                    .Tokenizer("standard")
+                    .Filters("standard", "lowercase", "stop")
+                )
+            )
+        )
+    )
+    .Mappings(m => m
+        .Map<Question>(mm => mm
+            .AutoMap()
+            .Properties(p => p
+                .Text(t => t
+                    .Name(n => n.Body)
+                    .Analyzer("index_question")
+                    .SearchAnalyzer("search_question")
+                )
+            )
+        )
+    )
+);
 ----
+<1> Use an analyzer at index time that strips HTML tags
+
+<2> Use an analyzer at search time that does not strip HTML tags
 
 With this in place, the text of a question body will be analyzed with the `index_question` analyzer
 at index time and the input to a full text query on the question body field will be analyzed with

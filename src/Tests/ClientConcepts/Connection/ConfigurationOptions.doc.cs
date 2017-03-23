@@ -62,20 +62,19 @@ namespace Tests.ClientConcepts.Connection
 			*/
 			var uri = new Uri("http://username:password@localhost:9200");
 			var settings = new ConnectionConfiguration(uri);
-
-			/**
-			* but this may become tedious when using connection pooling with multiple nodes. For this reason,
-            * we'd recommend specifying it on `ConnectionSettings`.
-			*====
-			*/
 		}
 
-		/**[float]
-		 * === OnRequestCompleted
-		 * You can pass a callback of type `Action<IApiCallDetails>` that can eavesdrop every time a response (good or bad) is created.
-		 * If you have complex logging needs this is a good place to add that in.
-		*/
-		[U]
+        /**
+        * but this may become tedious when using connection pooling with multiple nodes. For this reason,
+        * we'd recommend specifying it on `ConnectionSettings`.
+        *====
+        * 
+        *[float]
+        * === OnRequestCompleted
+        * You can pass a callback of type `Action<IApiCallDetails>` that can eavesdrop every time a response (good or bad) is created.
+        * If you have complex logging needs this is a good place to add that in.
+        */
+        [U]
 		public void OnRequestCompletedIsCalled()
 		{
 			var counter = 0;

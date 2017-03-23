@@ -76,15 +76,10 @@ and the first call should do a sniff which discovered we scaled up to a 100 node
 [source,csharp]
 ----
 audit.ChangeTime(d => d.AddMinutes(31));
-----
-
-a sniff is done first and it prefers the first node master node 
-
-[source,csharp]
-----
 audit = await audit.TraceCalls(
     new ClientCall {
-{ SniffOnStaleCluster },
+        /** a sniff is done first and it prefers the first node master node */
+        { SniffOnStaleCluster },
         { SniffSuccess, 9202 },
         { HealthyResponse, 9201 },
         { pool => pool.Nodes.Count.Should().Be(100) }
@@ -92,15 +87,10 @@ audit = await audit.TraceCalls(
 );
 
 audit.ChangeTime(d => d.AddMinutes(31));
-----
-
-a sniff is done first and it prefers the first node master node 
-
-[source,csharp]
-----
 audit = await audit.TraceCalls(
     new ClientCall {
-{ SniffOnStaleCluster },
+        /** a sniff is done first and it prefers the first node master node */
+        { SniffOnStaleCluster },
         { SniffSuccess, 9202 },
         { HealthyResponse, 9200 },
         { pool => pool.Nodes.Count.Should().Be(10) }

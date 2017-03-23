@@ -126,15 +126,19 @@ response.ShouldBeValid();
 
 var filterAgg = response.Aggs.Filters("projects_by_state");
 filterAgg.Should().NotBeNull();
+
 var namedResult = filterAgg.NamedBucket("belly_up");
 namedResult.Should().NotBeNull();
 namedResult.DocCount.Should().BeGreaterThan(0);
+
 namedResult = filterAgg.NamedBucket("stable");
 namedResult.Should().NotBeNull();
 namedResult.DocCount.Should().BeGreaterThan(0);
+
 namedResult = filterAgg.NamedBucket("very_active");
 namedResult.Should().NotBeNull();
 namedResult.DocCount.Should().BeGreaterThan(0);
+
 namedResult = filterAgg.NamedBucket("other_states_of_being");
 namedResult.Should().NotBeNull();
 namedResult.DocCount.Should().Be(0);

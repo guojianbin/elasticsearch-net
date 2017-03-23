@@ -26,10 +26,6 @@ ReturnsBool(!Query && !Query, q => !q.Query() && !q.Query(), b =>
     b.Should.Should().BeNull();
     b.Filter.Should().BeNull();
 });
-b.MustNot.Should().NotBeEmpty().And.HaveCount(2);
-b.Must.Should().BeNull();
-b.Should.Should().BeNull();
-b.Filter.Should().BeNull();
 ReturnsBool(!Query || !Query || !ConditionlessQuery, q => !q.Query() || !q.Query() || !q.ConditionlessQuery(), b =>
 {
     b.Should.Should().NotBeEmpty().And.HaveCount(2);
@@ -42,32 +38,6 @@ ReturnsBool(!Query || !Query || !ConditionlessQuery, q => !q.Query() || !q.Query
         q.Bool.MustNot.Should().NotBeEmpty().And.HaveCount(1);
     }
 });
-b.Should.Should().NotBeEmpty().And.HaveCount(2);
-b.Must.Should().BeNull();
-b.MustNot.Should().BeNull();
-b.Filter.Should().BeNull();
-
-foreach (IQueryContainer q in b.Should)
-{
-    q.Bool.Should().NotBeNull();
-    q.Bool.MustNot.Should().NotBeEmpty().And.HaveCount(1);
-}
-----
-
-[source,csharp]
-----
-var lotsOfNots = Enumerable.Range(0, 100).Aggregate(new QueryContainer(), (q, c) => q || Query, q => q);
-
-LotsOfNots(lotsOfNots);
-----
-
-[source,csharp]
-----
-QueryContainer container = null;
-----
-
-[source,csharp]
-----
 ReturnsSingleQuery(!Query || !ConditionlessQuery, q => !q.Query() || !q.ConditionlessQuery(),
     c => c.Bool.MustNot.Should().NotBeNull().And.HaveCount(1));
 ReturnsSingleQuery(!ConditionlessQuery || !Query, q => !q.ConditionlessQuery() || !q.Query(),
@@ -99,31 +69,30 @@ ReturnsNull(
 
 [source,csharp]
 ----
+var lotsOfNots = Enumerable.Range(0, 100).Aggregate(new QueryContainer(), (q, c) => q || Query, q => q);
+LotsOfNots(lotsOfNots);
+----
+
+[source,csharp]
+----
+QueryContainer container = null;
 foreach (var i in Enumerable.Range(0, 100))
     container |= Query;
-
 LotsOfNots(container);
 ----
 
 [source,csharp]
 ----
 var container = new QueryContainer();
-----
-
-[source,csharp]
-----
 foreach (var i in Enumerable.Range(0, 100))
     container |= Query;
-
 LotsOfNots(container);
 ----
 
 [source,csharp]
 ----
 lotsOfNots.Should().NotBeNull();
-
 lotsOfNots.Bool.Should().NotBeNull();
-
 lotsOfNots.Bool.Should.Should().NotBeEmpty().And.HaveCount(100);
 ----
 

@@ -1,0 +1,121 @@
+:ref_current: https://www.elastic.co/guide/en/elasticsearch/reference/5.2
+
+:github: https://github.com/elastic/elasticsearch-net
+
+:nuget: https://www.nuget.org/packages
+
+////
+IMPORTANT NOTE
+==============
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/BoolDsl/Operators/CombinatorialUsageTests.cs. 
+If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
+please modify the original csharp file found at the link and submit the PR with that change. Thanks!
+////
+
+[[combinatorial-usage]]
+=== Combinatorial Usage
+
+[source,csharp]
+----
+ReturnsBool(
+(Query || Query) && (Query || Query),
+q => (q.Query() || q.Query()) && (q.Query() || q.Query()),
+b =>
+{
+    b.Must.Should().NotBeEmpty().And.HaveCount(2);
+    b.Should.Should().BeNull();
+    b.MustNot.Should().BeNull();
+    b.Filter.Should().BeNull();
+
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+(Query || Query) || (Query || Query),
+q => (q.Query() || q.Query()) || (q.Query() || q.Query()),
+b =>
+{
+    b.Should.Should().NotBeEmpty().And.HaveCount(4);
+    b.Must.Should().BeNull();
+    b.MustNot.Should().BeNull();
+    b.Filter.Should().BeNull();
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+(Query && Query) || (Query && Query),
+q => (q.Query() && q.Query()) || (q.Query() && q.Query()),
+b =>
+{
+    b.Should.Should().NotBeEmpty().And.HaveCount(2);
+    b.Must.Should().BeNull();
+    b.MustNot.Should().BeNull();
+    b.Filter.Should().BeNull();
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+(Query && Query) && (Query && Query),
+q => (q.Query() && q.Query()) && (q.Query() && q.Query()),
+b =>
+{
+    b.Must.Should().NotBeEmpty().And.HaveCount(4);
+    b.Should.Should().BeNull();
+    b.MustNot.Should().BeNull();
+    b.Filter.Should().BeNull();
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+Query && !Query,
+q => q.Query() && !q.Query(),
+b =>
+{
+    b.Must.Should().NotBeEmpty().And.HaveCount(1);
+    b.MustNot.Should().NotBeEmpty().And.HaveCount(1);
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+Query || !Query,
+q => q.Query() || !q.Query(),
+b =>
+{
+    b.Should.Should().NotBeEmpty().And.HaveCount(2);
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+Query || !Query,
+q => q.Query() || +q.Query(),
+b =>
+{
+    b.Should.Should().NotBeEmpty().And.HaveCount(2);
+    b.Filter.Should().BeNull();
+})
+----
+
+[source,csharp]
+----
+ReturnsBool(
+Query && +Query,
+q => q.Query() && +q.Query(),
+b =>
+{
+    b.Must.Should().NotBeEmpty().And.HaveCount(1);
+    b.Filter.Should().NotBeEmpty().And.HaveCount(1);
+})
+----
+

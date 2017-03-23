@@ -77,7 +77,6 @@ we are expecting. Remember `result.Documents` is an `IEnumerable<ISearchResult>`
 [source,csharp]
 ----
 result.ShouldBeValid();
-
 result.Documents.Count().Should().Be(100);
 ----
 
@@ -87,9 +86,9 @@ actual type and assert the returned subsets are the expected sizes
 [source,csharp]
 ----
 var aDocuments = result.Documents.OfType<A>();
-
 var bDocuments = result.Documents.OfType<B>();
 var cDocuments = result.Documents.OfType<C>();
+
 aDocuments.Count().Should().Be(25);
 bDocuments.Count().Should().Be(25);
 cDocuments.Count().Should().Be(50);
@@ -100,7 +99,6 @@ and assume that properties that only exist on the subclass itself are properly f
 [source,csharp]
 ----
 aDocuments.Should().OnlyContain(a => a.PropertyOnA > 0);
-
 bDocuments.Should().OnlyContain(a => a.PropertyOnB > 0);
 cDocuments.Should().OnlyContain(a => a.PropertyOnC > 0);
 ----
@@ -129,7 +127,6 @@ we are expecting. Remember `result.Documents` is an `IEnumerable<ISearchResult>`
 [source,csharp]
 ----
 result.ShouldBeValid();
-
 result.Documents.Count().Should().Be(100);
 ----
 
@@ -139,15 +136,11 @@ actual type and assert the returned subsets are the expected sizes
 [source,csharp]
 ----
 var aDocuments = result.Documents.OfType<A>();
-
 var bDocuments = result.Documents.OfType<B>();
-
 var cDocuments = result.Documents.OfType<C>();
 
 aDocuments.Count().Should().Be(25);
-
 bDocuments.Count().Should().Be(25);
-
 cDocuments.Count().Should().Be(50);
 ----
 
@@ -156,9 +149,7 @@ and assume that properties that only exist on the subclass itself are properly f
 [source,csharp]
 ----
 aDocuments.Should().OnlyContain(a => a.PropertyOnA > 0);
-
 bDocuments.Should().OnlyContain(a => a.PropertyOnB > 0);
-
 cDocuments.Should().OnlyContain(a => a.PropertyOnC > 0);
 ----
 
@@ -183,7 +174,6 @@ we are expecting. Remember `result.Documents` is an `IEnumerable<ISearchResult>`
 [source,csharp]
 ----
 result.ShouldBeValid();
-
 result.Documents.Count().Should().Be(100);
 ----
 
@@ -193,15 +183,11 @@ actual type and assert the returned subsets are the expected sizes
 [source,csharp]
 ----
 var aDocuments = result.Documents.OfType<A>();
-
 var bDocuments = result.Documents.OfType<B>();
-
 var cDocuments = result.Documents.OfType<C>();
 
 aDocuments.Count().Should().Be(25);
-
 bDocuments.Count().Should().Be(25);
-
 cDocuments.Count().Should().Be(50);
 ----
 
@@ -210,9 +196,7 @@ and assume that properties that only exist on the subclass itself are properly f
 [source,csharp]
 ----
 aDocuments.Should().OnlyContain(a => a.PropertyOnA > 0);
-
 bDocuments.Should().OnlyContain(a => a.PropertyOnB > 0);
-
 cDocuments.Should().OnlyContain(a => a.PropertyOnC > 0);
 ----
 
@@ -237,7 +221,6 @@ we are expecting. Remember `result.Documents` is an `IEnumerable<ISearchResult>`
 [source,csharp]
 ----
 result.ShouldBeValid();
-
 result.Documents.Count().Should().Be(100);
 ----
 
@@ -247,15 +230,11 @@ actual type and assert the returned subsets are the expected sizes
 [source,csharp]
 ----
 var aDocuments = result.Documents.OfType<A>();
-
 var bDocuments = result.Documents.OfType<B>();
-
 var cDocuments = result.Documents.OfType<C>();
 
 aDocuments.Count().Should().Be(25);
-
 bDocuments.Count().Should().Be(25);
-
 cDocuments.Count().Should().Be(50);
 ----
 
@@ -264,9 +243,7 @@ and assume that properties that only exist on the subclass itself are properly f
 [source,csharp]
 ----
 aDocuments.Should().OnlyContain(a => a.PropertyOnA > 0);
-
 bDocuments.Should().OnlyContain(a => a.PropertyOnB > 0);
-
 cDocuments.Should().OnlyContain(a => a.PropertyOnC > 0);
 ----
 

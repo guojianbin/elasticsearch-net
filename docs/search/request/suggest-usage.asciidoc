@@ -233,6 +233,7 @@ new SearchRequest<Project>
 [source,csharp]
 ----
 var myCompletionSuggest = response.Suggest["my-completion-suggest"];
+
 myCompletionSuggest.Should().NotBeNull();
 var suggest = myCompletionSuggest.First();
 suggest.Text.Should().Be(Project.Instance.Name);

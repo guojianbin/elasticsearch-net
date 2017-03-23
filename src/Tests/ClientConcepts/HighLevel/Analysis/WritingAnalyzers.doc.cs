@@ -162,11 +162,8 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
         public class Question
         {
             public int Id { get; set; }
-
             public DateTimeOffset CreationDate { get; set; }
-
             public int Score { get; set; }
-
             public string Body { get; set; }
         }
 
@@ -258,12 +255,12 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
                             )
                         )
                         .Analyzers(an => an
-                            .Custom("index_question", ca => ca
+                            .Custom("index_question", ca => ca // <1> Use an analyzer at index time that strips HTML tags
                                 .CharFilters("html_strip", "programming_language")
                                 .Tokenizer("standard")
                                 .Filters("standard", "lowercase", "stop")
                             )
-                            .Custom("search_question", ca => ca
+                            .Custom("search_question", ca => ca // <2> Use an analyzer at search time that does not strip HTML tags
                                 .CharFilters("programming_language")
                                 .Tokenizer("standard")
                                 .Filters("standard", "lowercase", "stop")

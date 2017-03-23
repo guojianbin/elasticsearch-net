@@ -75,45 +75,54 @@ namespace DocGenerator
 			return input;
 		}
 
-		public static string RemoveNumberOfLeadingTabsAfterNewline(this string input, int numberOfTabs)
-		{
-			var firstTab = input.IndexOf("\t", StringComparison.OrdinalIgnoreCase);
+        ///<summary>
+        /// Removes the specified number of tabs (or spaces, assuming 4 spaces = 1 tab) 
+        /// from each line of the input
+        /// </summary>
+        public static string RemoveNumberOfLeadingTabsOrSpacesAfterNewline(this string input, int numberOfTabs)
+        {
+            var leadingCharacterIndex = input.IndexOf("\t", StringComparison.OrdinalIgnoreCase);
 
-			if (firstTab == -1)
-			{
-				return input;
-			}
+            if (leadingCharacterIndex == -1)
+            {
+                leadingCharacterIndex = input.IndexOf(" ", StringComparison.OrdinalIgnoreCase);
 
-			int count = 0;
-			char firstNonTabCharacter = Char.MinValue;
+                if (leadingCharacterIndex == -1)
+                {
+                    return input;
+                }
+            }
 
-			for (int i = firstTab; i < input.Length; i++)
-			{
-				if (input[i] != '\t')
-				{
-					firstNonTabCharacter = input[i];
-					count = i - firstTab;
-					break;
-				}
-			}
+            int count = 0;
+            char firstNonTabCharacter = char.MinValue;
 
-			if (firstNonTabCharacter == '{' && numberOfTabs != count)
-			{
-				numberOfTabs = count;
-			}
+            for (int i = leadingCharacterIndex; i < input.Length; i++)
+            {
+                if (input[i] != '\t' && input[i] != ' ')
+                {
+                    firstNonTabCharacter = input[i];
+                    count = i - leadingCharacterIndex;
+                    break;
+                }
+            }
 
-			return Regex.Replace(
-				Regex.Replace(
-					input,
-					$"(?<tabs>[\n|\r\n]+\t{{{numberOfTabs}}})",
-					m => m.Value.Replace("\t", string.Empty)
-				),
-				$"(?<spaces>[\n|\r\n]+\\s{{{numberOfTabs * 4}}})",
-				m => m.Value.Replace(" ", string.Empty)
-			);
-		}
+            if (firstNonTabCharacter == '{' && numberOfTabs != count)
+            {
+                numberOfTabs = count;
+            }
 
-		public static string[] SplitOnNewLines(this string input, StringSplitOptions options)
+            return Regex.Replace(
+                Regex.Replace(
+                    input,
+                    $"(?<tabs>[\n|\r\n]+\t{{{numberOfTabs}}})",
+                    m => m.Value.Replace("\t", string.Empty)
+                    ),
+                $"(?<spaces>[\n|\r\n]+\\s{{{numberOfTabs * 4}}})",
+                m => m.Value.Replace(" ", string.Empty)
+                );
+        }
+
+        public static string[] SplitOnNewLines(this string input, StringSplitOptions options)
 		{
 			return input.Split(new[] { "\r\n", "\n" }, options);
 		}

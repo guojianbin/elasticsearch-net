@@ -36,6 +36,7 @@ var response = this.Client.Search<Project>(s => s
         )
     )
 );
+
 response.ApiCall.DeprecationWarnings.Should().NotBeNullOrEmpty();
 response.DebugInformation.Should().Contain("Server indicated deprecations:");
 ----

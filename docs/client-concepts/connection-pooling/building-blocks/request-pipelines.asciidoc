@@ -45,12 +45,12 @@ to create it
 [source,csharp]
 ----
 var requestPipelineFactory = new RequestPipelineFactory();
-
 var requestPipeline = requestPipelineFactory.Create(
     settings,
     DateTimeProvider.Default, <1>
     new MemoryStreamFactory(),
     new SearchRequestParameters());
+
 requestPipeline.Should().BeOfType<RequestPipeline>();
 requestPipeline.GetType().Should().Implement<IDisposable>();
 ----
@@ -66,15 +66,11 @@ var transport = new Transport<ConnectionSettings>(
     requestPipelineFactory,
     DateTimeProvider.Default,
     new MemoryStreamFactory());
-----
 
-[source,csharp]
-----
 var pool = setupPool(new[] { TestClient.CreateUri(), TestClient.CreateUri(9201) });
-
 var settings = new ConnectionSettings(pool, connection ?? new InMemoryConnection());
-
 settings = settingsSelector?.Invoke(settings) ?? settings;
+return new FixedPipelineFactory(settings, dateTimeProvider ?? DateTimeProvider.Default).Pipeline;
 ----
 
 === Pipeline Behavior
@@ -84,9 +80,7 @@ settings = settingsSelector?.Invoke(settings) ?? settings;
 [source,csharp]
 ----
 var singleNodePipeline = CreatePipeline(uris => new SingleNodeConnectionPool(uris.First()));
-
 var staticPipeline = CreatePipeline(uris => new StaticConnectionPool(uris));
-
 var sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris));
 ----
 
@@ -96,9 +90,7 @@ on first usage
 [source,csharp]
 ----
 singleNodePipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
-
 staticPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
-
 sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeTrue();
 ----
 
@@ -107,10 +99,10 @@ You can however disable reseeding/sniffing on ConnectionSettings
 
 [source,csharp]
 ----
-sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s => s.SniffOnStartup(false));
-
+sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s => s.SniffOnStartup(false)); <1>
 sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 ----
+<1> Disable sniffing on startup
 
 ==== Wait for first Sniff
 
@@ -167,13 +159,10 @@ the `SemaphoreSlim`.
 [source,csharp]
 ----
 var task1 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
-
 var task2 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
-
 var task3 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 
 var exception = Record.Exception(() => Task.WaitAll(task1, task2, task3));
-
 exception.Should().BeNull();
 ----
 
@@ -182,15 +171,11 @@ exception.Should().BeNull();
 [source,csharp]
 ----
 var singleNodePipeline = CreatePipeline(uris => new SingleNodeConnectionPool(uris.First()));
-
 var staticPipeline = CreatePipeline(uris => new StaticConnectionPool(uris));
-
 var sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris));
 
 singleNodePipeline.SniffsOnConnectionFailure.Should().BeFalse();
-
 staticPipeline.SniffsOnConnectionFailure.Should().BeFalse();
-
 sniffingPipeline.SniffsOnConnectionFailure.Should().BeTrue();
 ----
 
@@ -200,7 +185,6 @@ You can however disable this on ConnectionSettings
 [source,csharp]
 ----
 sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s => s.SniffOnConnectionFault(false));
-
 sniffingPipeline.SniffsOnConnectionFailure.Should().BeFalse();
 ----
 
@@ -209,7 +193,6 @@ sniffingPipeline.SniffsOnConnectionFailure.Should().BeFalse();
 [source,csharp]
 ----
 var dateTime = new TestableDateTimeProvider();
-
 var singleNodePipeline = CreatePipeline(uris =>
     new SingleNodeConnectionPool(uris.First(), dateTime), dateTimeProvider: dateTime);
 
@@ -220,15 +203,11 @@ var sniffingPipeline = CreatePipeline(uris =>
     new SniffingConnectionPool(uris, dateTimeProvider: dateTime), dateTimeProvider: dateTime);
 
 singleNodePipeline.SniffsOnStaleCluster.Should().BeFalse();
-
 staticPipeline.SniffsOnStaleCluster.Should().BeFalse();
-
 sniffingPipeline.SniffsOnStaleCluster.Should().BeTrue();
 
 singleNodePipeline.StaleClusterState.Should().BeFalse();
-
 staticPipeline.StaleClusterState.Should().BeFalse();
-
 sniffingPipeline.StaleClusterState.Should().BeFalse();
 ----
 
@@ -244,7 +223,6 @@ connection pools that do not support reseeding never go stale
 [source,csharp]
 ----
 singleNodePipeline.StaleClusterState.Should().BeFalse();
-
 staticPipeline.StaleClusterState.Should().BeFalse();
 ----
 
@@ -263,7 +241,6 @@ See the <<max-retries, max retry documentation>> for more details, here we asser
 [source,csharp]
 ----
 var dateTime = new TestableDateTimeProvider();
-
 var singleNodePipeline = CreatePipeline(uris =>
     new SingleNodeConnectionPool(uris.First(), dateTime), dateTimeProvider: dateTime);
 
@@ -274,9 +251,7 @@ var sniffingPipeline = CreatePipeline(uris =>
     new SniffingConnectionPool(uris, dateTimeProvider: dateTime), dateTimeProvider: dateTime);
 
 singleNodePipeline.IsTakingTooLong.Should().BeFalse();
-
 staticPipeline.IsTakingTooLong.Should().BeFalse();
-
 sniffingPipeline.IsTakingTooLong.Should().BeFalse();
 ----
 
@@ -292,7 +267,6 @@ connection pools that do not support reseeding never go stale
 [source,csharp]
 ----
 singleNodePipeline.IsTakingTooLong.Should().BeTrue();
-
 staticPipeline.IsTakingTooLong.Should().BeTrue();
 ----
 
@@ -308,16 +282,10 @@ request pipeline exposes the DateTime it started, here we assert it started 2 ho
 [source,csharp]
 ----
 (dateTime.Now() - singleNodePipeline.StartedOn).Should().BePositive().And.BeCloseTo(TimeSpan.FromHours(2));
-
 (dateTime.Now() - staticPipeline.StartedOn).Should().BePositive().And.BeCloseTo(TimeSpan.FromHours(2));
-
 (dateTime.Now() - sniffingPipeline.StartedOn).Should().BePositive().And.BeCloseTo(TimeSpan.FromHours(2));
-----
 
-[source,csharp]
-----
 var dateTime = new TestableDateTimeProvider();
-
 var sniffingPipeline = CreatePipeline(uris =>
     new SniffingConnectionPool(uris, dateTimeProvider: dateTime), dateTimeProvider: dateTime) as RequestPipeline;
 

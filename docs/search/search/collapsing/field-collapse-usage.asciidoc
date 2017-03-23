@@ -76,7 +76,6 @@ new SearchRequest<Project>
 var numberOfStates = Enum.GetValues(typeof(StateOfBeing)).Length;
 response.HitsMetaData.Total.Should().BeGreaterThan(numberOfStates);
 response.Hits.Count.Should().Be(numberOfStates);
-
 foreach (var hit in response.Hits)
 {
     var name = nameof(StateOfBeing).ToLowerInvariant();

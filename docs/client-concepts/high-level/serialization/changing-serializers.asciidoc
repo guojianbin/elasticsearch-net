@@ -20,6 +20,13 @@ NEST uses http://www.newtonsoft.com/json[JSON.Net] to serialize requests to and 
 Whilst JSON.Net does a good job of serialization, you may wish to use your own JSON serializer for a particular
 reason. Elasticsearch.Net and NEST make it easy to replace the default serializer with your own.
 
+[NOTE]
+--
+If you are looking to change how the default serializer works, check out
+<<modifying-default-serializer,Modifying the default serializer>>.
+
+--
+
 The main component needed is to provide an implementation of `IElasticsearchSerializer`
 
 [source,csharp]
@@ -53,6 +60,8 @@ public class CustomSerializer : IElasticsearchSerializer
 }
 ----
 
+==== Changing serializers in Elasticsearch.Net
+
 For Elasticsearch.Net, an implementation of `IElasticsearchSerializer` is all that is needed and a delegate can
 be passed to `ConnectionConfiguration` that will be called to construct an instance of the serializer
 
@@ -61,10 +70,13 @@ be passed to `ConnectionConfiguration` that will be called to construct an insta
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
 var connection = new HttpConnection();
 var connectionConfiguration =
-                new ConnectionConfiguration(pool, connection, configuration => new CustomSerializer()); <1>
+    new ConnectionConfiguration(pool, connection, configuration => new CustomSerializer()); <1>
+
 var lowlevelClient = new ElasticLowLevelClient(connectionConfiguration);
 ----
 <1> delegate gets passed `ConnectionConfiguration` and creates a serializer.
+
+==== Changing serializers in NEST
 
 With NEST however, an implementation of `ISerializerFactory` in addition to an implementation
 of `IElasticsearchSerializer` is required.
@@ -72,12 +84,12 @@ of `IElasticsearchSerializer` is required.
 [source,csharp]
 ----
 public class CustomSerializerFactory : ISerializerFactory
-        {
-            public IElasticsearchSerializer Create(IConnectionSettingsValues settings) => new CustomSerializer();
+{
+    public IElasticsearchSerializer Create(IConnectionSettingsValues settings) => new CustomSerializer();
 
-            public IElasticsearchSerializer CreateStateful(IConnectionSettingsValues settings, JsonConverter converter) =>
-                new CustomSerializer();
-        }
+    public IElasticsearchSerializer CreateStateful(IConnectionSettingsValues settings, JsonConverter converter) =>
+        new CustomSerializer();
+}
 ----
 
 With an implementation of `ISerializerFactory` that can create instances of our custom serializer,
@@ -86,11 +98,9 @@ hooking this into `ConnectionSettings` is straightfoward
 [source,csharp]
 ----
 var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-
 var connection = new HttpConnection();
-
 var connectionSettings =
-                new ConnectionSettings(pool, connection, new CustomSerializerFactory());
+    new ConnectionSettings(pool, connection, new CustomSerializerFactory());
 
 var client = new ElasticClient(connectionSettings);
 ----

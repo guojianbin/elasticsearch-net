@@ -30,6 +30,7 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .Settings(s => s.DisablePing())
 );
+
 audit = await audit.TraceCall(
     new ClientCall(r => r.MaxRetries(2)) {
         { BadResponse, 9200 },

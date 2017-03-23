@@ -36,12 +36,5 @@ namespace DocGenerator.Documentation.Files
 				Directory.CreateDirectory(fileInfo.Directory.FullName);
 			return fileInfo;
 		}
-
-        public static async Task CopyFileAsync(string sourceFile, string destinationFile)
-        {
-            using (var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
-            using (var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
-                await sourceStream.CopyToAsync(destinationStream);
-        }
-    }
+	}
 }

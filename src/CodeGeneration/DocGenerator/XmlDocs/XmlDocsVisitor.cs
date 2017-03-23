@@ -9,7 +9,7 @@ namespace DocGenerator.XmlDocs
 {
     /// <summary>
     /// Visits XML Documentation file to build an AsciiDoc
-    /// a collection of labeled list items to include in documentation
+    /// collection of labeled list items to include in documentation
     /// </summary>
     /// <seealso cref="NuDoq.Visitor" />
     public class XmlDocsVisitor : Visitor
@@ -17,7 +17,7 @@ namespace DocGenerator.XmlDocs
         private LabeledListItem _labeledListItem;
         private readonly Type _type;
 
-        // AsciiDocNet does not current have a type for list item continuations, so mimic here
+        // AsciiDocNet does not currently have a type for list item continuations, so mimic here
         // for the moment
         private const string ListItemContinuation = "\r\n+\r\n";
 

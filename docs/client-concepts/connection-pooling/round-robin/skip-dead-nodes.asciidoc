@@ -28,30 +28,27 @@ suffering from noisy neighbours advancing a global cursor.
 [source,csharp]
 ----
 var seeds = Enumerable.Range(9200, NumberOfNodes).Select(p => new Node(new Uri("http://localhost:" + p))).ToList();
-
-seeds.First().MarkDead(DateTime.Now.AddDays(1));
-
 var pool = new StaticConnectionPool(seeds, randomize: false);
+for (var i = 0; i < 20; i++)
+{
+    var node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9200);
+    node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9201);
+    node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9202);
+}
 
-var node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9201);
-
-node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9202);
-----
-
-[source,csharp]
-----
 var seeds = Enumerable.Range(9200, NumberOfNodes).Select(p => new Node(new Uri("http://localhost:" + p))).ToList();
+seeds.First().MarkDead(DateTime.Now.AddDays(1));
 var pool = new StaticConnectionPool(seeds, randomize: false);
-var node = pool.CreateView().First();
-node.Uri.Port.Should().Be(9200);
-node = pool.CreateView().First();
-node.Uri.Port.Should().Be(9201);
-node = pool.CreateView().First();
-node.Uri.Port.Should().Be(9202);
+for (var i = 0; i < 20; i++)
+{
+    var node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9201);
+    node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9202);
+}
 ----
 
 After we marked the first node alive again, we expect it to be hit again
@@ -59,37 +56,27 @@ After we marked the first node alive again, we expect it to be hit again
 [source,csharp]
 ----
 seeds.First().MarkAlive();
+for (var i = 0; i < 20; i++)
+{
+    var node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9201);
+    node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9202);
+    node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9200);
+}
 
-var node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9201);
-
-node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9202);
-
-node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9200);
-----
-
-[source,csharp]
-----
 var dateTimeProvider = new TestableDateTimeProvider();
-
 var seeds = Enumerable.Range(9200, NumberOfNodes).Select(p => new Node(new Uri("http://localhost:" + p))).ToList();
-
 seeds.First().MarkDead(dateTimeProvider.Now().AddDays(1));
-
 var pool = new StaticConnectionPool(seeds, randomize: false, dateTimeProvider: dateTimeProvider);
-
-var node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9201);
-
-node = pool.CreateView().First();
-
-node.Uri.Port.Should().Be(9202);
+for (var i = 0; i < 20; i++)
+{
+    var node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9201);
+    node = pool.CreateView().First();
+    node.Uri.Port.Should().Be(9202);
+}
 ----
 
 If we roll the clock forward two days, the node that was marked dead until tomorrow (or yesterday!) should be resurrected 
@@ -97,19 +84,12 @@ If we roll the clock forward two days, the node that was marked dead until tomor
 [source,csharp]
 ----
 dateTimeProvider.ChangeTime(d => d.AddDays(2));
-
 var n = pool.CreateView().First();
-
 n.Uri.Port.Should().Be(9201);
-
 n = pool.CreateView().First();
-
 n.Uri.Port.Should().Be(9202);
-
 n = pool.CreateView().First();
-
 n.Uri.Port.Should().Be(9200);
-
 n.IsResurrected.Should().BeTrue();
 ----
 
@@ -125,30 +105,23 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .Settings(p=>p.DisablePing())
 );
-----
 
-The first call goes to 9200 which succeeds 
-
-The 2nd call does a ping on 9201 because its used for the first time.
-It fails so we wrap over to node 9202 
-
-Finally we assert that the connectionpool has one node that is marked as dead 
-
-The next call goes to 9203 which fails so we should wrap over 
-
-[source,csharp]
-----
 await audit.TraceCalls(
-new ClientCall {
+    /** The first call goes to 9200 which succeeds */
+    new ClientCall {
         { HealthyResponse, 9200},
         { pool => pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(0) }
     },
-new ClientCall {
+    /** The 2nd call does a ping on 9201 because its used for the first time.
+    * It fails so we wrap over to node 9202 */
+    new ClientCall {
         { BadResponse, 9201},
         { HealthyResponse, 9202},
-{ pool =>  pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(1) }
+        /** Finally we assert that the connectionpool has one node that is marked as dead */
+        { pool =>  pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(1) }
     },
-new ClientCall {
+    /** The next call goes to 9203 which fails so we should wrap over */
+    new ClientCall {
         { BadResponse, 9203},
         { HealthyResponse, 9200},
         { pool => pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(2) }
@@ -182,18 +155,10 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .Settings(p=>p.DisablePing())
 );
-----
 
-All the calls fail 
-
-After all our registered nodes are marked dead we want to sample a single dead node
-each time to quickly see if the cluster is back up. We do not want to retry all 4
-nodes
-
-[source,csharp]
-----
 await audit.TraceCalls(
-new ClientCall {
+    /** All the calls fail */
+    new ClientCall {
         { BadResponse, 9200},
         { BadResponse, 9201},
         { BadResponse, 9202},
@@ -201,7 +166,11 @@ new ClientCall {
         { MaxRetriesReached },
         { pool => pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(4) }
     },
-new ClientCall {
+    /** After all our registered nodes are marked dead we want to sample a single dead node
+    * each time to quickly see if the cluster is back up. We do not want to retry all 4
+    * nodes
+    */
+    new ClientCall {
         { AllNodesDead },
         { Resurrection, 9201},
         { BadResponse, 9201},

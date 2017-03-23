@@ -36,7 +36,7 @@ the client with different configuration values.
 [source,csharp]
 ----
 var settings = new ConnectionConfiguration(new Uri("http://example.com:9200"))
-                .RequestTimeout(TimeSpan.FromMinutes(2));
+    .RequestTimeout(TimeSpan.FromMinutes(2));
 
 var lowlevelClient = new ElasticLowLevelClient(settings);
 ----
@@ -59,14 +59,13 @@ cluster to which it can send requests in a round-robin fashion.
 [source,csharp]
 ----
 var uris = new[]
-            {
-                new Uri("http://localhost:9200"),
-                new Uri("http://localhost:9201"),
-                new Uri("http://localhost:9202"),
-            };
+{
+    new Uri("http://localhost:9200"),
+    new Uri("http://localhost:9201"),
+    new Uri("http://localhost:9202"),
+};
 
 var connectionPool = new SniffingConnectionPool(uris);
-
 var settings = new ConnectionConfiguration(connectionPool);
 
 var lowlevelClient = new ElasticLowLevelClient(settings);
@@ -82,13 +81,13 @@ Imagine we have the following http://en.wikipedia.org/wiki/Plain_Old_CLR_Object[
 [source,csharp]
 ----
 public class Person
-        {
-            public Guid Id { get; set; }
+{
+    public Guid Id { get; set; }
 
-            public string FirstName { get; set; }
+    public string FirstName { get; set; }
 
-            public string LastName { get; set; }
-        }
+    public string LastName { get; set; }
+}
 ----
 
 Indexing a single instance of the POCO either synchronously or asynchronously, is as simple as
@@ -96,17 +95,15 @@ Indexing a single instance of the POCO either synchronously or asynchronously, i
 [source,csharp]
 ----
 var person = new
-            {
-                FirstName = "Martijn",
-                LastName = "Laarman"
-            };
+{
+    FirstName = "Martijn",
+    LastName = "Laarman"
+};
 
 var indexResponse = lowlevelClient.Index<byte[]>("people", "person", "1", person); <1>
-
 byte[] responseBytes = indexResponse.Body;
 
 var asyncIndexResponse = await lowlevelClient.IndexAsync<string>("people", "person", "1", person); <2>
-
 string asyncResponseString = asyncIndexResponse.Body;
 ----
 <1> synchronous method that returns an `IIndexResponse`
@@ -132,21 +129,20 @@ The Elasticsearch Query DSL can be expressed using an anonymous type within the 
 [source,csharp]
 ----
 var searchResponse = lowlevelClient.Search<string>("people", "person", new
-            {
-                from = 0,
-                size = 10,
-                query = new
-                {
-                    match = new
-                    {
-                        field = "firstName",
-                        query = "Martijn"
-                    }
-                }
-            });
+{
+    from = 0,
+    size = 10,
+    query = new
+    {
+        match = new
+        {
+            field = "firstName",
+            query = "Martijn"
+        }
+    }
+});
 
 var successful = searchResponse.Success;
-
 var responseJson = searchResponse.Body;
 ----
 
@@ -158,16 +154,16 @@ Strings can also be used to express the request
 [source,csharp]
 ----
 var searchResponse = lowlevelClient.Search<byte[]>("people", "person", @"
-            {
-                ""from"": 0,
-                ""size"": 10,
-                ""query"": {               
-                    ""match"": {
-                        ""field"": ""firstName"",
-                        ""query"": ""Martijn""
-                    }
-                }
-            }");
+{
+    ""from"": 0,
+    ""size"": 10,
+    ""query"": {               
+        ""match"": {
+            ""field"": ""firstName"",
+            ""query"": ""Martijn""
+        }
+    }
+}");
 
 var responseBytes = searchResponse.Body;
 ----
@@ -201,11 +197,8 @@ is successful
 var searchResponse = lowlevelClient.Search<byte[]>("people", "person", new { match_all = new {} });
 
 var success = searchResponse.Success; <1>
-
 var successOrKnownError = searchResponse.SuccessOrKnownError; <2>
-
 var serverError = searchResponse.ServerError; <3>
-
 var exception = searchResponse.OriginalException; <4>
 ----
 <1> Response is in the 200 range, or an expected response for the given request
@@ -223,7 +216,7 @@ The default behaviour of not throwing exceptions can be changed by setting `.Thr
 [source,csharp]
 ----
 var settings = new ConnectionConfiguration(new Uri("http://example.com:9200"))
-                .ThrowExceptions();
+    .ThrowExceptions();
 
 var lowlevelClient = new ElasticLowLevelClient(settings);
 ----
@@ -233,13 +226,13 @@ And if more fine grained control is required, custom exceptions can be thrown us
 [source,csharp]
 ----
 var settings = new ConnectionConfiguration(new Uri("http://example.com:9200"))
-                .OnRequestCompleted(apiCallDetails =>
-                {
-                    if (apiCallDetails.HttpStatusCode == 418)
-                    {
-                        throw new TimeForACoffeeException();
-                    }
-                });
+    .OnRequestCompleted(apiCallDetails =>
+    {
+        if (apiCallDetails.HttpStatusCode == 418)
+        {
+            throw new TimeForACoffeeException();
+        }
+    });
 
 var lowlevelClient = new ElasticLowLevelClient(settings);
 ----

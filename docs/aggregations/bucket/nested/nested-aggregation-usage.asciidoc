@@ -81,7 +81,6 @@ var tags = response.Aggs.Nested("tags");
 tags.Should().NotBeNull();
 var tagNames = tags.Terms("tag_names");
 tagNames.Should().NotBeNull();
-
 foreach(var item in tagNames.Buckets)
 {
     item.Key.Should().NotBeNullOrEmpty();

@@ -67,7 +67,6 @@ var uris = new[]
 };
 
 var connectionPool = new SniffingConnectionPool(uris);
-
 var settings = new ConnectionSettings(connectionPool)
     .DefaultIndex("people");
 
@@ -251,25 +250,20 @@ Here's an example
 [source,csharp]
 ----
 var searchResponse = client.LowLevel.Search<SearchResponse<Person>>("people", "person", new
-            {
-                from = 0,
-                size = 10,
-                query = new
-                {
-                    match = new
-                    {
-                        field = "firstName",
-                        query = "Martijn"
-                    }
-                }
-            });
+{
+    from = 0,
+    size = 10,
+    query = new
+    {
+        match = new
+        {
+            field = "firstName",
+            query = "Martijn"
+        }
+    }
+});
 
 var responseJson = searchResponse.Body;
-----
-
-[source,csharp]
-----
-
 ----
 
 Here, the query can be represented as an anonymous type, but the body of the response is a concrete 

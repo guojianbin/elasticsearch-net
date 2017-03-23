@@ -72,20 +72,10 @@ var audit = new Auditor(() => Framework.Cluster
     .StaticConnectionPool()
     .AllDefaults()
 );
-----
 
-The first call goes to 9200 which succeeds 
-
-The 2nd call does a ping on 9201 because its used for the first time.
-It fails and so we ping 9202 which also fails. We then ping 9203 because
-we haven't used it before and it succeeds 
-
-Finally we assert that the connectionpool has two nodes that are marked as dead 
-
-[source,csharp]
-----
 await audit.TraceCalls(
-new ClientCall {
+    /** The first call goes to 9200 which succeeds */
+    new ClientCall {
         { PingSuccess, 9200},
         { HealthyResponse, 9200},
         { pool =>
@@ -93,12 +83,16 @@ new ClientCall {
             pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(0);
         } }
     },
-new ClientCall {
+    /** The 2nd call does a ping on 9201 because its used for the first time.
+    * It fails and so we ping 9202 which also fails. We then ping 9203 because
+    * we haven't used it before and it succeeds */
+    new ClientCall {
         { PingFailure, 9201},
         { PingFailure, 9202},
         { PingSuccess, 9203},
         { HealthyResponse, 9203},
-{ pool =>  pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(2) }
+        /** Finally we assert that the connectionpool has two nodes that are marked as dead */
+        { pool =>  pool.Nodes.Where(n=>!n.IsAlive).Should().HaveCount(2) }
     }
 );
 ----

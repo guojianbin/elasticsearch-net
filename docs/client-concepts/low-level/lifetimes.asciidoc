@@ -90,15 +90,11 @@ Disposing an instance of `ConnectionSettings` will also dispose the `IConnection
 [source,csharp]
 ----
 var connection = new AConnection();
-
 var connectionPool = new AConnectionPool(new Uri("http://localhost:9200"));
-
 var settings = new AConnectionSettings(connectionPool, connection);
-
+using (settings) { }
 settings.IsDisposed.Should().BeTrue();
-
 connectionPool.IsDisposed.Should().BeTrue();
-
 connection.IsDisposed.Should().BeTrue();
 ----
 

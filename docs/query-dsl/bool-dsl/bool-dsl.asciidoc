@@ -116,10 +116,7 @@ Both of these can be combined with `&&` to form a single bool query
 [source,csharp]
 ----
 Assert(q => !q.Query() && !q.Query(), !Query && !Query, c => c.Bool.MustNot.Should().HaveCount(2));
-----
 
-[source,csharp]
-----
 Assert(q => +q.Query() && +q.Query(), +Query && +Query, c => c.Bool.Filter.Should().HaveCount(2));
 ----
 
@@ -148,10 +145,6 @@ Assert(
         c.Bool.Must.Should().HaveCount(3);
         c.Bool.MustNot.Should().HaveCount(1);
     });
-
-c.Bool.Must.Should().HaveCount(3);
-
-c.Bool.MustNot.Should().HaveCount(1);
 ----
 
 Even more involved `term && term && term && !term && +term && +term` still only results in a single `bool` query:
@@ -182,12 +175,6 @@ Assert(
         c.Bool.MustNot.Should().HaveCount(1);
         c.Bool.Filter.Should().HaveCount(2);
     });
-
-c.Bool.Must.Should().HaveCount(3);
-
-c.Bool.MustNot.Should().HaveCount(1);
-
-c.Bool.Filter.Should().HaveCount(2);
 ----
 
 You can still mix and match actual bool queries with the bool DSL e.g`bool(must=term, term, term) && !term` would still merge into a single `bool` query.
@@ -202,10 +189,6 @@ Assert(
         c.Bool.Must.Should().HaveCount(3);
         c.Bool.MustNot.Should().HaveCount(1);
     });
-
-c.Bool.Must.Should().HaveCount(3);
-
-c.Bool.MustNot.Should().HaveCount(1);
 ----
 
 NEST will also do the same with `should`s or `||` when it sees that the boolean queries in play **only** consist of `should` clauses.
@@ -270,16 +253,6 @@ Assert(
         lastClause.Bool.Should().NotBeNull();
         lastClause.Bool.Should.Should().HaveCount(3);
     });
-
-c.Bool.Must.Should().HaveCount(2);
-
-var lastClause = c.Bool.Must.Last() as IQueryContainer;
-
-lastClause.Should().NotBeNull();
-
-lastClause.Bool.Should().NotBeNull();
-
-lastClause.Bool.Should.Should().HaveCount(3);
 ----
 
 TIP: *add parentheses to force evaluation order*
@@ -317,12 +290,6 @@ Assert(
         var nestedBool = c.Bool.Should.First() as IQueryContainer;
         nestedBool.Bool.Should.Should().HaveCount(4);
     });
-
-c.Bool.Should.Should().HaveCount(3);
-
-var nestedBool = c.Bool.Should.First() as IQueryContainer;
-
-nestedBool.Bool.Should.Should().HaveCount(4);
 ----
 
 === Locked bool queries
@@ -377,10 +344,12 @@ In this example we are creating a single bool query with a 1000 must clauses usi
 [source,csharp]
 ----
 var c = new QueryContainer();
-
 var q = new TermQuery { Field = "x", Value = "x" };
 
-c &= q;
+for (var i = 0; i < 1000; i++)
+{
+    c &= q;
+}
 ----
 
 ....
@@ -396,9 +365,7 @@ Since we already know the shape of our bool query in advance its much much faste
 [source,csharp]
 ----
 QueryContainer q = new TermQuery { Field = "x", Value = "x" };
-
 var x = Enumerable.Range(0, 1000).Select(f => q).ToArray();
-
 var boolQuery = new BoolQuery
 {
     Must = x

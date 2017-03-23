@@ -24,11 +24,11 @@ namespace DocGenerator
 		{
             yield return project.Documents
                .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
-               .Select(d => new WorkspaceProjectDocumentationFile(d, compilation));
+               .Select(d => new CSharpDocumentationFile(d, compilation));
 
             yield return project.Documents
                 .Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
-                .Select(d => new WorkspaceProjectDocumentationFile(d, compilation));
+                .Select(d => new CSharpDocumentationFile(d, compilation));
 
             yield return InputFiles("*.png");
 			yield return InputFiles("*.gif");

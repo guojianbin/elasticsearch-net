@@ -131,9 +131,6 @@ namespace DocGenerator.AsciiDoc
 			if (_topLevel)
 			{
 				_topLevel = false;
-				Source exampleJson = null;
-				Source objectInitializerExample = null;
-
 				for (int index = 0; index < elements.Count; index++)
 				{
 					var element = elements[index];
@@ -150,21 +147,12 @@ namespace DocGenerator.AsciiDoc
 						var method = source.Attributes.OfType<NamedAttribute>().FirstOrDefault(a => a.Name == "method");
 						if (method == null)
 						{
-							_newDocument.Add(element);
+							_newDocument.Add(source);
 							continue;
 						}
 
-						if ((method.Value == "expectjson" || method.Value == "queryjson") &&
-							source.Attributes.Count > 1 &&
-							source.Attributes[1].Name == "javascript" &&
-							_destination.Name != "writing-aggregations.asciidoc")
-						{
-							exampleJson = source;
-							continue;
-						}
-
-						// if there is a section title since the last source block, don't add one
-						var lastSourceBlock = _newDocument.LastOrDefault(e => e is Source);
+                        // if there is a section title since the last source block, don't add one
+                        var lastSourceBlock = _newDocument.LastOrDefault(e => e is Source);
 						var lastSectionTitle = _newDocument.OfType<SectionTitle>().LastOrDefault(e => e.Level == _topSectionTitleLevel + 1);
 						if (lastSourceBlock != null && lastSectionTitle != null)
 						{
@@ -172,7 +160,7 @@ namespace DocGenerator.AsciiDoc
 							var lastSourceBlockIndex = _newDocument.IndexOf(lastSourceBlock);
 							if (lastSectionTitleIndex > lastSourceBlockIndex)
 							{
-								_newDocument.Add(element);
+								_newDocument.Add(source);
 								continue;
 							}
 						}
@@ -186,60 +174,23 @@ namespace DocGenerator.AsciiDoc
 									_newDocument.Add(CreateSubsectionTitle("Fluent DSL Example"));
 								}
 
-								_newDocument.Add(element);
-
-								if (objectInitializerExample != null)
-								{
-									_newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
-									_newDocument.Add(objectInitializerExample);
-									objectInitializerExample = null;
-
-									if (exampleJson != null)
-									{
-										_newDocument.Add(exampleJson);
-										exampleJson = null;
-									}
-								}
-								break;
+								_newDocument.Add(source);
+                                break;
 							case "initializer":
-								_newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
-								_newDocument.Add(element);
-								// Move the example json to after the initializer example
-								if (exampleJson != null)
-								{
-									_newDocument.Add(exampleJson);
-									exampleJson = null;
-								}
-								break;
-							case "queryinitializer":
-								if (objectInitializerExample != null)
-								{
-									_newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
-									_newDocument.Add(objectInitializerExample);
-
-									// Move the example json to after the initializer example
-									if (exampleJson != null)
-									{
-										_newDocument.Add(exampleJson);
-										exampleJson = null;
-									}
-								}
-								else
-								{
-									objectInitializerExample = source;
-								}
-								break;
+                            case "queryinitializer":
+                                _newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
+								_newDocument.Add(source);
+                                break;
 							case "expectresponse":
 								// Don't add the Handlng Response section title if it was the last title (it might be defined in the doc already)
 								if (!LastSectionTitleMatches(text => text.Equals("Handling Responses", StringComparison.OrdinalIgnoreCase)))
 								{
 									_newDocument.Add(CreateSubsectionTitle("Handling Responses"));
 								}
-
-								_newDocument.Add(element);
+								_newDocument.Add(source);
 								break;
 							default:
-								_newDocument.Add(element);
+								_newDocument.Add(source);
 								break;
 						}
 					}
@@ -328,6 +279,7 @@ namespace DocGenerator.AsciiDoc
 	            Assembly assembly;
 	            string assemblyNamespace;
 
+                //TODO: tidy this up
 	            switch (assemblyName.ToLowerInvariant())
 	            {
                     case "elasticsearch.net":
@@ -397,6 +349,8 @@ namespace DocGenerator.AsciiDoc
 			var level = _topSectionTitleLevel + 1;
 			var sectionTitle = new SectionTitle(title, level);
 
+            // levels 1-3 need to be floating so the Elasticsearch docs generation does not 
+            // split into separate file
 			if (level < 4)
 				sectionTitle.IsFloating = true;
 

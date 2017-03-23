@@ -96,6 +96,7 @@ response.ShouldBeValid();
 var matrix = response.Aggs.MatrixStats("matrixstats");
 matrix.Should().NotBeNull();
 matrix.Fields.Should().NotBeNull().And.HaveCount(2);
+
 AssertField(matrix, "numberOfCommits");
 AssertField(matrix, "numberOfContributors");
 ----

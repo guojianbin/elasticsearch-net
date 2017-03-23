@@ -106,6 +106,7 @@ new TermsQuery
 [source,csharp]
 ----
 response.IsValid.Should().BeFalse();
+
 response.ServerError.Should().NotBeNull();
 response.ServerError.Status.Should().Be(400);
 response.ServerError.Error.Should().NotBeNull();

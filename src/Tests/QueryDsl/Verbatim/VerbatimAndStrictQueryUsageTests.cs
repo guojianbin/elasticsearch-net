@@ -112,7 +112,8 @@ namespace Tests.QueryDsl.Verbatim
 			);
 	}
 
-	public class SingleVerbatimQueryUsageTests : QueryDslUsageTestsBase
+    /** A single verbatim query will be serialized as-is */
+    public class SingleVerbatimQueryUsageTests : QueryDslUsageTestsBase
 	{
 		public SingleVerbatimQueryUsageTests(ReadOnlyCluster cluster, EndpointUsage usage) : base(cluster, usage) { }
 
@@ -146,6 +147,9 @@ namespace Tests.QueryDsl.Verbatim
 			);
 	}
 
+    /**
+     * Leaf queries within a compound query marked as verbatim will also be serialized as-is
+     */
 	public class CompoundVerbatimInnerQueryUsageTests : QueryDslUsageTestsBase
 	{
 		public CompoundVerbatimInnerQueryUsageTests(ReadOnlyCluster cluster, EndpointUsage usage) : base(cluster, usage) { }
@@ -228,9 +232,9 @@ namespace Tests.QueryDsl.Verbatim
 	/**[float]
 	 * === Strict Query Usage
 	 *
-	 * A query can be marked as strict meaning that if it is determined to be conditionless, it will throw an
+	 * A query can be marked as strict meaning that _if_ it is determined to be _conditionless_, it will throw an
 	 * exception. The following example demonstrates this by trying to send an empty string as the value for
-	 * a `term` query that is marked as strict
+	 * a `term` query marked as strict
 	 */
 	public class StrictQueryUsageTests
 	{

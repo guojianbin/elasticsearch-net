@@ -51,7 +51,6 @@ You can create simple expressions using any of the static methods on `DateMath`
 [source,csharp]
 ----
 Expect("now").WhenSerializing(Nest.DateMath.Now);
-
 Expect("2015-05-05T00:00:00").WhenSerializing(Nest.DateMath.Anchored(new DateTime(2015,05, 05)));
 ----
 
@@ -73,8 +72,8 @@ the resulting date math will assume the whole string is the anchor
 
 [source,csharp]
 ----
-Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)
-.Result(dateMath => ((IDateMath)dateMath)
+Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)            
+    .Result(dateMath => ((IDateMath)dateMath)
         .Anchor.Match(
             d => d.Should().NotBe(default(DateTime)),
             s => s.Should().Be(nonsense)
@@ -82,20 +81,15 @@ Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)
     );
 ----
 
-`DateTime` also implicitly convert to simple date math expressions 
+`DateTime` also implicitly convert to simple date math expressions; the resulting 
+anchor will be an actual `DateTime`, even after a serialization/deserialization round trip
 
 [source,csharp]
 ----
 var date = new DateTime(2015, 05, 05);
-----
-
-the anchor will be an actual `DateTime`, even after a serialization/deserialization round trip 
-
-[source,csharp]
-----
 Expect("2015-05-05T00:00:00").WhenSerializing<Nest.DateMath>(date)
-.Result(dateMath => ((IDateMath)dateMath)
-    .    Anchor.Match(
+    .Result(dateMath => ((IDateMath)dateMath)
+        .Anchor.Match(
             d => d.Should().Be(date),
             s => s.Should().BeNull()
         )
