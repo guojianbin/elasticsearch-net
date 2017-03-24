@@ -10,7 +10,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 {
 	public class OnStaleClusterState
 	{
-		/**== Sniffing periodically
+		/**=== Sniffing periodically
 		*
 		* Connection pools that return true for `SupportsReseeding` can be configured to sniff periodically.
 		* In addition to sniffing on startup and sniffing on failures, sniffing periodically can benefit scenarios where
@@ -61,24 +61,23 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 				}
 			);
 			/** Now let's forward the clock 31 minutes, our sniff lifespan should now go state
-			* and the first call should do a sniff which discovered we scaled up to a 100 nodes!
+			* and the first call should do a sniff, which discovered we scaled up to a 100 nodes!
 			*/
 			audit.ChangeTime(d => d.AddMinutes(31));
 			audit = await audit.TraceCalls(
 				new ClientCall {
-					/** a sniff is done first and it prefers the first node master node */
-					{ SniffOnStaleCluster },
+					{ SniffOnStaleCluster }, // <1> a sniff is done first and it prefers the first node master node
 					{ SniffSuccess, 9202 },
 					{ HealthyResponse, 9201 },
 					{ pool => pool.Nodes.Count.Should().Be(100) }
 				}
 			);
 
-			audit.ChangeTime(d => d.AddMinutes(31));
+            audit.ChangeTime(d => d.AddMinutes(31));
 			audit = await audit.TraceCalls(
 				new ClientCall {
-					/** a sniff is done first and it prefers the first node master node */
-					{ SniffOnStaleCluster },
+					
+					{ SniffOnStaleCluster }, // <2> a sniff is done first and it prefers the first node master node
 					{ SniffSuccess, 9202 },
 					{ HealthyResponse, 9200 },
 					{ pool => pool.Nodes.Count.Should().Be(10) }

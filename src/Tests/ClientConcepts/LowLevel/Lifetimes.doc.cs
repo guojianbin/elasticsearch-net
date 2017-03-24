@@ -13,7 +13,7 @@ namespace Tests.ClientConcepts.LowLevel
 {
 	public class Lifetimes
 	{
-		/**=== Lifetimes
+		/**== Lifetimes
 		*
 		* If you are using an IOC/Dependency Injection container, it's always useful to know the best practices around 
         * the lifetime of your objects.
@@ -89,7 +89,7 @@ namespace Tests.ClientConcepts.LowLevel
 			var connection = new AConnection();
 			var connectionPool = new AConnectionPool(new Uri("http://localhost:9200"));
 			var settings = new AConnectionSettings(connectionPool, connection);
-			using (settings) { }
+			using (settings) { } // <1> force the settings to be disposed
 			settings.IsDisposed.Should().BeTrue();
 			connectionPool.IsDisposed.Should().BeTrue();
 			connection.IsDisposed.Should().BeTrue();

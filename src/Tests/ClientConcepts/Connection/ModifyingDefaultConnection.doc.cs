@@ -92,21 +92,21 @@ namespace Tests.ClientConcepts.Connection
             };
 
             var responseBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
-            var connection = new InMemoryConnection(responseBytes, 200);
+            var connection = new InMemoryConnection(responseBytes, 200); // <1> `InMemoryConnection` is configured to **always** return `responseBytes` along with a 200 HTTP status code
             var connectionPool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
             var settings = new ConnectionSettings(connectionPool, connection);
             var client = new ElasticClient(settings);
 
             var searchResponse = client.Search<Project>(s => s.MatchAll());
 
-            // assert expected response
+            /**
+             * We can now assert that the `searchResponse` is valid and contains documents deserialized
+             * from our fixed `InMemoryConnection` response
+             */
             searchResponse.IsValid.Should().BeTrue();
             searchResponse.Documents.Count.Should().Be(25);
         }
         /**
-        * `InMemoryConnection` is configured to _always_ return `responseBytes` along with a 200 HTTP status code. A
-        * couple assertions are made to assert that the response is valid and contains 25 documents.
-        * 
         * ==== Changing HttpConnection
         *
         * There may be a need to change how the default `HttpConnection` works, for example, to add an X509 certificate
@@ -147,7 +147,8 @@ namespace Tests.ClientConcepts.Connection
         * NOTE: The client reuses TCP connections so changing the connection limit to something really high 
         * should only be done with careful consideration and testing. It's demonstrated here only as an example.
         * 
-        * ===== X509 Certificates
+        * [[x509-certificates]]
+        * ===== X.509 Certificates
         * 
         * It is possible to add X509 certificates to each request from the client by overriding the `CreateHttpWebRequest`
         * method in an `IConnection` implementation deriving from `HttpConnection`

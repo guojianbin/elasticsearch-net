@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 {
-	/**== Request Pipeline
+	/**=== Request Pipeline
 	* Every request is executed in the context of a `RequestPipeline` when using the
 	* default <<transports,ITransport>> implementation.
 	*/
@@ -68,8 +68,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			return new FixedPipelineFactory(settings, dateTimeProvider ?? DateTimeProvider.Default).Pipeline;
 		}
 
-		/**=== Pipeline Behavior
-		*==== Sniffing on First usage
+		/**
+		*==== Sniffing on first usage
 		*/
 		[U]
 		public void FirstUsageCheck()
@@ -78,21 +78,24 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			var staticPipeline = CreatePipeline(uris => new StaticConnectionPool(uris));
 			var sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris));
 
-			/** Here we have setup three pipelines using Three different connection pools. Let's see how they behave
+			/** Here we have setup three pipelines using three different connection pools. Let's see how they behave
 			* on first usage
 			*/
 			singleNodePipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 			staticPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 			sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeTrue();
 
-			/** We can see that only the cluster that supports reseeding will opt in to `FirstPoolUsageNeedsSniffing()`;
-			* You can however disable reseeding/sniffing on ConnectionSettings
+			/** Only the <<sniffing-connection-pool, Sniffing connection pool>> supports sniffing on first usage
+             * as it supports reseeding. Sniffing on startup however can be disabled on `ConnectionSettings`
 			*/
-			sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s => s.SniffOnStartup(false)); //<1> Disable sniffing on startup
+			sniffingPipeline = CreatePipeline(
+                uris => new SniffingConnectionPool(uris), 
+                s => s.SniffOnStartup(false)); //<1> Disable sniffing on startup
+
 			sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 		}
 
-		/**==== Wait for first Sniff
+		/**==== Wait for first sniff
 		 *
 		 * All threads wait for the sniff on startup to finish, waiting the request timeout period. A
 		 * https://msdn.microsoft.com/en-us/library/system.threading.semaphoreslim(v=vs.110).aspx[`SemaphoreSlim`]
@@ -101,6 +104,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		[U]
 		public void FirstUsageCheckConcurrentThreads()
 		{
+            //hide
 			var response = new
 			{
 				cluster_name = "elasticsearch",
@@ -128,33 +132,46 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 				}
 			};
 
+            //hide
 			var responseBody = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
 
-			var inMemoryConnection = new WaitingInMemoryConnection(
+            /** We can demonstrate this with the following example. First, let's configure
+             * a custom `IConnection` implementation that's simply going to return a known
+             * 200 response after one second
+             */
+            var inMemoryConnection = new WaitingInMemoryConnection(
 				TimeSpan.FromSeconds(1),
 				responseBody);
 
-			var sniffingPipeline = CreatePipeline(
+            /**
+             * Next, we create a <<sniffing-connection-pool, Sniffing connection pool>> using our
+             * custom connection and a timeout for how long a request can take before the client
+             * times out
+             */
+            var sniffingPipeline = CreatePipeline(
 				uris => new SniffingConnectionPool(uris),
 				connection: inMemoryConnection,
 				settingsSelector: s => s.RequestTimeout(TimeSpan.FromSeconds(2)));
 
-			var semaphoreSlim = new SemaphoreSlim(1, 1);
-
-			/**
-			 * start three tasks that will initiate a sniff on startup. The first task will successfully
-			 * sniff on startup with the remaining two waiting tasks exiting without exception and releasing
-			 * the `SemaphoreSlim`.
+            /**Now, with a `SemaphoreSlim` in place that allows only one thread to enter at a time,
+			 * start three tasks that will initiate a sniff on startup. 
+             * 
+             * The first task will successfully sniff on startup with the remaining two waiting 
+             * tasks exiting without exception and releasing the `SemaphoreSlim`.
 			 */
-			var task1 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
+            var semaphoreSlim = new SemaphoreSlim(1, 1);
+
+            var task1 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 			var task2 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 			var task3 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 
 			var exception = Record.Exception(() => Task.WaitAll(task1, task2, task3));
-			exception.Should().BeNull();
+
+            exception.Should().BeNull();
+		    semaphoreSlim.CurrentCount.Should().Be(1);
 		}
 
-		/**==== Sniffing on Connection Failure */
+		/**==== Sniff on connection failure */
 		[U]
 		public void SniffsOnConnectionFailure()
 		{
@@ -173,7 +190,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			sniffingPipeline.SniffsOnConnectionFailure.Should().BeFalse();
 		}
 
-		/**==== Sniffing on Stale cluster  */
+		/**==== Sniff on stale cluster  */
 		[U]
 		public void SniffsOnStaleCluster()
 		{
@@ -207,9 +224,11 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		}
 
 
-		/**=== Retrying requests
+		/**
+        * ==== Retrying
+        * 
 		* A request pipeline also checks whether the overall time across multiple retries exceeds the request timeout.
-		* See the <<max-retries, max retry documentation>> for more details, here we assert that our request pipeline exposes this propertly
+		* See <<maximum-retries, Maximum retries>> for more details, here we assert that our request pipeline exposes this propertly
 		*/
 		[U]
 		public void IsTakingTooLong()

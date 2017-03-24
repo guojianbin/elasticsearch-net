@@ -1,0 +1,27 @@
+:ref_current: https://www.elastic.co/guide/en/elasticsearch/reference/5.2
+
+:github: https://github.com/elastic/elasticsearch-net
+
+:nuget: https://www.nuget.org/packages
+
+////
+IMPORTANT NOTE
+==============
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/Search/WritingQueries.doc.cs. 
+If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
+please modify the original csharp file found at the link and submit the PR with that change. Thanks!
+////
+
+[[writing-queries]]
+=== Writing queries
+
+* Single search
+
+* Multisearch
+
+* Paging
+
+* Scrolling
+
+* SearchAfter
+

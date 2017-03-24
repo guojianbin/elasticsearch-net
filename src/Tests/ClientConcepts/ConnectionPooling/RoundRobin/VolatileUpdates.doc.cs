@@ -10,7 +10,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.RoundRobin
 {
 	public class VolatileUpdates
 	{
-		/**== Volatile Updates */
+		/**=== Volatile Updates */
 		protected int NumberOfNodes = 10;
 		private readonly Random Random = new Random();
 

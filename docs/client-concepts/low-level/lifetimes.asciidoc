@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[lifetimes]]
-=== Lifetimes
+== Lifetimes
 
 If you are using an IOC/Dependency Injection container, it's always useful to know the best practices around 
 the lifetime of your objects.
@@ -92,9 +92,10 @@ Disposing an instance of `ConnectionSettings` will also dispose the `IConnection
 var connection = new AConnection();
 var connectionPool = new AConnectionPool(new Uri("http://localhost:9200"));
 var settings = new AConnectionSettings(connectionPool, connection);
-using (settings) { }
+using (settings) { } <1>
 settings.IsDisposed.Should().BeTrue();
 connectionPool.IsDisposed.Should().BeTrue();
 connection.IsDisposed.Should().BeTrue();
 ----
+<1> force the settings to be disposed
 

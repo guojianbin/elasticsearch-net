@@ -9,6 +9,8 @@ include::low-level.asciidoc[]
 
 include::high-level.asciidoc[]
 
+include::conventions.asciidoc[]
+
 include::search.asciidoc[]
 
 include::query-dsl.asciidoc[]

@@ -14,8 +14,8 @@ If you wish to submit a PR for any spelling mistakes, typos or grammatical error
 please modify the original csharp file found at the link and submit the PR with that change. Thanks!
 ////
 
-[[disabling-sniffing-and-pinging-on-a-request-basis]]
-== Disabling sniffing and pinging on a request basis
+[[disable-sniffing-and-pinging-on-a-request-basis]]
+=== Disable sniffing and pinging on a request basis
 
 Even if you are using a sniffing connection pool thats set up to sniff on start/failure
 and pinging enabled, you can opt out of this behaviour on a _per request_ basis.
@@ -33,18 +33,25 @@ var audit = new Auditor(() => Framework.Cluster
     .SniffingConnectionPool()
     .Settings(s => s.SniffOnStartup()) <1>
 );
+----
+<1> sniff on startup
 
+Now We disable sniffing on the request so even though it's our first call, 
+we do not want to sniff on startup. 
 
-audit = await audit.TraceCalls(
-    /** Now We disable sniffing on the request so even though it's our first call, we do not want to sniff on startup */
+Instead, the sniff on startup is deferred to the second call into the cluster that
+does not disable sniffing on a per request basis.
+
+And after that no sniff on startup will happen again          
+
+[source,csharp]
+----
+audit = await audit.TraceCalls(                
     new ClientCall(r => r.DisableSniffing()) <1>
     {
         { PingSuccess, 9200 }, <2>
         { HealthyResponse, 9200 }
     },
-    /** Instead, the sniff on startup is deferred to the second call into the cluster that
-    * does not disable sniffing on a per request basis
-    */
     new ClientCall()
     {
         { SniffOnStartup }, <3>
@@ -52,21 +59,20 @@ audit = await audit.TraceCalls(
         { PingSuccess, 9200 },
         { HealthyResponse, 9200 }
     },
-    /** And after that no sniff on startup will happen again */
     new ClientCall()
     {
-        { PingSuccess, 9201 },
+        { PingSuccess, 9201 }, <4>
         { HealthyResponse, 9201 }
     }
 );
 ----
-<1> sniff on startup
-
 <1> disable sniffing
 
 <2> first call is a successful ping
 
 <3> sniff on startup call happens here, on the second call
+
+<4> No sniff on startup again
 
 Now, let's disable pinging on the request 
 

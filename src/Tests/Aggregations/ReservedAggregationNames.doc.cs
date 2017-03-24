@@ -12,7 +12,7 @@ using static Nest.Infer;
 namespace Tests.Aggregations
 {
 	/**
-	*== Reserved Aggregation Names
+	*=== Reserved aggregation names
 	* NEST uses a heuristics based parser to parse the aggregations back in to typed responses.
 	* Because of this, some of the key properties we use to make decisions about parsing are not allowed as key names
 	* for aggregations in a request.
@@ -23,8 +23,15 @@ namespace Tests.Aggregations
 	*/
 	public class ReservedAggregationNames : DocumentationTestBase
 	{
-		public string[] Reserved => new []{"score", "value_as_string", "keys", "max_score"}; //<1> Reserved Aggregation key names
+		public string[] Reserved => new []
+		{
+		    "score",
+            "value_as_string",
+            "keys",
+            "max_score"
+		};
 
+        //hide
 		private TermsAggregation Terms(string name) => new TermsAggregation(name) {Field = "x"};
 
 		//hide

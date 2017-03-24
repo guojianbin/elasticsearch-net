@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[reserved-aggregation-names]]
-== Reserved Aggregation Names
+=== Reserved aggregation names
 
 NEST uses a heuristics based parser to parse the aggregations back in to typed responses
 Therefor some of the key properties we use to make a decision on are not allowed as key names
@@ -25,7 +25,12 @@ fashion at which point this limitation will be lifted
 
 [source,csharp]
 ----
-new []{"score", "value_as_string", "keys", "max_score"}
-new TermsAggregation(name) {Field = "x"}
+new []
+{
+    "score",
+    "value_as_string",
+    "keys",
+    "max_score"
+}
 ----
 

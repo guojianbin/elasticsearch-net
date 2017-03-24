@@ -51,7 +51,7 @@ As well as a number of types for working with
 
 And features such as
 
-* <<auto-map, Auto Mapping C# types>>
+* <<mapping, Mapping CLR POCO types to JSON documents>>
 
 * <<covariant-search-results, Covariant Search Results>>
 
@@ -69,6 +69,8 @@ include::client-concepts/connection-pooling/building-blocks/connection-pooling.a
 include::client-concepts/connection/configuring-ssl.asciidoc[]
 
 include::client-concepts/connection/modifying-default-connection.asciidoc[]
+
+include::{building-blocks}/date-time-providers.asciidoc[]
 
 [[serialization]]
 == Serialization
@@ -146,7 +148,33 @@ include::{output-dir}/analysis/writing-analyzers.asciidoc[]
 
 include::{output-dir}/analysis/testing-analyzers.asciidoc[]
 
-[[conventions]]
+[[search]]
+== Search
+
+* <<writing-queries, Writing queries>>
+
+include::search/writing-queries.asciidoc[]
+
+include::query-dsl/bool-dsl/bool-dsl.asciidoc[]
+
+include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
+
+[[aggregations]]
+== Aggregations
+
+The aggregations framework helps provide aggregated data based on a search query. 
+It is based on simple building blocks called aggregations, that can be composed in order to build 
+complex summaries of the data.
+
+* <<writing-aggregations, Writing aggregations>>
+
+* <<reserved-aggregation-names, Reserved aggregation names>>
+
+include::aggregations/writing-aggregations.asciidoc[]
+
+include::aggregations/reserved-aggregation-names.asciidoc[]
+
+[[nest-conventions]]
 == Conventions
 
 There are a number of conventions that NEST uses for inference of
@@ -183,8 +211,6 @@ include::client-concepts/high-level/inference/indices-paths.asciidoc[]
 
 include::client-concepts/high-level/inference/property-inference.asciidoc[]
 
-include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
-
 [[common-types]]
 == Common Types
 
@@ -193,35 +219,4 @@ include::common-options/time-unit/time-units.asciidoc[]
 include::common-options/distance-unit/distance-units.asciidoc[]
 
 include::common-options/date-math/date-math-expressions.asciidoc[]
-
-[[thrown-exceptions]]
-== Exceptions
-
-There are three categories of exceptions that may be thrown:
-
-`ElasticsearchClientException`::
-
-These are known exceptions, either an exception that occurred in the request pipeline
-(such as max retries or timeout reached, bad authentication, etc...) or Elasticsearch itself returned an error (could
-not parse the request, bad query, missing field, etc...). If it is an Elasticsearch error, the `ServerError` property
-on the response will contain the the actual error that was returned.  The inner exception will always contain the
-root causing exception.
-
-`UnexpectedElasticsearchClientException`::
-
-These are unknown exceptions, for instance a response from Elasticsearch not
-properly deserialized.  These are sometimes bugs and {github}/issues[should be reported]. This exception also inherits from `ElasticsearchClientException`
-so an additional catch block isn't necessary, but can be helpful in distinguishing between the two.
-
-Development time exceptions::
-
-These are CLR exceptions like `ArgumentException`, `ArgumentOutOfRangeException`, etc.
-that are thrown when an API in the client is misused.  The `.ThrowExceptions()` setting has no bearing on these as
-they will always be thrown, and also should not be handled by a consumer.
-
-:includes-from-dirs: client-concepts/connection-pooling/exceptions
-
-include::client-concepts/connection-pooling/exceptions/unexpected-exceptions.asciidoc[]
-
-include::client-concepts/connection-pooling/exceptions/unrecoverable-exceptions.asciidoc[]
 

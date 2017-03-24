@@ -9,7 +9,8 @@ using static Nest.Infer;
 
 namespace Tests.QueryDsl.BoolDsl
 {
-	/**== Bool Queries
+	/**
+    * === Bool queries
 	*/
 	public class BoolDslTests : OperatorUsageBase
 	{
@@ -33,12 +34,11 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 		/**Now, imagine multiple nested bools; you'll realise that this quickly becomes an exercise in _hadouken indenting_
 		*
-		*[[indent]]
 		*.hadouken indenting
 		*image::hadouken-indentation.jpg[hadouken indenting]
 		*
 		*[float]
-		*=== Operator Overloading
+		*=== Operator overloading
 		*
 		*For this reason, NEST introduces **operator overloading** so complex bool queries become easier to write.
 		*The previous example now becomes the following with the fluent API
@@ -116,7 +116,7 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
 		/**[float]
-		* === Combining/Merging bool queries
+		* === Combining bool queries
 		*
 		* When combining multiple queries some or all possibly marked as `must_not` or `filter`, NEST still combines to a single bool query
 		*
@@ -258,7 +258,7 @@ namespace Tests.QueryDsl.BoolDsl
 		*
 		* There is another subtle situation where NEST will not blindly merge 2 bool queries with only should clauses. Consider the following
 		*
-		* [source,shell]
+		* [source,sh]
 		* ----
 		* bool(should=term1, term2, term3, term4, minimum_should_match=2) || term5 || term6
 		* ----

@@ -1,4 +1,4 @@
-﻿[[aggregations]]
+﻿[[reference-aggregations]]
 = Aggregations
 
 [partintro]
@@ -10,9 +10,9 @@ exposes all of the available Aggregation types
 - <<bucket-aggregations, Bucket Aggregations>>
 - <<pipeline-aggregations, Pipeline Aggregations>>
 - <<matrix-aggregations, Matrix Aggregations>>
---
 
-include::aggregations/writing-aggregations.asciidoc[]
+See the documentation on <<writing-aggregations, Writing aggregations>> for how to use them in NEST.
+--
 
 [[metric-aggregations]]
 == Metric Aggregations
@@ -35,6 +35,14 @@ current context "falls" into it. In other words, the buckets effectively define 
 In addition to the buckets themselves, the bucket aggregations also compute and return the number of documents that "fell into" each bucket.
 
 :anchor-list: aggregations/bucket
+
+[NOTE]
+--
+Bucketing aggregations can have sub-aggregations (bucketing or metric). The sub-aggregations will be computed 
+for the buckets which their parent aggregation generates. There is no hard limit on the level/depth 
+of nested aggregations (one can nest an aggregation under a "parent" aggregation, which is itself a 
+sub-aggregation of another higher-level aggregation).
+--
 
 See the Elasticsearch documentation on {ref_current}/search-aggregations-bucket.html[Bucket aggregations] for more details.
 

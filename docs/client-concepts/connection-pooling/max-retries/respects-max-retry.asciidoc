@@ -14,8 +14,8 @@ If you wish to submit a PR for any spelling mistakes, typos or grammatical error
 please modify the original csharp file found at the link and submit the PR with that change. Thanks!
 ////
 
-[[max-retries]]
-== Max Retries
+[[maximum-retries]]
+=== Maximum retries
 
 By default, NEST will retry as many times as there are nodes in the cluster that the client knows about. 
 Retries still respects the request timeout however, 

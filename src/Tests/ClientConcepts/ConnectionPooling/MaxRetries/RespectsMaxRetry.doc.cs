@@ -8,8 +8,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.MaxRetries
 {
 	public class RespectsMaxRetry
 	{
-		/**[[max-retries]]
-		*== Max Retries
+		/**[[maximum-retries]]
+		*=== Maximum retries
 		* By default, NEST will retry as many times as there are nodes in the cluster that the client knows about. 
 		* Retries still respects the request timeout however, 
 		* meaning if you have a 100 node cluster and a request timeout of 20 seconds, 

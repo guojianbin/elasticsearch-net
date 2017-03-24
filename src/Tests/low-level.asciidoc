@@ -21,8 +21,6 @@ include::client-concepts/low-level/getting-started.asciidoc[]
 [[elasticsearch-net-conventions]]
 == Conventions
 
-include::client-concepts/low-level/lifetimes.asciidoc[]
-
 include::client-concepts/low-level/post-data.asciidoc[]
 
 

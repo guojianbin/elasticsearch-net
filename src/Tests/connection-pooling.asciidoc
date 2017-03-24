@@ -6,7 +6,6 @@
 :failover: {output-dir}/failover
 :max-retries: {output-dir}/max-retries
 :request-overrides: {output-dir}/request-overrides
-:exceptions: {output-dir}/exceptions
 
 include::{building-blocks}/request-pipelines.asciidoc[]
 
@@ -47,10 +46,6 @@ include::{request-overrides}/respects-max-retry-overrides.asciidoc[]
 include::{request-overrides}/respects-allowed-status-code.asciidoc[]
 
 include::{request-overrides}/respects-force-node.asciidoc[]
-
-include::{exceptions}/unexpected-exceptions.asciidoc[]
-
-include::{exceptions}/unrecoverable-exceptions.asciidoc[]
 
 
 

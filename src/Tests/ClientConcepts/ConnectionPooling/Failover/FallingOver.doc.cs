@@ -6,8 +6,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.FailOver
 {
 	public class FallingOver
 	{
-		/**[[falling-over]]
-		* == Fail over
+		/**[[fail-over]]
+		* === Fail over
 		* When using connection pooling and the pool has sufficient nodes a request will be retried if
 		* the call to a node throws an exception or returns a 502 or 503
 		*/
@@ -32,7 +32,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.FailOver
 		}
 
 		/**[[bad-gateway]]
-		*=== 502 Bad Gateway
+		*==== 502 Bad Gateway
 		*
 		* Will be treated as an error that requires retrying
 		*/
@@ -56,7 +56,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.FailOver
 		}
 
 		/**[[service-unavailable]]
-		*=== 503 Service Unavailable
+		*==== 503 Service Unavailable
 		*
 		* Will be treated as an error that requires retrying
 		*/
@@ -80,7 +80,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.FailOver
 		}
 
 		/**[[gateway-timeout]]
-		*=== 504 Gateway Timeout
+		*==== 504 Gateway Timeout
 		*
 		* Will be treated as an error that requires retrying
 		*/
@@ -104,10 +104,10 @@ namespace Tests.ClientConcepts.ConnectionPooling.FailOver
 		}
 
 		/**
-		* If a call returns a valid http status code other than 502 or 503, the request won't be retried.
+		* If a call returns a __valid__ HTTP status code other than 502 or 503, the request won't be retried.
 		*
-		* IMPORTANT: Different requests may have different status codes that are deemed valid. For example,
-		* a *404 Not Found* response is a valid status code for an index exists request
+		* IMPORTANT: Different requests may have different status codes that are deemed __valid__. For example,
+		* a *404 Not Found* response is a __valid__ status code for an index exists request
 		*/
 		[U]
 		public async Task HttpTeapotDoesNotFallOver()

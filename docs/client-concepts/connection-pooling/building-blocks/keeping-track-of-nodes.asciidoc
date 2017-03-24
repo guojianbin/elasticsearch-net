@@ -15,9 +15,9 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[keeping-track-of-nodes]]
-== Keeping track of nodes
+=== Keeping track of nodes
 
-=== Creating a Node
+==== Creating a Node
 
 A `Node` can be instantiated by passing it a `Uri`
 
@@ -43,7 +43,7 @@ Is resurrected is true on first usage, hints to the transport that a ping might 
 node.IsResurrected.Should().BeTrue();
 ----
 
-=== Building a Node path
+==== Building a Node path
 
 passing a node with a path should be preserved.
 Sometimes an Elasticsearch node lives behind a proxy
@@ -72,7 +72,7 @@ combinedPath = node.CreatePath("index/type/_search");
 combinedPath.AbsolutePath.Should().Be("/elasticsearch/index/type/_search");
 ----
 
-=== Marking Nodes 
+==== Marking Nodes 
 
 [source,csharp]
 ----
@@ -106,7 +106,7 @@ node.DeadUntil.Should().Be(default(DateTime));
 node.IsAlive.Should().BeTrue();
 ----
 
-=== Node Equality
+==== Node Equality
 
 Nodes are considered equal if they have the same endpoint, no matter what other metadata is associated 
 

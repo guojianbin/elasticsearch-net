@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[request-pipeline]]
-== Request Pipeline
+=== Request Pipeline
 
 Every request is executed in the context of a `RequestPipeline` when using the
 default <<transports,ITransport>> implementation.
@@ -73,9 +73,7 @@ settings = settingsSelector?.Invoke(settings) ?? settings;
 return new FixedPipelineFactory(settings, dateTimeProvider ?? DateTimeProvider.Default).Pipeline;
 ----
 
-=== Pipeline Behavior
-
-==== Sniffing on First usage
+==== Sniffing on first usage
 
 [source,csharp]
 ----
@@ -84,7 +82,7 @@ var staticPipeline = CreatePipeline(uris => new StaticConnectionPool(uris));
 var sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris));
 ----
 
-Here we have setup three pipelines using Three different connection pools. Let's see how they behave
+Here we have setup three pipelines using three different connection pools. Let's see how they behave
 on first usage
 
 [source,csharp]
@@ -94,79 +92,68 @@ staticPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeTrue();
 ----
 
-We can see that only the cluster that supports reseeding will opt in to `FirstPoolUsageNeedsSniffing()`;
-You can however disable reseeding/sniffing on ConnectionSettings
+Only the <<sniffing-connection-pool, Sniffing connection pool>> supports sniffing on first usage
+as it supports reseeding. Sniffing on startup however can be disabled on `ConnectionSettings`
 
 [source,csharp]
 ----
-sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s => s.SniffOnStartup(false)); <1>
+sniffingPipeline = CreatePipeline(
+    uris => new SniffingConnectionPool(uris), 
+    s => s.SniffOnStartup(false)); <1>
+
 sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 ----
 <1> Disable sniffing on startup
 
-==== Wait for first Sniff
+==== Wait for first sniff
 
 All threads wait for the sniff on startup to finish, waiting the request timeout period. A https://msdn.microsoft.com/en-us/library/system.threading.semaphoreslim(v=vs.110).aspx[`SemaphoreSlim`]
 is used to block threads until the sniff finishes and waiting threads release the `SemaphoreSlim` appropriately.
 
+We can demonstrate this with the following example. First, let's configure
+a custom `IConnection` implementation that's simply going to return a known
+200 response after one second
+
 [source,csharp]
 ----
-var response = new
-{
-    cluster_name = "elasticsearch",
-    nodes = new
-    {
-        node1 = new
-        {
-            name = "Node Name 1",
-            transport_address = "127.0.0.1:9300",
-            host = "127.0.0.1",
-            ip = "127.0.01",
-            version = "5.0.0-alpha3",
-            build_hash = "e455fd0",
-            roles = new List<string>(),
-            http = new
-            {
-                bound_address = new[] { "127.0.0.1:9200" }
-            },
-            settings = new Dictionary<string, object>
-            {
-                { "cluster.name", "elasticsearch" },
-                { "node.name", "Node Name 1" }
-            }
-        }
-    }
-};
-
-var responseBody = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
-
 var inMemoryConnection = new WaitingInMemoryConnection(
     TimeSpan.FromSeconds(1),
     responseBody);
+----
 
+Next, we create a <<sniffing-connection-pool, Sniffing connection pool>> using our
+custom connection and a timeout for how long a request can take before the client
+times out
+
+[source,csharp]
+----
 var sniffingPipeline = CreatePipeline(
     uris => new SniffingConnectionPool(uris),
     connection: inMemoryConnection,
     settingsSelector: s => s.RequestTimeout(TimeSpan.FromSeconds(2)));
-
-var semaphoreSlim = new SemaphoreSlim(1, 1);
 ----
 
-start three tasks that will initiate a sniff on startup. The first task will successfully
-sniff on startup with the remaining two waiting tasks exiting without exception and releasing
-the `SemaphoreSlim`.
+Now, with a `SemaphoreSlim` in place that allows only one thread to enter at a time,
+start three tasks that will initiate a sniff on startup. 
+
+The first task will successfully sniff on startup with the remaining two waiting 
+tasks exiting without exception and releasing the `SemaphoreSlim`.
 
 [source,csharp]
 ----
+var semaphoreSlim = new SemaphoreSlim(1, 1);
+
 var task1 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 var task2 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 var task3 = Task.Run(() => sniffingPipeline.FirstPoolUsage(semaphoreSlim));
 
 var exception = Record.Exception(() => Task.WaitAll(task1, task2, task3));
+
 exception.Should().BeNull();
+semaphoreSlim.CurrentCount.Should().Be(1);
 ----
 
-==== Sniffing on Connection Failure 
+==== Sniff on connection failure 
 
 [source,csharp]
 ----
@@ -188,7 +175,7 @@ sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s =>
 sniffingPipeline.SniffsOnConnectionFailure.Should().BeFalse();
 ----
 
-==== Sniffing on Stale cluster  
+==== Sniff on stale cluster  
 
 [source,csharp]
 ----
@@ -233,10 +220,10 @@ the sniffing connection pool supports reseeding so the pipeline will signal the 
 sniffingPipeline.StaleClusterState.Should().BeTrue();
 ----
 
-=== Retrying requests
+==== Retrying
 
 A request pipeline also checks whether the overall time across multiple retries exceeds the request timeout.
-See the <<max-retries, max retry documentation>> for more details, here we assert that our request pipeline exposes this propertly
+See <<maximum-retries, Maximum retries>> for more details, here we assert that our request pipeline exposes this propertly
 
 [source,csharp]
 ----
