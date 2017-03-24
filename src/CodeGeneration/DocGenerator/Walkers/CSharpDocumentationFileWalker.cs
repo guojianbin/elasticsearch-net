@@ -127,10 +127,10 @@ namespace DocGenerator.Walkers
                 ? node.GetLeadingTrivia()
                 : default(SyntaxTriviaList);
 
-            if (node.ShouldBeHidden(leadingTrivia)) return;
-
             // multiline comment on method
             AddMultiLineDocumentationComment(leadingTrivia);
+
+            if (node.ShouldBeHidden(leadingTrivia)) return;
 
             // allow derived types to determine if this method should be json serialized
             if (SerializeMethodDeclarationToJson(node)) return;
@@ -218,9 +218,6 @@ namespace DocGenerator.Walkers
                 {
                     var trivia = blockChildNode.GetLeadingTrivia();
 
-                    if (blockChildNode.ShouldBeHidden(trivia))
-                        continue;
-
                     // inside method multiline comment
                     AddMultiLineDocumentationComment(trivia, () =>
                     {
@@ -231,6 +228,9 @@ namespace DocGenerator.Walkers
                             codeBlock = null;
                         }
                     });
+
+                    if (blockChildNode.ShouldBeHidden(trivia))
+                        continue;
 
                     if (blockChildNode.ShouldBeConvertedToJson(trivia))
                     {

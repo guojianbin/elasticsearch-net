@@ -239,6 +239,7 @@
     <Compile Include="ClientConcepts\Connection\ModifyingDefaultConnection.doc.cs" />
     <Compile Include="ClientConcepts\DebuggerDisplayTests.cs" />
     <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
+    <Compile Include="ClientConcepts\HighLevel\Analysis\TestingAnalyzers.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Analysis\WritingAnalyzers.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
     <Compile Include="ClientConcepts\HighLevel\GettingStarted.doc.cs" />

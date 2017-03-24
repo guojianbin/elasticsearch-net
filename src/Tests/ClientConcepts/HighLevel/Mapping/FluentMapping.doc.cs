@@ -25,7 +25,6 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         * - `Company`, which has a name and a collection of Employees
         * - `Employee` which has various properties of different types and has itself a collection of `Employee` types.
 		*/
-
         public class Company
         {
             public string Name { get; set; }
@@ -83,7 +82,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
              * 
              * The json mapping for this example looks like
 			 */
-            // json
+            //json
             var expected = new
             {
                 mappings = new
@@ -124,18 +123,18 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
             Expect(expected).WhenSerializing((ICreateIndexRequest) descriptor);
         }
 
-        /** Manual mapping in this way is great and useful but can become can become verbose and unwieldy for 
-        * large POCOs. The majority of the time you simply want to map* all* the properties of a POCO in a single go
-        * without having to specify the mapping for each, particularly when there is a known mapping
-        * from CLR types to Elasticsearch types.
+        /** Manual mapping in this way is powerful but can become verbose and unwieldy for 
+        * large POCOs. The majority of the time you simply want to map *all* the properties of a POCO in a single go
+        * without having to specify the mapping for each property, 
+        * particularly when there is <<auto-map,inferred mapping>> from CLR types to Elasticsearch types.
         *
-        * This is where the fluent mapping in conjunction with automapping comes in.
+        * This is where the fluent mapping in conjunction with auto mapping comes in.
         * 
         * [[auto-map-with-overrides]]
         * ==== Auto mapping with fluent overrides
         * 
         * In most cases, you'll want to map more than just the vanilla datatypes and also provide
-        * various options for your properties such as analyzer to use, whether to enable `doc_values`, etc.
+        * various options for your properties, such as the analyzer to use, whether to enable `doc_values`, etc.
         * 
         * In this case, it's possible to use `.AutoMap()` in conjunction with explicitly mapped properties.
         */
@@ -144,7 +143,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         {
             /**
 			* Here we are using `.AutoMap()` to automatically infer the mapping of our `Company` type from the
-            * CLR property types but then we're overriding the `Employees` property to make it a 
+            * CLR property types, but then we're overriding the `Employees` property to make it a 
             * {ref_current}/nested.html[nested datatype], since by default `.AutoMap()` will infer the 
             * `List<Employee>` property as an `object` datatype
 			*/
@@ -160,9 +159,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
                     )
                 );
 
-            /**
-             */
-            // json
+            //json
             var expected = new
             {
                 mappings = new
@@ -196,7 +193,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
             Expect(expected).WhenSerializing((ICreateIndexRequest)descriptor);
 
             /**
-			 * `.AutoMap()` **__is idempotent__** therefore calling it _before_ or _after_ 
+			 * `.AutoMap()` __**is idempotent**__ therefore calling it _before_ or _after_ 
              * manually mapped properties will still yield the same result. The next example
              * generates the same mapping as the previous
 			 */
@@ -217,8 +214,9 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         }
 
         /**
-         * Just as we were able to override the inferred properties in the previous example, fluent mapping
-         * also take precedence over <<attribute-mapping, Attribute Mapping>>. We'll demonstrate with an example.
+         * Just as we were able to override the inferred properties from auto mapping in the previous example, 
+         * fluent mapping also takes precedence over <<attribute-mapping, Attribute Mapping>>. 
+         * In this way, fluent, attribute and auto mapping can be combined. We'll demonstrate with an example.
          * 
          * Consider the following two POCOS
          */
@@ -260,7 +258,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 
         /**
          * Now when mapping, `AutoMap()` is called to infer the mapping from the POCO property types and
-         * attributes, and inferred mappings are overridden with fluent mapping.
+         * attributes, and inferred mappings are overridden with fluent mapping
          */
         [U]
         public void OverridingAutoMappedAttributes()
@@ -303,9 +301,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
                     )
                 );
 
-            /**
-             */
-            // json
+            //json
             var expected = new
             {
                 mappings = new
@@ -470,9 +466,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
                     )
                 );
 
-            /**
-             */
-            // json
+            //json
             var expected = new
             {
                 mappings = new

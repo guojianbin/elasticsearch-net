@@ -213,7 +213,9 @@ Our custom `question` analyzer will apply the following analysis to a question b
 . remove stop word tokens
 
 A <<full-text-queries, full text query>> will also apply the same analysis to the query input against the
-question body at search time.
+question body at search time, meaning when someone searches including the input `"C#"`, it will also be
+analyzed and produce the token `"csharp"`, matching a question body that contains `"C#"` (as well as `"csharp"`
+and case invariants), because the search time analysis applied is the same as the index time analysis.
 
 ==== Index and Search time analysis
 

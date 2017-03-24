@@ -90,7 +90,7 @@ include::client-concepts/high-level/serialization/modifying-default-serializer.a
 
 To interact with Elasticsearch using NEST, we need to be able to contol how POCO types in our solution
 map to JSON documents and fields stored within the inverted index in Elasticsearch. This section
-describes all of the different functionality available within NEST that making working with POCOs and Elasticsearch
+describes all of the different functionality available within NEST that makes working with POCOs and Elasticsearch
 a breeze. 
 
 Explicitly mapping documents in Elasticsearch is crucial in providing bespoke search solutions for a given problem 
@@ -101,9 +101,9 @@ To explicitly control mapping, an explicit type mapping can be specified when cr
 index _before_ indexing the first document of that type (because indexing a document without an explicit mapping
 will cause Elasticsearch to infer the mapping).
 
-Here are the ways to control mapping in NEST:
+There are several ways to control mapping in NEST
 
-* <<auto-map, Inferred mapping>>
+* <<auto-map, Auto mapping (inferred from POCO property types)>>
 
 * <<attribute-mapping, Attribute mapping>>
 
@@ -111,7 +111,7 @@ Here are the ways to control mapping in NEST:
 
 * <<visitor-pattern-mapping, through the Visitor Pattern>>
 
-as well as how to control:
+and these can be combined to form an overall mapping approach. In addition, there are also ways to control
 
 * <<ignoring-properties, Ignoring properties>>
 
@@ -136,7 +136,15 @@ _Analysis_ is the process of converting text, like the body of any email, into _
 the inverted index for searching. Analysis is performed by an _analyzer_ which can be either a built-in 
 analyzer or a _custom_ analyzer defined per index.
 
+Take a look at
+
+* <<writing-analyzers, Writing analyzers>>
+
+* <<testing-analyzers, Testing analyzers>>
+
 include::{output-dir}/analysis/writing-analyzers.asciidoc[]
+
+include::{output-dir}/analysis/testing-analyzers.asciidoc[]
 
 [[conventions]]
 == Conventions

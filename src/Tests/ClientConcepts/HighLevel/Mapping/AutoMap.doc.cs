@@ -10,7 +10,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 {
 	/**
 	* [[auto-map]]
-	* === Auto mapping properties
+	* === Auto mapping
 	*
 	* When creating a mapping either when creating an index or through the Put Mapping API,
 	* NEST offers a feature called auto mapping that can automagically infer the correct
@@ -246,11 +246,11 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		 * Observe that NEST has inferred the Elasticsearch types based on the CLR type of our POCO properties.
 		 * In this example,
 		 *
-		 * - Birthday was mapped as a `date`,
-		 * - Hours was mapped as a `long` (`TimeSpan` ticks)
-		 * - IsManager was mapped as a `boolean`,
-		 * - Salary as an `integer`
-		 * - Employees as an `object`
+		 * - Birthday is mapped as a `date`,
+		 * - Hours is mapped as a `long` (``TimeSpan`` ticks)
+		 * - IsManager is mapped as a `boolean`,
+		 * - Salary is mapped as an `integer`
+		 * - Employees is mapped as an `object`
 		 *
 		 * and the remaining string properties as multi field `text` datatypes, each with a `keyword` datatype
          * sub field.
@@ -363,7 +363,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
             //hide
 			Expect(expected).WhenSerializing((ICreateIndexRequest)descriptor);
 
-			/** Now let's specify a maxRecursion of 3 */
+			/** Now let's specify a maxRecursion of `3` */
 			var withMaxRecursionDescriptor = new CreateIndexDescriptor("myindex")
 				.Mappings(ms => ms
 					.Map<A>(m => m.AutoMap(3))

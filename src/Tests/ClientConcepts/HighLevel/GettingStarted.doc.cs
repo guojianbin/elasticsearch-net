@@ -16,8 +16,8 @@ namespace Tests.ClientConcepts.HighLevel
 	 * All requests and responses are exposed through types, making it ideal for getting up and running quickly.
      * 
      * Under the covers, NEST uses the <<elasticsearch-net,Elasticsearch.Net low level client>> to dispatch requests and
-     * responses, using and extending many of the types within Elasticsearch.Net. The low level client itself is still exposed
-     * on the high level client through the `.LowLevel` property.
+     * responses, using and extending many of the types within Elasticsearch.Net. The low level client itself is still 
+     * exposed on the high level client through the `.LowLevel` property.
 	 */
 	public class GettingStarted
 	{
@@ -79,16 +79,15 @@ namespace Tests.ClientConcepts.HighLevel
 		/**[float]
 		 * === Indexing
 		 *
-		 * Once a client had been configured to connect to Elasticsearch, we need to get some data into the cluster to work with.
+		 * Once a client had been configured to connect to Elasticsearch, we need to get some data into the cluster 
+         * to work with.
 		 *
 		 * Imagine we have the following http://en.wikipedia.org/wiki/Plain_Old_CLR_Object[POCO]
 		 */
 		public class Person
 		{
 			public int Id { get; set; }
-
 			public string FirstName { get; set; }
-
 			public string LastName { get; set; }
 		}
 
@@ -303,12 +302,17 @@ namespace Tests.ClientConcepts.HighLevel
 		}
 
 		/**
-		 * In this example, a `match` query to search for people with the first name of "Martijn" is issued as before; this time however,
+		 * In this example, a `match` query to search for people with the first name of "Martijn" is issued as before; 
+         * this time however,
 		 *
-		 * . a size of 0 has been sent as we don't want the first 10 documents that match this query to be returned
-		 * . a `terms` aggregation has been specified to group matching documents into buckets based on last name.
+		 * . a size of `0` is set because we don't want the first 10 documents that match this query to be returned,
+         * we're only interested in the aggregation results
+		 * . a `terms` aggregation is specified to group matching documents into buckets based on last name.
 		 *
-		 * `termsAggregation` can be used to get the count of documents for each bucket, where each bucket will be keyed by last name.
+		 * `termsAggregation` can be used to get the count of documents for each bucket, where each bucket will be 
+         * keyed by last name.
+         * 
+         * See <<writing-aggregations, Writing aggregations>> for more details.
 		 */
 	}
 }
