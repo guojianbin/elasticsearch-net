@@ -1,23 +1,28 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using FluentAssertions;
 using Nest;
 using Tests.Framework;
 using Tests.Framework.MockData;
 using Tests.QueryDsl.BoolDsl.Operators;
 using static Nest.Infer;
+using static Tests.Framework.RoundTripper;
 
 namespace Tests.QueryDsl.BoolDsl
 {
 	/**
-    * === Bool queries
+     * [[bool-queries]]
+    * === Writing bool queries
 	*/
 	public class BoolDslTests : OperatorUsageBase
 	{
-		protected readonly IElasticClient Client = TestClient.GetFixedReturnClient(new { });
+		protected readonly IElasticClient Client = 
+            TestClient.GetFixedReturnClient(new { }, modifySettings: c => c.DisableDirectStreaming());
 
-		/** Writing boolean queries can grow verbose rather quickly when using the query DSL. For example,
-		* take a single {ref_current}/query-dsl-bool-query.html[bool query] with only two clauses
+		/** 
+         * Writing `bool` queries can grow verbose rather quickly when using the query DSL. For example,
+		* take a single {ref_current}/query-dsl-bool-query.html[bool query] with two `should` clauses
 		*/
 		public void VerboseWay()
 		{
@@ -32,7 +37,9 @@ namespace Tests.QueryDsl.BoolDsl
 				)
 			);
 		}
-		/**Now, imagine multiple nested bools; you'll realise that this quickly becomes an exercise in _hadouken indenting_
+        /**
+         * Now, imagine multiple nested `bool` queries; you'll realise that this quickly becomes an exercise 
+         * in __hadouken indenting__
 		*
 		*.hadouken indenting
 		*image::hadouken-indentation.jpg[hadouken indenting]
@@ -40,85 +47,374 @@ namespace Tests.QueryDsl.BoolDsl
 		*[float]
 		*=== Operator overloading
 		*
-		*For this reason, NEST introduces **operator overloading** so complex bool queries become easier to write.
-		*The previous example now becomes the following with the fluent API
+		* For this reason, NEST introduces **operator overloading** so complex `bool` queries become easier to write. 
+        * The overloaded operators are
+        * 
+        * - <<binary-or-operator, Binary `||` operator>>
+        * - <<binary-and-operator, Binary `&&` operator>>
+        * - <<unary-negation-operator, Unary `!` operator>>
+        * - <<unary-plus-operator, Unary `+` operator>>
+        * 
+        * We'll demonstrate each with examples.
+        * 
+        * [[binary-or-operator]]
+        * ==== Binary || operator
+        * 
+        * Using the overloaded binary `||` operator, a `bool` query with `should` clauses can be more succinctly
+        * expressed.
+        * 
+        * The previous example now becomes the following with the Fluent API
 		*/
-		public void UsingOperator()
+        public void UsingOperator()
 		{
-			var searchResults = this.Client.Search<Project>(s => s
-				.Query(q => q.Term(p => p.Name, "x") || q.Term(p => p.Name, "y"))
-			);
-			/** or, using the object initializer syntax */
-			searchResults = this.Client.Search<Project>(new SearchRequest<Project>
-			{
-				Query = new TermQuery { Field = "name", Value= "x" }
-					|| new TermQuery { Field = Field<Project>(p=>p.Name), Value = "y" }
-			});
-		}
+            //hide
+		    var client = this.Client;
 
-		/** A naive implementation of operator overloading would rewrite
+			var firstSearchResponse = client.Search<Project>(s => s
+				.Query(q => q
+                    .Term(p => p.Name, "x") || q
+                    .Term(p => p.Name, "y")
+                )
+			);
+
+            /** and, with the the Object Initializer syntax */
+            var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
+			{
+				Query = new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" } || 
+                        new TermQuery { Field = Field<Project>(p => p.Name), Value = "y" }
+			});
+
+            /**
+             * Both result in the following JSON query DSL
+             */
+             //json
+		    var expected = new
+		    {
+                query = new
+                {
+                    @bool = new
+                    {
+                        should = new object[]
+                        {
+                            new
+                            {
+                                term = new
+                                {
+                                    name = new
+                                    {
+                                        value = "x"
+                                    }
+                                }
+                            },
+                            new
+                            {
+                                term = new
+                                {
+                                    name = new
+                                    {
+                                        value = "y"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+		    };
+
+            //hide
+		    Expect(expected)
+		        .NoRoundTrip()
+		        .WhenSerializing(Encoding.UTF8.GetString(firstSearchResponse.ApiCall.RequestBodyInBytes));
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(secondSearchResponse.ApiCall.RequestBodyInBytes));
+        }
+
+        /**[[binary-and-operator]]
+         * ==== Binary && operator
+         * 
+         * The overloaded binary `&&` operator can be used to combine queries together. When the queries to be combined 
+         * don't have any unary operators applied to them, the resulting query is a `bool` query with `must` clauses
+         */
+        [U]
+        public void MustQueries()
+        {
+            //hide
+            var client = this.Client;
+
+            var firstSearchResponse = client.Search<Project>(s => s
+                .Query(q => q
+                    .Term(p => p.Name, "x") && q
+                    .Term(p => p.Name, "y")
+                )
+            );
+
+            /** and, with the the Object Initializer syntax */
+            var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
+            {
+                Query = new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" } &&
+                        new TermQuery { Field = Field<Project>(p => p.Name), Value = "y" }
+            });
+
+            /**
+             * Both result in the following JSON query DSL
+             */
+            //json
+            var expected = new
+            {
+                query = new
+                {
+                    @bool = new
+                    {
+                        must = new object[]
+                        {
+                            new
+                            {
+                                term = new
+                                {
+                                    name = new
+                                    {
+                                        value = "x"
+                                    }
+                                }
+                            },
+                            new
+                            {
+                                term = new
+                                {
+                                    name = new
+                                    {
+                                        value = "y"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(firstSearchResponse.ApiCall.RequestBodyInBytes));
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(secondSearchResponse.ApiCall.RequestBodyInBytes));
+        }
+
+        /** A naive implementation of operator overloading would rewrite
 		*
-		* `term && term && term` to
+        * [source,sh]
+        * ----
+		* term && term && term
+		* ----
+        * 
+        * to
+        * 
+		*....
+		*bool
+		*|___must
+		*    |___term
+		*    |___bool
+		*        |___must
+		*            |___term
+		*            |___term
+		*....
+		*
+		* As you can imagine this becomes unwieldy quite fast the more complex a query becomes. NEST is smart enough
+        * to join the ``&&``ed queries together to form a single `bool` query
 		*
 		*....
 		*bool
 		*|___must
 		*    |___term
-		*        |___bool
-		*            |___must
-		*                |___term
-		*                |___term
-		*....
-		*
-		* As you can imagine this becomes unwieldy quite fast the more complex a query becomes, NEST can spot these and
-		* join them together to become a single bool query
-		*
-		*....
-		*bool
-		*|___must
-		*    |___term
 		*    |___term
 		*    |___term
 		*....
+        * 
+        * as demonstrated with the following
 		*/
 
-		[U] public void JoinsMustQueries()
+        [U] public void JoinsMustQueries()
 		{
 			Assert(
-				q => q.Query() && q.Query() && q.Query(),
-				Query && Query && Query,
-				c => c.Bool.Must.Should().HaveCount(3)
-				);
+				q => q.Query() && q.Query() && q.Query(), // <1> three queries ``&&``ed together using the Fluent API
+				Query && Query && Query, // <2> three queries ``&&``ed together using Object Initialzer syntax
+				c => c.Bool.Must.Should().HaveCount(3) // <3> assert the resulting `bool` query in each case has 3 `must` clauses
+			);
 		}
 
-		/** The bool DSL offers also a shorthand notation to mark a query as a `must_not` using the `!` operator */
-		[U] public void MustNotOperator()
+
+        /**[[unary-negation-operator]] 
+         * ==== Unary ! operator
+         * 
+         * NEST also offers a shorthand notation for creating a `bool` query with a `must_not` clause 
+         * using the unary `!` operator 
+         */
+        [U]
+        public void MustNotQuery()
+        {
+            //hide
+            var client = this.Client;
+
+            var firstSearchResponse = client.Search<Project>(s => s
+                .Query(q => !q
+                    .Term(p => p.Name, "x")
+                )
+            );
+
+            /** and, with the the Object Initializer syntax */
+            var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
+            {
+                Query = !new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" }
+            });
+
+            /**
+             * Both result in the following JSON query DSL
+             */
+            //json
+            var expected = new
+            {
+                query = new
+                {
+                    @bool = new
+                    {
+                        must_not = new object[]
+                        {
+                            new
+                            {
+                                term = new
+                                {
+                                    name = new
+                                    {
+                                        value = "x"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(firstSearchResponse.ApiCall.RequestBodyInBytes));
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(secondSearchResponse.ApiCall.RequestBodyInBytes));
+        }
+
+        // hide
+        [U] public void MustNotOperator()
 		{
 			Assert(q => !q.Query(), !Query, c => c.Bool.MustNot.Should().HaveCount(1));
 		}
 
-		/** And to mark a query as a `filter` using the `+` operator*/
-		[U] public void UnaryAddOperator()
+        /**Two queries marked with the unary `!`  operator can be combined with the `&&` operator to form
+         * a single `bool` query with two `must_not` clauses
+         */
+        [U]
+        public void MustNotOperatorAnd()
+        {
+            Assert(
+                q => !q.Query() && !q.Query(), // <1> two queries with `!` operator applied, ``&&``ed together using the Fluent API
+                !Query && !Query, // <2> two queries with `!` operator applied, ``&&``ed together using the Object Initializer syntax
+                c => c.Bool.MustNot.Should().HaveCount(2)); // <3> assert the resulting `bool` query in each case has two `must_not` clauses
+        }
+
+        /**[[unary-plus-operator]] 
+         * ==== Unary + operator
+         * 
+         * A query can be transformed into a `bool` query with a `filter` clause using the unary `+` operator
+         */
+        [U]
+        public void FilterQuery()
+        {
+            //hide
+            var client = this.Client;
+
+            var firstSearchResponse = client.Search<Project>(s => s
+                .Query(q => +q
+                    .Term(p => p.Name, "x")
+                )
+            );
+
+            /** and, with the the Object Initializer syntax */
+            var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
+            {
+                Query = +new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" }
+            });
+
+            /**
+             * Both result in the following JSON query DSL
+             */
+            //json
+            var expected = new
+            {
+                query = new
+                {
+                    @bool = new
+                    {
+                        filter = new object[]
+                        {
+                            new
+                            {
+                                term = new
+                                {
+                                    name = new
+                                    {
+                                        value = "x"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(firstSearchResponse.ApiCall.RequestBodyInBytes));
+            //hide
+            Expect(expected)
+                .NoRoundTrip()
+                .WhenSerializing(Encoding.UTF8.GetString(secondSearchResponse.ApiCall.RequestBodyInBytes));
+        }
+
+        //hide
+        [U] public void UnaryAddOperator()
 		{
 			Assert(q => +q.Query(), +Query, c => c.Bool.Filter.Should().HaveCount(1));
 		}
 
-		/** Both of these can be combined with `&&` to form a single bool query  */
-
-		[U] public void MustNotOperatorAnd()
+        /**
+         * This runs the {ref_current}/query-filter-context.html[query in a filter context] which can be useful in improving performance where 
+         * the relevancy score for the query is not required to affect the order of results.
+         * 
+         * Similarly to the unary `!` operator, queries marked with the unary `+`  operator can be 
+         * combined with the `&&` operator to form a single `bool` query with two `filter` clauses
+        */
+        [U] public void UnaryAddOperatorAnd()
 		{
-			Assert(q => !q.Query() && !q.Query(), !Query && !Query, c => c.Bool.MustNot.Should().HaveCount(2));
-		}
-
-		[U] public void UnaryAddOperatorAnd()
-		{
-			Assert(q => +q.Query() && +q.Query(), +Query && +Query, c => c.Bool.Filter.Should().HaveCount(2));
+			Assert(
+                q => +q.Query() && +q.Query(), 
+                +Query && +Query, 
+                c => c.Bool.Filter.Should().HaveCount(2));
 		}
 
 		/**[float]
 		* === Combining bool queries
 		*
-		* When combining multiple queries some or all possibly marked as `must_not` or `filter`, NEST still combines to a single bool query
+		* When combining multiple queries with the binary `&&` operator 
+        * where some or all queries have unary operators applied, 
+        * NEST is still able to combine them to form a single `bool` query.
+        * 
+        * Take for example the following `bool` query
 		*
 		*....
 		*bool
@@ -130,8 +426,9 @@ namespace Tests.QueryDsl.BoolDsl
 		*|___must_not
 		*    |___term
 		*....
+        * 
+        * This can be constructed with NEST using
 		*/
-
 		[U] public void JoinsMustWithMustNot()
 		{
 			Assert(
@@ -142,25 +439,32 @@ namespace Tests.QueryDsl.BoolDsl
 					c.Bool.Must.Should().HaveCount(3);
 					c.Bool.MustNot.Should().HaveCount(1);
 				});
-
 		}
 
-		/** Even more involved `term && term && term && !term && +term && +term` still only results in a single `bool` query:
-		*....
-		*bool
-		*|___must
-		*|   |___term
-		*|   |___term
-		*|   |___term
-		*|
-		*|___must_not
-		*|   |___term
-		*|
-		*|___filter
-		*    |___term
-		*    |___term
-		*....
-		*/
+		/** An even more example
+         * 
+         * [source, sh]
+         * ----
+         * term && term && term && !term && +term && +term
+         * ----
+         * 
+         * still only results in a single `bool` query that has the following structure
+         * 
+		 *....
+		 *bool
+		 *|___must
+		 *|   |___term
+		 *|   |___term
+		 *|   |___term
+		 *|
+		 *|___must_not
+		 *|   |___term
+		 *|
+		 *|___filter
+		 *    |___term
+		 *    |___term
+		 *....
+		 */
 		[U] public void JoinsMustWithMustNotAndFilter()
 		{
 			Assert(
@@ -174,8 +478,14 @@ namespace Tests.QueryDsl.BoolDsl
 				});
 		}
 
-		/** You can still mix and match actual bool queries with the bool DSL e.g
-		* `bool(must=term, term, term) && !term` would still merge into a single `bool` query.
+		/** You can still mix and match actual `bool` queries with operator overloaded queries e.g
+		* 
+        * [source,sh]
+        * ----
+        * bool(must=term, term, term) && !term
+        * ----
+        * 
+        * would still merge into a single `bool` query.
 		*/
 		[U] public void MixAndMatch()
 		{
@@ -189,13 +499,17 @@ namespace Tests.QueryDsl.BoolDsl
 				});
 		}
 
-		/** NEST will also do the same with `should`s or `||` when it sees that the boolean queries in play **only** consist of `should` clauses.
-		* This is because the `bool` query does not quite follow the same boolean logic you expect from a programming language.
+		/** NEST will also do the same with ``should``s or `||` when it sees that the bool queries in play 
+         * **only** consist of `should` clauses; This is because the `bool` query does not quite follow 
+         * the same boolean logic you expect from a programming language.
 		*
-		* To summarize, the latter:
+		* To summarize, the latter
 		*
-		* `term || term || term`
-		*
+        * [source, sh]
+        * ----
+		* term || term || term
+		* ----
+        * 
 		* becomes
 		*....
 		*bool
@@ -218,11 +532,13 @@ namespace Tests.QueryDsl.BoolDsl
 		*    |___term4
 		*....
 		*
-		* This is because when a `bool` query has **only** `should` clauses, at least one of them must match.
-		* When that `bool` query also has a `must` clause then the `should` clauses start acting as a _boost_ factor
+		* This is because when a `bool` query has **only** `should` clauses, __**at least one**__ of them must match.
+        * 
+		* When that `bool` query also has a `must` clause, the `should` clauses act as a _boost_ factor
 		* and none of them have to match, drastically altering its meaning.
 		*
-		* So in the previous you could get back results that **only** contain `term1`. This is clearly not what you want in the strict boolean sense of the input.
+		* So, relating back to the previous example, you could get back results that **only** contain `term1`. 
+        * This is clearly not what you want in the strict boolean sense of the input.
 		*
 		* To aid with this, NEST rewrites the previous query to
 		*....
@@ -244,7 +560,7 @@ namespace Tests.QueryDsl.BoolDsl
 				c =>
 				{
 					c.Bool.Must.Should().HaveCount(2);
-					var lastClause = c.Bool.Must.Last() as IQueryContainer;
+					var lastClause = (IQueryContainer)c.Bool.Must.Last();
 					lastClause.Should().NotBeNull();
 					lastClause.Bool.Should().NotBeNull();
 					lastClause.Bool.Should.Should().HaveCount(3);
@@ -253,19 +569,22 @@ namespace Tests.QueryDsl.BoolDsl
 
 		/** TIP: *add parentheses to force evaluation order*
 		*
-		* Also note that using shoulds as boosting factors can be really powerful so if you need this
-		*always remember that you can mix and match an actual bool query with the bool dsl.
+		* Using ``should`` clauses as boost factors can be a really powerful construct when building
+        * search queries, so if you need this,
+		* always remember that you can mix and match an actual bool query with NEST's operator overloading.
 		*
-		* There is another subtle situation where NEST will not blindly merge 2 bool queries with only should clauses. Consider the following
+		* There is another subtle situation where NEST will not blindly merge two `bool` queries with only 
+        * `should` clauses. Consider the following
 		*
 		* [source,sh]
 		* ----
 		* bool(should=term1, term2, term3, term4, minimum_should_match=2) || term5 || term6
 		* ----
 		*
-		* if NEST identified both sides of the OR operation as only containing `should` clauses and it would
-		* join them together it would give a different meaning to the `minimum_should_match` parameter of the first boolean query.
-		* Rewriting this to a single bool with 5 `should` clauses would break because only matching on `term5` or `term6` should still be a hit.
+		* if NEST identified both sides of a binary `||` operation as only containing `should` clauses and
+		* joined them together, it would give a different meaning to the `minimum_should_match` parameter of 
+        * the first `bool` query; rewriting this to a single `bool` with 5 `should` clauses would break the semantics
+        * of the original query because only matching on `term5` or `term6` should still be a hit.
 		**/
 		[U]
 		public void MixAndMatchMinimumShouldMatch()
@@ -362,9 +681,6 @@ namespace Tests.QueryDsl.BoolDsl
 			result.Bool.Must.Should().HaveCount(3, $"query composed using {origin} combined with && should have 3 must clauses");
 			original.Bool.Must.Should().HaveCount(2, $"query composed using {origin} should still have 2 must clauses after composition");
 		}
-
-
-
 
 		/**[float]
 		* === Perfomance considerations

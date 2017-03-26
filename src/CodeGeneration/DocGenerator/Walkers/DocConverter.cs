@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DocGenerator.Documentation.Blocks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace DocGenerator.Walkers
 {
@@ -16,13 +15,11 @@ namespace DocGenerator.Walkers
             var node = await document.GetSyntaxRootAsync().ConfigureAwait(false);
             IList<IDocumentationBlock> blocks = new List<IDocumentationBlock>();
 
-            CSharpSyntaxWalker walker;
-
             // use different walking rules for different source files
             if (document.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase) ||
                 document.Name.Equals("WritingAggregations.doc.cs", StringComparison.OrdinalIgnoreCase))
             {
-                walker = new UsageTestsWalker(blocks);
+                var walker = new UsageTestsWalker(blocks);
                 walker.Visit(node);
 
                 // apply the usage conventions to writing aggregations,
@@ -34,12 +31,11 @@ namespace DocGenerator.Walkers
             }
             else
             {
-                walker = new CSharpDocumentationFileWalker(blocks);
+                var walker = new CSharpDocumentationFileWalker(blocks);
                 walker.Visit(node);
                 blocks = CondenseCodeBlocks(blocks);
             }
-
-            
+           
             return blocks;
         }
 
