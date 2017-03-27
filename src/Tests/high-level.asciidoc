@@ -118,10 +118,15 @@ include::{output-dir}/analysis/testing-analyzers.asciidoc[]
 == Search
 
 - <<writing-queries, Writing queries>>
+- <<bool-queries, Writing bool queries>>
+- <<returned-fields, Returning only certain fields>>
+- <<covariant-search-results, Covariant search results>>
 
 include::search/writing-queries.asciidoc[]
 
 include::query-dsl/bool-dsl/bool-dsl.asciidoc[]
+
+include::search/returned-fields.asciidoc[]
 
 include::{output-dir}/covariant-hits/covariant-search-results.asciidoc[]
 

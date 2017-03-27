@@ -28,11 +28,11 @@ Elasticsearch.Net and NEST:
 
 `BasicAuthentication`::
 
-Basic Authentication credentials to send with all requests to Elasticsearch
+Basic Authentication credentials to specify with all requests.
 
 `ConnectionLimit`::
 
-Limits the number of concurrent connections that can be opened to an endpoint. Defaults to `80` .
+Limits the number of concurrent connections that can be opened to an endpoint. Defaults to 80.
 +
 For Desktop CLR, this setting applies to the DefaultConnectionLimit property on the  ServicePointManager object when creating ServicePoint objects, affecting the default `IConnection` implementation.
 +
@@ -50,7 +50,7 @@ Disables the automatic detection of a proxy
 
 Ensures the response bytes are always available on the `ElasticsearchResponse<T>`
 +
-IMPORTANT: Depending on the registered serializer,             this may cause the response to be buffered in memory first, potentially affecting performance.
+IMPORTANT: Depending on the registered serializer,             this may cause the respose to be buffered in memory first, potentially affecting performance.
 
 `DisablePing`::
 
@@ -62,13 +62,13 @@ Enables gzip compressed requests and responses.
 +
 IMPORTANT: You need to configure http compression on Elasticsearch to be able to use this
 +
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-http.html
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-http.html"
 
 `EnableHttpPipelining`::
 
 Allows for requests to be pipelined. http://en.wikipedia.org/wiki/HTTP_pipelining
 +
-NOTE: HTTP pipelining must also be enabled in Elasticsearch for this to work properly.
+Note: HTTP pipelining must also be enabled in Elasticsearch for this to work properly.
 
 `EnableTcpKeepAlive`::
 
@@ -86,7 +86,7 @@ A collection of query string parameters that will be sent with every request. Us
 
 `MaxDeadTimeout`::
 
-Sets the maximum time a node can be marked dead. Different implementations of `IConnectionPool` may choose a different default.
+Sets the maximum time a node can be marked dead. Different implementations of IConnectionPool may choose a different default.
 
 `MaximumRetries`::
 
@@ -94,9 +94,9 @@ The maximum number of retries for a given request,
 
 `MaxRetryTimeout`::
 
-Limits the total runtime, including retries, separately from `RequestTimeout`
+Limits the total runtime including retries separately from `RequestTimeout`
 +
-When not specified, defaults to `RequestTimeout` , which itself defaults to `60` seconds
+When not specified defaults to `RequestTimeout` , which itself defaults to 60 seconds
 
 `NodePredicate`::
 
@@ -116,7 +116,7 @@ Sets the default ping timeout in milliseconds for ping requests, which are used 
 
 `PrettyJson`::
 
-Forces all requests to have ?pretty=true querystring parameter appended,  causing Elasticsearch to return formatted JSON. Also forces the client to send out formatted JSON. Defaults to `false`
+Forces all requests to have ?pretty=true, causing Elasticsearch to return formatted json. Also forces the client to send out formatted json. Defaults to `false`
 
 `Proxy`::
 
@@ -124,9 +124,7 @@ If your connection has to go through proxy, use this method to specify the proxy
 
 `RequestTimeout`::
 
-Sets the default timeout in milliseconds for each request to Elasticsearch. Defaults to `60` seconds.
-+
-NOTE: You can set this to a high value here, and specify a timeout on Elasticsearch's side.
+Sets the default timeout in milliseconds for each request to Elasticsearch. NOTE: You can set this to a high value here, and specify a timeout on Elasticsearch's side.
 
 `SniffLifeSpan`::
 
@@ -134,11 +132,11 @@ Set the duration after which a cluster state is considered stale and a sniff sho
 
 `SniffOnConnectionFault`::
 
-Enables resniffing of the cluster when a call fails, if the connection pool supports reseeding. Defaults to `true`
+Enables resniffing of the cluster when a call fails, if the connection pool supports reseeding. Defaults to true
 
 `SniffOnStartup`::
 
-Enables sniffing on first usage of a connection pool if that pool supports reseeding. Defaults to `true`
+Enables sniffing on first usage of a connection pool if that pool supports reseeding. Defaults to true
 
 `ThrowExceptions`::
 
@@ -154,9 +152,7 @@ The following is a list of available connection configuration options on `Connec
 
 `DefaultFieldNameInferrer`::
 
-Specify how field names are inferred from POCO property names.
-+
-By default, NEST camel cases property names  e.g. EmailAddress POCO property => "emailAddress" Elasticsearch document field name
+By default NEST camelCases property name (EmailAddress => emailAddress) expressions either via an ElasticProperty attribute or because they are part of Dictionary where the keys should be treated verbatim. Here you can register a function that transforms these expressions (default casing, pre- or suffixing)
 
 `DefaultIndex`::
 
@@ -164,29 +160,15 @@ The default index to use when no index is specified.
 
 `DefaultTypeNameInferrer`::
 
-Specify how type names are inferred from POCO types.  By default, type names are inferred by calling `ToLowerInvariant` on the type's name.
+Allows you to override how type names should be represented, the default will call .ToLowerInvariant() on the type's name.
 
 `MapDefaultTypeIndices`::
 
-Specify the default index names for a given POCO type.  Takes precedence over the global `DefaultIndex`
-
-`MapDefaultTypeNames`::
-
-Specify the default type names for a given POCO type.  Takes precedence over the global `DefaultTypeNameInferrer`
-
-`MapIdPropertyFor`::
-
-Specify which property on a given POCO should be used to infer the id of the document when  indexed in Elasticsearch. The type of the document.
-
-`MapPropertiesFor`::
-
-Specify how the properties are mapped for a given POCO type. The type of the document.
+Map types to a index names. Takes precedence over DefaultIndex().
 
 `PluralizeTypeNames`::
 
-Pluralize type names when inferring from POCO type names.
-+
-This calls `DefaultTypeNameInferrer` with an implementation that will pluralize type names.              This used to be the default prior to Nest 0.90
+This calls SetDefaultTypenameInferrer with an implementation that will pluralize type names. This used to be the default prior to Nest 0.90
 
 :xml-docs: Nest:ConnectionSettingsBase`1
 

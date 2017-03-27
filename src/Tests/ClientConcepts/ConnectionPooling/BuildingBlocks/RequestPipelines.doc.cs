@@ -23,6 +23,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		[U]
 		public void RequestPipeline()
 		{
+            // hide
 			var settings = TestClient.GlobalDefaultSettings;
 
 			/** When calling `Request()` or `RequestAsync()` on an `ITransport`,
@@ -59,6 +60,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 				new MemoryStreamFactory());
 		}
 
+        // hide
 		private IRequestPipeline CreatePipeline(
 			Func<IEnumerable<Uri>, IConnectionPool> setupPool, Func<ConnectionSettings, ConnectionSettings> settingsSelector = null, IDateTimeProvider dateTimeProvider = null, InMemoryConnection connection = null)
 		{

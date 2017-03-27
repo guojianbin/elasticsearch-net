@@ -774,6 +774,7 @@
     <Compile Include="Search\Search\SearchProfileApiTests.cs" />
     <Compile Include="Search\Search\SearchProfileTests.cs" />
     <Compile Include="Search\Suggesters\SuggestUrlTests.cs" />
+    <Compile Include="Search\ReturnedFields.doc.cs" />
     <Compile Include="Search\WritingQueries.doc.cs" />
     <Compile Include="XPack\Security\ClearCachedRealms\ClearCachedRealmsApiTests.cs" />
     <Compile Include="XPack\Security\ClearCachedRealms\ClearCachedRealmsUrlTests.cs" />

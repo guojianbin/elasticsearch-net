@@ -11,11 +11,11 @@ using static Tests.Framework.RoundTripper;
 
 namespace Tests.QueryDsl.BoolDsl
 {
-	/**
+    /**
      * [[bool-queries]]
     * === Writing bool queries
 	*/
-	public class BoolDslTests : OperatorUsageBase
+    public class BoolDslTests : OperatorUsageBase
 	{
 		protected readonly IElasticClient Client = 
             TestClient.GetFixedReturnClient(new { }, modifySettings: c => c.DisableDirectStreaming());
@@ -223,7 +223,7 @@ namespace Tests.QueryDsl.BoolDsl
 		*            |___term
 		*....
 		*
-		* As you can imagine this becomes unwieldy quite fast the more complex a query becomes. NEST is smart enough
+		* As you can imagine this becomes unwieldy quite fast, the more complex a query becomes. NEST is smart enough
         * to join the ``&&``ed queries together to form a single `bool` query
 		*
 		*....
@@ -393,8 +393,9 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
         /**
-         * This runs the {ref_current}/query-filter-context.html[query in a filter context] which can be useful in improving performance where 
-         * the relevancy score for the query is not required to affect the order of results.
+         * This runs the {ref_current}/query-filter-context.html[query in a filter context], 
+         * which can be useful in improving performance where the relevancy score for the query 
+         * is not required to affect the order of results.
          * 
          * Similarly to the unary `!` operator, queries marked with the unary `+`  operator can be 
          * combined with the `&&` operator to form a single `bool` query with two `filter` clauses
@@ -441,14 +442,14 @@ namespace Tests.QueryDsl.BoolDsl
 				});
 		}
 
-		/** An even more example
+		/** An even more complex example
          * 
          * [source, sh]
          * ----
          * term && term && term && !term && +term && +term
          * ----
          * 
-         * still only results in a single `bool` query that has the following structure
+         * still only results in a single `bool` query with the following structure
          * 
 		 *....
 		 *bool
@@ -485,7 +486,7 @@ namespace Tests.QueryDsl.BoolDsl
         * bool(must=term, term, term) && !term
         * ----
         * 
-        * would still merge into a single `bool` query.
+        * This will still merge into a single `bool` query.
 		*/
 		[U] public void MixAndMatch()
 		{
@@ -499,11 +500,12 @@ namespace Tests.QueryDsl.BoolDsl
 				});
 		}
 
-		/** NEST will also do the same with ``should``s or `||` when it sees that the bool queries in play 
-         * **only** consist of `should` clauses; This is because the `bool` query does not quite follow 
-         * the same boolean logic you expect from a programming language.
+        /**==== Combining queries with || or should clauses
+         * 
+         * As per the previous example, NEST will combine multiple ``should`` or `||` into a single `bool` query
+         * with `should` clauses when it sees that the `bool` queries in play **only** consist of `should` clauses; 
 		*
-		* To summarize, the latter
+		* To summarize, this
 		*
         * [source, sh]
         * ----
@@ -519,7 +521,15 @@ namespace Tests.QueryDsl.BoolDsl
 		*    |___term
 		*....
 		*
-		* but `term1 && (term2 || term3 || term4)` does **not** become
+        * However, the `bool` query does not quite follow the same boolean logic you expect from a 
+        * programming language. That is
+        * 
+        * [source,sh]
+        * ----
+		* term1 && (term2 || term3 || term4)
+        * ----
+        * 
+        * does **not** become
 		*
 		* ....
 		*bool
@@ -532,15 +542,16 @@ namespace Tests.QueryDsl.BoolDsl
 		*    |___term4
 		*....
 		*
-		* This is because when a `bool` query has **only** `should` clauses, __**at least one**__ of them must match.
-        * 
-		* When that `bool` query also has a `must` clause, the `should` clauses act as a _boost_ factor
-		* and none of them have to match, drastically altering its meaning.
+		* Why is this? Well, when a `bool` query has **only** `should` clauses, **__at least one__** of them must match.
+        * However, when that `bool` query also has a `must` clause, the `should` clauses instead now act as a 
+        * _boost_ factor, meaning none of them have to match but if they do, the relevancy score for that document
+        * will be boosted and thus appear higher in the results. The semantics for how `should` clauses behave then
+        * change based on the presence of the `must` clause.
 		*
-		* So, relating back to the previous example, you could get back results that **only** contain `term1`. 
-        * This is clearly not what you want in the strict boolean sense of the input.
+		* So, relating this back to the previous example, you could get back results that **only** contain `term1`. 
+        * This is clearly not what was intended when using operator overloading.
 		*
-		* To aid with this, NEST rewrites the previous query to
+		* To aid with this, NEST rewrites the previous query as
 		*....
 		*bool
 		*|___must
@@ -552,7 +563,7 @@ namespace Tests.QueryDsl.BoolDsl
 		*            |___term4
 		*....
 		*/
-		[U] public void JoinsWithShouldClauses()
+        [U] public void JoinsWithShouldClauses()
 		{
 			Assert(
 				q => q.Query() && (q.Query() || q.Query() || q.Query()),
@@ -560,18 +571,17 @@ namespace Tests.QueryDsl.BoolDsl
 				c =>
 				{
 					c.Bool.Must.Should().HaveCount(2);
-					var lastClause = (IQueryContainer)c.Bool.Must.Last();
-					lastClause.Should().NotBeNull();
-					lastClause.Bool.Should().NotBeNull();
-					lastClause.Bool.Should.Should().HaveCount(3);
+					var lastMustClause = (IQueryContainer)c.Bool.Must.Last();
+					lastMustClause.Should().NotBeNull();
+					lastMustClause.Bool.Should().NotBeNull();
+					lastMustClause.Bool.Should.Should().HaveCount(3);
 				});
 		}
 
-		/** TIP: *add parentheses to force evaluation order*
+		/** TIP: *Add parentheses to force evaluation order*
 		*
 		* Using ``should`` clauses as boost factors can be a really powerful construct when building
-        * search queries, so if you need this,
-		* always remember that you can mix and match an actual bool query with NEST's operator overloading.
+        * search queries, and remember, you can mix and match an actual `bool` query with NEST's operator overloading.
 		*
 		* There is another subtle situation where NEST will not blindly merge two `bool` queries with only 
         * `should` clauses. Consider the following
