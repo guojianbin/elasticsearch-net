@@ -206,13 +206,6 @@ namespace DocGenerator.AsciiDoc
 
 		public override void Visit(Source source)
 		{
-			if (source.Attributes.Count > 1 &&
-				source.Attributes[1].Name == "javascript" &&
-				!source.Attributes.HasTitle)
-			{
-				source.Attributes.Add(new Title("Example json output"));
-			}
-
 			// remove method attributes as the elastic doc generation doesn't like them; it
 			// expects a linenumbering in the index 2 position of a source block
 			var methodAttribute = source.Attributes.FirstOrDefault(a => a.Name == "method");

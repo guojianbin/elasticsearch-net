@@ -26,16 +26,6 @@ namespace DocGenerator.Documentation.Blocks
             MemberName = memberName?.ToLowerInvariant() ?? string.Empty;
         }
 
-        public virtual string ToAsciiDoc()
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine(!string.IsNullOrEmpty(MemberName)
-                ? $"[source, {Language.ToLowerInvariant()}, method=\"{MemberName.ToLowerInvariant()}\"]"
-                : $"[source, {Language.ToLowerInvariant()}]");
-            builder.AppendLine("----");
-            builder.AppendLine(Value);
-            builder.AppendLine("----");
-            return builder.ToString();
-        }
+        public abstract string ToAsciiDoc();
     }
 }

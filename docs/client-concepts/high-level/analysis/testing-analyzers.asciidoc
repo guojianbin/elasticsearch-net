@@ -35,7 +35,6 @@ var analyzeResponse = client.Analyze(a => a
 This returns the following response from Elasticsearch
 
 [source,javascript]
-.Example json output
 ----
 {
   "tokens": [
@@ -115,7 +114,6 @@ var analyzeResponse = client.Analyze(a => a
 ----
 
 [source,javascript]
-.Example json output
 ----
 {
   "tokens": [
@@ -225,7 +223,6 @@ var analyzeResponse = client.Analyze(a => a
 The output now looks like
 
 [source,javascript]
-.Example json output
 ----
 {
   "tokens": [
@@ -344,7 +341,6 @@ var analyzeResponse = client.Analyze(analyzeRequest);
 We now get further details back in the response
 
 [source,javascript]
-.Example json output
 ----
 {
   "detail": {

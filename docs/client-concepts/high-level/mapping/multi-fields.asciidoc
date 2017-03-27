@@ -46,7 +46,6 @@ var descriptor = new CreateIndexDescriptor("myindex")
 ----
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {
@@ -92,7 +91,6 @@ var searchResponse = client.Search<Person>(s => s
 <1> Use the keyword subfield on `Name`
 
 [source,javascript]
-.Example json output
 ----
 {
   "query": {
@@ -166,7 +164,6 @@ var descriptor = new CreateIndexDescriptor("myindex")
 <3> Index as not analyzed
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {

@@ -20,11 +20,6 @@ please modify the original csharp file found at the link and submit the PR with 
 Every request is executed in the context of a `RequestPipeline` when using the
 default <<transports,ITransport>> implementation.
 
-[source,csharp]
-----
-var settings = TestClient.GlobalDefaultSettings;
-----
-
 When calling `Request()` or `RequestAsync()` on an `ITransport`,
 the whole coordination of the request is deferred to a new instance in a `using` block.
 
@@ -66,11 +61,6 @@ var transport = new Transport<ConnectionSettings>(
     requestPipelineFactory,
     DateTimeProvider.Default,
     new MemoryStreamFactory());
-
-var pool = setupPool(new[] { TestClient.CreateUri(), TestClient.CreateUri(9201) });
-var settings = new ConnectionSettings(pool, connection ?? new InMemoryConnection());
-settings = settingsSelector?.Invoke(settings) ?? settings;
-return new FixedPipelineFactory(settings, dateTimeProvider ?? DateTimeProvider.Default).Pipeline;
 ----
 
 ==== Sniffing on first usage

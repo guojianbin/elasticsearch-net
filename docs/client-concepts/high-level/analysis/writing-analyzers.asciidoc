@@ -106,7 +106,6 @@ var createIndexResponse = client.CreateIndex("my-index", c => c
 <2> Use the `standard_english` analyzer configured
 
 [source,javascript]
-.Example json output
 ----
 {
   "settings": {

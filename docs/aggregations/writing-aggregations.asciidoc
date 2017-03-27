@@ -31,7 +31,6 @@ want to use each.
 This is the json output for each example
 
 [source,javascript]
-.Example json output
 ----
 {
   "aggs": {

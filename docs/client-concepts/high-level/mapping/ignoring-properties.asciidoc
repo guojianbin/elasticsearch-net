@@ -68,7 +68,6 @@ var settings = WithConnectionSettings(s => s
 The JSON output for the mapping does not contain the ignored properties
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {
@@ -123,7 +122,6 @@ var settings = WithConnectionSettings(s => s
 The property `IgnoreMe` has been ignored for the child mapping 
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {

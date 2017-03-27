@@ -152,7 +152,6 @@ var descriptor = new CreateIndexDescriptor("myindex")
 ----
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {

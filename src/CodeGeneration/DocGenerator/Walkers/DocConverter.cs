@@ -107,6 +107,8 @@ namespace DocGenerator.Walkers
 
                 if (codeBlock.Language == "javascript")
                 {
+                    ((JavaScriptBlock) codeBlock).Title = "Example json output";
+
                     if (seenFluentExample && seenInitializerExample)
                     {
                         newBlocks.Insert(index + 1, codeBlock);

@@ -21,12 +21,12 @@ and is exposed in NEST in the form of both a Fluent API and an Object Initialize
 
 ==== Match All query
 
-The simplest of queries is the {ref_current}/query-dsl-match-all-query.html`match_all`] query; 
+The simplest of queries is the {ref_current}/query-dsl-match-all-query.html[match_all] query; 
 this will return all documents, giving them all a `_score` of 1.0
 
 [NOTE]
 --
-Not all documents are returned in the one response; by default, only the first ten documents
+Not _all_ of the matching documents are returned in the one response; by default, only the first ten documents
 are returned. You can use `from` and `size` to paginate results.
 
 --
@@ -43,7 +43,6 @@ var searchResponse = client.Search<Project>(s => s
 which serializes to the following JSON
 
 [source,javascript]
-.Example json output
 ----
 {
   "query": {
@@ -62,7 +61,7 @@ searchResponse = client.Search<Project>(s => s
 );
 ----
 
-The previous examples used the Fluent API to express the query. NEST also exposes an
+The two previous examples both used the Fluent API to express the query. NEST also exposes an
 Object Initializer syntax to compose queries
 
 [source,csharp]
@@ -127,7 +126,6 @@ var searchResponse = client.Search<Project>(s => s
 which yields the following query JSON
 
 [source,javascript]
-.Example json output
 ----
 {
   "query": {
@@ -164,7 +162,6 @@ searchResponse = client.Search<Project>(s => s
 ----
 
 [source,javascript]
-.Example json output
 ----
 {
   "query": {
@@ -223,7 +220,6 @@ var searchResponse = client.Search<Project>(s => s
 which yields the following query JSON
 
 [source,javascript]
-.Example json output
 ----
 {
   "query": {
@@ -289,7 +285,6 @@ var searchResponse = client.Search<Project>(s => s
 which yields the following query JSON
 
 [source,javascript]
-.Example json output
 ----
 {
   "query": {

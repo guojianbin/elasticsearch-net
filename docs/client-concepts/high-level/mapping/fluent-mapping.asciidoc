@@ -86,7 +86,6 @@ only the `FirstName`, `LastName` and `Salary` properties of the `Employee` type 
 The json mapping for this example looks like
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {
@@ -150,7 +149,6 @@ var descriptor = new CreateIndexDescriptor("myindex")
 ----
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {
@@ -290,7 +288,6 @@ var descriptor = new CreateIndexDescriptor("myindex")
 <4> Override employee inferred mappings
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {
@@ -428,7 +425,6 @@ var descriptor = new CreateIndexDescriptor("myindex")
 <4> Override specific `Employee` properties
 
 [source,javascript]
-.Example json output
 ----
 {
   "mappings": {
