@@ -156,18 +156,15 @@ namespace DocGenerator.Walkers
                     }
                 }
 
-                if (i == blocks.Count - 1)
+                if (i == blocks.Count - 1 && javascriptBlock != null)
                 {
-                    if (javascriptBlock != null)
+                    if (seenFluentExample && seenInitializerExample)
                     {
-                        if (seenFluentExample && seenInitializerExample)
-                        {
-                            newBlocks.Insert(index + 1, javascriptBlock);
-                        }
-                        else
-                        {
-                            newBlocks.Add(javascriptBlock);
-                        }
+                        newBlocks.Insert(index + 1, javascriptBlock);
+                    }
+                    else
+                    {
+                        newBlocks.Add(javascriptBlock);
                     }
                 }
             }

@@ -10,12 +10,12 @@ namespace DocGenerator
 			var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
 			if (currentDirectory.Name == "DocGenerator" && currentDirectory.Parent.Name == "CodeGeneration")
 			{
-				InputDirPath = @"..\..\Tests";
+				InputDirPath = @"..\..\";
 				OutputDirPath = @"..\..\..\docs";
 			}
 			else
 			{
-				InputDirPath = @"..\..\..\..\..\src\Tests";
+				InputDirPath = @"..\..\..\..\..\src";
 				OutputDirPath = @"..\..\..\..\..\docs";
 			}
 		}

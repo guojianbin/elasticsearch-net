@@ -87,9 +87,8 @@ namespace DocGenerator
         /// </summary>
         /// <param name="node">The node.</param>
         /// <returns></returns>
-        public static int StartingLine(this SyntaxNode node) => node.SyntaxTree
-            .GetLineSpan(node.Span)
-            .StartLinePosition.Line;
+        public static int StartingLine(this SyntaxNode node) => 
+            node.SyntaxTree.GetLineSpan(node.Span).StartLinePosition.Line;
 
 	    public static SyntaxNode WithLeadingEndOfLineTrivia(this SyntaxNode node)
 	    {

@@ -13,7 +13,7 @@ namespace DocGenerator.Documentation.Blocks
         private static readonly Regex Callout = new Regex(@"//[ \t]*(?<callout>\<\d+\>)[ \t]*(?<text>\S.*)", RegexOptions.Compiled);
         private static readonly Regex CalloutReplacer = new Regex(@"//[ \t]*\<(\d+)\>.*", RegexOptions.Compiled);
 
-        private List<string> CallOuts { get; } = new List<string>();
+        private List<string> Callouts { get; } = new List<string>();
 
         public CSharpBlock(SyntaxNode node, int depth, string memberName = null)
             : base(node.WithoutLeadingTrivia().ToFullString(),
@@ -30,7 +30,7 @@ namespace DocGenerator.Documentation.Blocks
         {
             var builder = new StringBuilder();
 
-            // method is used to reorder elements in GeneratedAsciidocVisitor
+            // method attribute is used to add section titles in GeneratedAsciidocVisitor
             builder.AppendLine(!string.IsNullOrEmpty(MemberName)
                 ? $"[source, {Language.ToLowerInvariant()}, method=\"{MemberName.ToLowerInvariant()}\"]"
                 : $"[source, {Language.ToLowerInvariant()}]");
@@ -43,19 +43,18 @@ namespace DocGenerator.Documentation.Blocks
             builder.AppendLine(code);
 
             builder.AppendLine("----");
-            foreach (var callOut in CallOuts)
+            foreach (var callout in Callouts)
             {
-                builder.AppendLine(callOut);
+                builder.AppendLine(callout);
             }
             return builder.ToString();
         }
 
         /// <summary>
-        /// Extracts the call outs from code. The callout comment is defined inline within
-        /// source code, but needs to be extracted and placed after the source block delimiter
+        /// Extracts the callouts from code. The callout comment is defined inline within
+        /// source code to play nicely with C# semantics, but needs to be extracted and placed after the 
+        /// source block delimiter to be valid asciidoc.
         /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
         private string ExtractCallOutsFromCode(string value)
         {
             var matches = Callout.Matches(value);
@@ -69,7 +68,7 @@ namespace DocGenerator.Documentation.Blocks
             if (callouts.Any())
             {
                 value = CalloutReplacer.Replace(value, "//<$1>");
-                CallOuts.AddRange(callouts);
+                Callouts.AddRange(callouts);
             }
 
             return value.Trim();

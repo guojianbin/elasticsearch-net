@@ -14,21 +14,27 @@ namespace DocGenerator
 	{
 		private static readonly string[] SkipFolders = { "Debug", "Release" };
 
-		public static IEnumerable<DocumentationFile> InputFiles(string path) =>
-			from f in Directory.GetFiles(Program.InputDirPath, $"{path}", SearchOption.AllDirectories)
+	    private static readonly string TestsProjectDir = Path.Combine(Program.InputDirPath, "Tests");
+	    private static readonly string NestProjectDir = Path.Combine(Program.InputDirPath, "Nest");
+	    private static readonly string ElasticsearchNetProjectDir = Path.Combine(Program.InputDirPath, "Elasticsearch.Net");
+
+	    public static IEnumerable<DocumentationFile> InputFiles(string path) =>
+			from f in Directory.GetFiles(TestsProjectDir, $"{path}", SearchOption.AllDirectories)
 			let dir = new DirectoryInfo(f)
 			where dir?.Parent != null && !SkipFolders.Contains(dir.Parent.Name)
 			select DocumentationFile.Load(new FileInfo(f));
 
-		public static IEnumerable<IEnumerable<DocumentationFile>> GetDocumentFiles(Project project, Compilation compilation)
+		public static IEnumerable<IEnumerable<DocumentationFile>> GetDocumentFiles(Dictionary<string, Project> projects)
 		{
-            yield return project.Documents
-               .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
-               .Select(d => new CSharpDocumentationFile(d, compilation));
+		    var testProject = projects["Tests"];
 
-            yield return project.Documents
+            yield return testProject.Documents
+               .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
+               .Select(d => new CSharpDocumentationFile(d, projects));
+
+            yield return testProject.Documents
                 .Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
-                .Select(d => new CSharpDocumentationFile(d, compilation));
+                .Select(d => new CSharpDocumentationFile(d, projects));
 
             yield return InputFiles("*.png");
 			yield return InputFiles("*.gif");
@@ -41,12 +47,19 @@ namespace DocGenerator
 		public static async Task GoAsync(string[] args)
 		{
             var workspace = MSBuildWorkspace.Create();
-            var project = await workspace.OpenProjectAsync(Path.Combine(Program.InputDirPath, "Tests.csproj"));
 
-            // TODO: this throws OutOfMemory occasionally...
-		    Compilation compilation = null; //await project.GetCompilationAsync();
+            var testProject = workspace.OpenProjectAsync(Path.Combine(TestsProjectDir, "Tests.csproj"));
+            var nestProject = workspace.OpenProjectAsync(Path.Combine(NestProjectDir, "Nest.csproj"));
+            var elasticSearchNetProject = workspace.OpenProjectAsync(Path.Combine(ElasticsearchNetProjectDir, "Elasticsearch.Net.csproj"));
 
-            foreach (var file in GetDocumentFiles(project, compilation).SelectMany(s => s))
+		    var projects = new []
+		    {
+		        await testProject,
+		        await nestProject,
+		        await elasticSearchNetProject
+		    }.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+            
+            foreach (var file in GetDocumentFiles(projects).SelectMany(s => s))
 			{
 				await file.SaveToDocumentationFolderAsync();
 			}

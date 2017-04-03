@@ -51,7 +51,6 @@
     <Compile Include="Documentation\Files\ImageDocumentationFile.cs" />
     <Compile Include="Documentation\Files\RawDocumentationFile.cs" />
     <Compile Include="Documentation\Files\CSharpDocumentationFile.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="LitUp.cs" />
     <Compile Include="MethodInfoExtensions.cs" />
     <Compile Include="Program.cs" />

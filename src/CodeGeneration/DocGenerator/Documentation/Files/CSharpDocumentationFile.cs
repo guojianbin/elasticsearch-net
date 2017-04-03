@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,13 +14,13 @@ namespace DocGenerator.Documentation.Files
     public class CSharpDocumentationFile : DocumentationFile
     {
         private readonly Document _document;
-        private readonly Compilation _compilation;
+        private readonly Dictionary<string, Project> _projects;
 
-        public CSharpDocumentationFile(Document document, Compilation compilation) 
+        public CSharpDocumentationFile(Document document, Dictionary<string, Project> projects) 
             : base(new FileInfo(document.FilePath))
         {
             _document = document;
-            _compilation = compilation;
+            _projects = projects;
         }
 
         public override async Task SaveToDocumentationFolderAsync()
@@ -40,7 +41,7 @@ namespace DocGenerator.Documentation.Files
 
             // Now add Asciidoc headers, rearrange sections, etc.
             var document = AsciiDocNet.Document.Parse(builder.ToString());
-            var visitor = new GeneratedAsciidocVisitor(this.FileLocation, destination);
+            var visitor = new GeneratedAsciidocVisitor(this.FileLocation, destination, _projects);
             document = visitor.Convert(document);
 
             // Write out document to file

@@ -4,16 +4,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AsciiDocNet;
+using DocGenerator.Walkers;
 using DocGenerator.XmlDocs;
 using Elasticsearch.Net;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Nest;
 using NuDoq;
 using Container = AsciiDocNet.Container;
+using Document = AsciiDocNet.Document;
 using Exception = System.Exception;
 
 namespace DocGenerator.AsciiDoc
@@ -28,15 +33,17 @@ namespace DocGenerator.AsciiDoc
 
 		private readonly FileInfo _source;
 		private readonly FileInfo _destination;
-		private int _topSectionTitleLevel;
+	    private readonly Dictionary<string, Project> _projects;
+	    private int _topSectionTitleLevel;
 		private Document _document;
 		private Document _newDocument;
 		private bool _topLevel = true;
 
-		public GeneratedAsciidocVisitor(FileInfo source, FileInfo destination)
+		public GeneratedAsciidocVisitor(FileInfo source, FileInfo destination, Dictionary<string, Project> projects)
 		{
 			_source = source;
 			_destination = destination;
+		    _projects = projects;
 		}
 
 		public Document Convert(Document document)
@@ -256,59 +263,81 @@ namespace DocGenerator.AsciiDoc
 	    {
 	        if (attributeEntry.Name == "xml-docs")
 	        {
-	            var value = attributeEntry.Value;
+                var value = attributeEntry.Value;
 
-	            if (string.IsNullOrEmpty(value))
-	            {
-	                base.Visit(attributeEntry);
-	                return;
-	            }
+                if (string.IsNullOrEmpty(value))
+                {
+                    base.Visit(attributeEntry);
+                    return;
+                }
 
-	            var parts = value.Split(':');
-	            var assemblyName = parts[0];
-	            var typeName = parts[1];
+                var parts = value.Split(':');
+                var assemblyName = parts[0];
+                var typeName = parts[1];
 
-	            string xmlDocsFile;
-	            Assembly assembly;
-	            string assemblyNamespace;
+                string xmlDocsFile;
+                Assembly assembly;
+                string assemblyNamespace;
 
                 //TODO: tidy this up
-	            switch (assemblyName.ToLowerInvariant())
-	            {
+                switch (assemblyName.ToLowerInvariant())
+                {
                     case "elasticsearch.net":
-                        xmlDocsFile = Path.GetFullPath(Path.Combine(Program.OutputDirPath,
-                                @"..\build\output\v4.6\Elasticsearch.Net\Elasticsearch.Net.XML"));
-	                    assembly = typeof(ElasticLowLevelClient).Assembly;
-	                    assemblyNamespace = typeof(ElasticLowLevelClient).Namespace;
+                        xmlDocsFile = Path.GetFullPath("Elasticsearch.Net.XML");
+                        assembly = typeof(ElasticLowLevelClient).Assembly;
+                        assemblyNamespace = typeof(ElasticLowLevelClient).Namespace;
                         break;
                     default:
-                        xmlDocsFile = Path.GetFullPath(Path.Combine(Program.OutputDirPath,
-                                @"..\build\output\v4.6\Nest\Nest.XML"));
+                        xmlDocsFile = Path.GetFullPath("Nest.XML");
                         assembly = typeof(ElasticClient).Assembly;
                         assemblyNamespace = typeof(ElasticClient).Namespace;
                         break;
                 }
 
-                if (!File.Exists(xmlDocsFile))
-                    throw new FileNotFoundException(
-                        $"Expected to find an XML documentation file at " +
-                        $"{xmlDocsFile}, but does not exist. Please build the solution using build.bat in the directory root.");
+                // build xml documentation file on the fly if it doesn't exist
+	            if (!File.Exists(xmlDocsFile))
+	            {
+                    var project = _projects[assemblyName];
+                    var compilation = project.GetCompilationAsync().Result;
+
+                    using (var peStream = new MemoryStream())
+                    using (var commentStream = File.Create(xmlDocsFile))
+                    {
+                        var emitResult = compilation.Emit(peStream, null, commentStream);
+
+                        if (!emitResult.Success)
+                        {
+                            var failures = emitResult.Diagnostics.Where(diagnostic =>
+                                diagnostic.IsWarningAsError ||
+                                diagnostic.Severity == DiagnosticSeverity.Error);
+
+                            var builder = new StringBuilder($"Unable to emit compilation for: {assemblyName}");
+                            foreach (var diagnostic in failures)
+                            {
+                                builder.AppendLine($"{diagnostic.Id}: {diagnostic.GetMessage()}");
+                            }
+                            builder.AppendLine(new string('-', 30));
+
+                            throw new Exception(builder.ToString());
+                        }
+                    }
+                }
 
                 var assemblyMembers = DocReader.Read(assembly, xmlDocsFile);
-	            var type = assembly.GetType(assemblyNamespace + "." + typeName);
+                var type = assembly.GetType(assemblyNamespace + "." + typeName);
                 var visitor = new XmlDocsVisitor(type);
 
                 visitor.VisitAssembly(assemblyMembers);
-	            if (visitor.LabeledListItems.Any())
-	            {
-	                var labeledList = new LabeledList();
-	                foreach (var item in visitor.LabeledListItems.OrderBy(l => l.Label))
-	                {
-	                    labeledList.Items.Add(item);
-	                }
-	                _newDocument.Insert(_newDocument.IndexOf(attributeEntry), labeledList);
-	            }
-	        }
+                if (visitor.LabeledListItems.Any())
+                {
+                    var labeledList = new LabeledList();
+                    foreach (var item in visitor.LabeledListItems.OrderBy(l => l.Label))
+                    {
+                        labeledList.Items.Add(item);
+                    }
+                    _newDocument.Insert(_newDocument.IndexOf(attributeEntry), labeledList);
+                }
+            }
 	    }
 
 		private void RemoveDocDirectoryAttribute(Document document)

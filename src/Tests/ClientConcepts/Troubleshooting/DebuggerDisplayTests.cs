@@ -5,7 +5,7 @@ using Nest;
 using Tests.Framework;
 using Tests.Framework.MockData;
 
-namespace Tests.ClientConcepts
+namespace Tests.ClientConcepts.Troubleshooting
 {
 	public class DebuggerDisplayTests
 	{

@@ -237,8 +237,10 @@
     <Compile Include="ClientConcepts\Connection\ConfiguringSSL.doc.cs" />
     <Compile Include="ClientConcepts\Connection\HttpConnectionTests.cs" />
     <Compile Include="ClientConcepts\Connection\ModifyingDefaultConnection.doc.cs" />
-    <Compile Include="ClientConcepts\DebuggerDisplayTests.cs" />
-    <Compile Include="ClientConcepts\DeprecationLogging.doc.cs" />
+    <Compile Include="ClientConcepts\Troubleshooting\DebugInformation.doc.cs" />
+    <Compile Include="ClientConcepts\Troubleshooting\AuditTrail.doc.cs" />
+    <Compile Include="ClientConcepts\Troubleshooting\DebuggerDisplayTests.cs" />
+    <Compile Include="ClientConcepts\Troubleshooting\DeprecationLogging.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Analysis\TestingAnalyzers.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Analysis\WritingAnalyzers.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Caching\FieldResolverBenchmarkTests.cs" />
@@ -251,6 +253,8 @@
     <Compile Include="ClientConcepts\HighLevel\Serialization\ModifyingDefaultSerializer.doc.cs" />
     <Compile Include="ClientConcepts\HighLevel\Serialization\ChangingSerializers.doc.cs" />
     <Compile Include="ClientConcepts\LowLevel\GettingStarted.doc.cs" />
+    <Compile Include="ClientConcepts\Troubleshooting\LoggingWithFiddler.doc.cs" />
+    <Compile Include="ClientConcepts\Troubleshooting\LoggingWithOnRequestCompleted.doc.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskApiTests.cs" />
     <Compile Include="Cluster\TaskManagement\GetTask\GetTaskUrlTests.cs" />
     <Compile Include="CodeStandards\Responses.doc.cs" />
@@ -840,6 +844,7 @@
     <None Include="breaking-changes.asciidoc" />
     <None Include="connection-pooling.asciidoc" />
     <EmbeddedResource Include="Document\Single\Attachment\Attachment_Test_Document.pdf" />
+    <None Include="troubleshooting.asciidoc" />
     <None Include="conventions.asciidoc" />
     <None Include="high-level.asciidoc" />
     <None Include="index.asciidoc" />
@@ -869,6 +874,9 @@
     <Content Include="ClientConcepts\LowLevel\class.png" />
     <Content Include="ClientConcepts\LowLevel\pipeline.png" />
     <Content Include="ClientConcepts\LowLevel\pipeline.xml" />
+    <Content Include="ClientConcepts\Troubleshooting\capture-requests-localhost.png" />
+    <Content Include="ClientConcepts\Troubleshooting\capture-requests-remotehost.png" />
+    <Content Include="ClientConcepts\Troubleshooting\inspect-requests.png" />
     <Content Include="QueryDsl\BoolDsl\hadouken-indentation.jpg" />
     <Content Include="tests.default.yaml" />
   </ItemGroup>

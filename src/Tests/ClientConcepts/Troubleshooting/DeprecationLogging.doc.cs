@@ -1,16 +1,16 @@
 ﻿using FluentAssertions;
-using Nest;
 using Tests.Framework;
-using Tests.Framework.Integration;
 using Tests.Framework.ManagedElasticsearch.Clusters;
 using Tests.Framework.MockData;
 using Xunit;
 
-namespace Tests.ClientConcepts
+namespace Tests.ClientConcepts.Troubleshooting
 {
-	/**== Deprecation Logging
-	 * Elasticsearch will send back `Warn` HTTP Headers when you are using an API feature thats deprecated and will soon
-	 * be removed or rewritten.
+	/**
+     * === Deprecation Logging
+	 * 
+     * Elasticsearch will send back `Warn` HTTP Headers when you are using an API feature that is 
+     * deprecated and will be removed or rewritten in a future release.
 	 *
 	 * Elasticsearch.NET and NEST report these back to you so you can log and watch out for them.
 	 */
@@ -34,7 +34,8 @@ namespace Tests.ClientConcepts
 			);
 
 			response.ApiCall.DeprecationWarnings.Should().NotBeNullOrEmpty();
-			response.DebugInformation.Should().Contain("Server indicated deprecations:");
-		}
+
+			response.DebugInformation.Should().Contain("Server indicated deprecations:"); // <1> `DebugInformation` also contains the deprecation warnings
+        }
 	}
 }

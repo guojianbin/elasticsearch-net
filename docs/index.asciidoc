@@ -19,6 +19,8 @@ include::high-level.asciidoc[]
 
 include::conventions.asciidoc[]
 
+include::troubleshooting.asciidoc[]
+
 include::search.asciidoc[]
 
 include::query-dsl.asciidoc[]
