@@ -5,6 +5,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+#if DOTNETCORE
+using Elasticsearch.Net;
+using System.Net.Http;
+#endif
+
 namespace Tests.ClientConcepts.Connection
 {
     /**[[configuring-ssl]]

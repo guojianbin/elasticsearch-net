@@ -173,9 +173,11 @@ var descriptor = new CreateIndexDescriptor("myindex")
           "type": "text",
           "fields": {
             "stop": {
+              "type": "text",
               "analyzer": "stop"
             },
             "shingles": {
+              "type": "text",
               "analyzer": "name_shingles"
             },
             "keyword": {

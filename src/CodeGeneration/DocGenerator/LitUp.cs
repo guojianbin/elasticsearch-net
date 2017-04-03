@@ -14,12 +14,11 @@ namespace DocGenerator
 	{
 		private static readonly string[] SkipFolders = { "Debug", "Release" };
 
-	    private static readonly string TestsProjectDir = Path.Combine(Program.InputDirPath, "Tests");
-	    private static readonly string NestProjectDir = Path.Combine(Program.InputDirPath, "Nest");
-	    private static readonly string ElasticsearchNetProjectDir = Path.Combine(Program.InputDirPath, "Elasticsearch.Net");
+        private static string GetProjectDir(string projectName) => Path.Combine(Program.InputDirPath, projectName);
+        private static string GetProjectFile(string projectName) => Path.Combine(GetProjectDir(projectName), $"{projectName}.csproj");
 
-	    public static IEnumerable<DocumentationFile> InputFiles(string path) =>
-			from f in Directory.GetFiles(TestsProjectDir, $"{path}", SearchOption.AllDirectories)
+        public static IEnumerable<DocumentationFile> InputFiles(string path) =>
+			from f in Directory.GetFiles(GetProjectDir("Tests"), $"{path}", SearchOption.AllDirectories)
 			let dir = new DirectoryInfo(f)
 			where dir?.Parent != null && !SkipFolders.Contains(dir.Parent.Name)
 			select DocumentationFile.Load(new FileInfo(f));
@@ -47,10 +46,9 @@ namespace DocGenerator
 		public static async Task GoAsync(string[] args)
 		{
             var workspace = MSBuildWorkspace.Create();
-
-            var testProject = workspace.OpenProjectAsync(Path.Combine(TestsProjectDir, "Tests.csproj"));
-            var nestProject = workspace.OpenProjectAsync(Path.Combine(NestProjectDir, "Nest.csproj"));
-            var elasticSearchNetProject = workspace.OpenProjectAsync(Path.Combine(ElasticsearchNetProjectDir, "Elasticsearch.Net.csproj"));
+            var testProject = workspace.OpenProjectAsync(GetProjectFile("Tests"));
+            var nestProject = workspace.OpenProjectAsync(GetProjectFile("Nest"));
+            var elasticSearchNetProject = workspace.OpenProjectAsync(GetProjectFile("Elasticsearch.Net"));
 
 		    var projects = new []
 		    {

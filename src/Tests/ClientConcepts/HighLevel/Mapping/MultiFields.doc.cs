@@ -204,10 +204,12 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
                                 {
                                     stop = new
                                     {
+                                        type = "text",
                                         analyzer = "stop"
                                     },
                                     shingles = new
                                     {
+                                        type = "text",
                                         analyzer = "name_shingles"
                                     },
                                     keyword = new

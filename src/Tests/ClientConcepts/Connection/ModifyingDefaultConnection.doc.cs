@@ -94,7 +94,7 @@ namespace Tests.ClientConcepts.Connection
             var responseBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
             var connection = new InMemoryConnection(responseBytes, 200); // <1> `InMemoryConnection` is configured to **always** return `responseBytes` along with a 200 HTTP status code
             var connectionPool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-            var settings = new ConnectionSettings(connectionPool, connection);
+            var settings = new ConnectionSettings(connectionPool, connection).DefaultIndex("project");
             var client = new ElasticClient(settings);
 
             var searchResponse = client.Search<Project>(s => s.MatchAll());
@@ -131,7 +131,6 @@ namespace Tests.ClientConcepts.Connection
                 requestServicePoint.UseNagleAlgorithm = true;
             }
         }
-#endif
 
         public void UseMyCustomHttpConnection()
         {
@@ -153,7 +152,6 @@ namespace Tests.ClientConcepts.Connection
         * It is possible to add X509 certificates to each request from the client by overriding the `CreateHttpWebRequest`
         * method in an `IConnection` implementation deriving from `HttpConnection`
         */
-#if !DOTNETCORE
         public class X509CertificateHttpConnection : HttpConnection
         {
             protected override HttpWebRequest CreateHttpWebRequest(RequestData requestData)
@@ -163,7 +161,6 @@ namespace Tests.ClientConcepts.Connection
                 return request;
             }
         }
-#endif
 
         /**
          * As before, a new instance of the custom connection is passed to `ConnectionSettings` in order to
@@ -176,5 +173,6 @@ namespace Tests.ClientConcepts.Connection
             var settings = new ConnectionSettings(connectionPool, connection);
             var client = new ElasticClient(settings);
         }
+#endif
     }
 }

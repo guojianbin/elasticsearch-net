@@ -125,7 +125,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
          * 
          * As an example, let's create a visitor that maps all CLR types to an Elasticsearch text datatype (`ITextProperty`).
 		 */
-        public class EverythingIsAStringPropertyVisitor : NoopPropertyVisitor
+        public class EverythingIsATextPropertyVisitor : NoopPropertyVisitor
 		{
 			public override IProperty Visit(PropertyInfo propertyInfo, ElasticsearchPropertyAttributeBase attribute) => new TextProperty();
 		}
@@ -135,7 +135,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		{
 			var descriptor = new CreateIndexDescriptor("myindex")
 				.Mappings(ms => ms
-					.Map<Employee>(m => m.AutoMap(new EverythingIsAStringPropertyVisitor()))
+					.Map<Employee>(m => m.AutoMap(new EverythingIsATextPropertyVisitor()))
 				);
 
             /**
@@ -172,6 +172,10 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 							salary = new
 							{
 								type = "text"
+							},							
+                            hours = new
+							{
+								type = "text"
 							}
 						}
 					}
@@ -179,7 +183,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 			};
 
             // hide
-		    Expect(expected).WhenSerializing(descriptor as IIndexRequest);
+		    Expect(expected).WhenSerializing((ICreateIndexRequest) descriptor);
 		}
 	}
 }

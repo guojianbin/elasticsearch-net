@@ -8,17 +8,21 @@ namespace DocGenerator
 		static Program()
 		{
 			var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-			if (currentDirectory.Name == "DocGenerator" && currentDirectory.Parent.Name == "CodeGeneration")
+            if (currentDirectory.Name == "DocGenerator" && currentDirectory.Parent.Name == "CodeGeneration")
 			{
-				InputDirPath = @"..\..\";
+                InputDirPath = @"..\..\";
 				OutputDirPath = @"..\..\..\docs";
+                BuildOutputPath = @"..\..\..\build\output";
 			}
 			else
 			{
 				InputDirPath = @"..\..\..\..\..\src";
 				OutputDirPath = @"..\..\..\..\..\docs";
+                BuildOutputPath = @"..\..\..\..\..\build\output";
 			}
-		}
+        }
+
+        public static string BuildOutputPath { get; }
 
 		public static string InputDirPath { get; }
 

@@ -140,14 +140,14 @@ As an example, let's create a visitor that maps all CLR types to an Elasticsearc
 
 [source,csharp]
 ----
-public class EverythingIsAStringPropertyVisitor : NoopPropertyVisitor
+public class EverythingIsATextPropertyVisitor : NoopPropertyVisitor
 {
     public override IProperty Visit(PropertyInfo propertyInfo, ElasticsearchPropertyAttributeBase attribute) => new TextProperty();
 }
 
 var descriptor = new CreateIndexDescriptor("myindex")
         .Mappings(ms => ms
-            .Map<Employee>(m => m.AutoMap(new EverythingIsAStringPropertyVisitor()))
+            .Map<Employee>(m => m.AutoMap(new EverythingIsATextPropertyVisitor()))
         );
 ----
 
@@ -173,6 +173,9 @@ var descriptor = new CreateIndexDescriptor("myindex")
           "type": "text"
         },
         "salary": {
+          "type": "text"
+        },
+        "hours": {
           "type": "text"
         }
       }

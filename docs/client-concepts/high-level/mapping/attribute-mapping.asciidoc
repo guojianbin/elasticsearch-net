@@ -90,42 +90,33 @@ var descriptor = new CreateIndexDescriptor("myindex")
         "employees": {
           "properties": {
             "birthday": {
+              "format": "MMddyyyy",
               "type": "date"
             },
-            "employees": {
+            "empl": {
               "properties": {},
-              "type": "object"
+              "type": "nested"
             },
-            "firstName": {
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              },
+            "first_name": {
               "type": "text"
             },
-            "hours": {
-              "type": "long"
-            },
             "isManager": {
+              "null_value": false,
+              "store": true,
               "type": "boolean"
             },
-            "lastName": {
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              },
+            "last_name": {
               "type": "text"
             },
             "salary": {
-              "type": "integer"
+              "coerce": true,
+              "doc_values": false,
+              "ignore_malformed": true,
+              "type": "float"
             }
           },
-          "store": false,
-          "type": "object"
+          "type": "object",
+          "store": false
         },
         "name": {
           "null_value": "null",
@@ -144,42 +135,7 @@ var descriptor = new CreateIndexDescriptor("myindex")
           "type": "date"
         },
         "empl": {
-          "properties": {
-            "birthday": {
-              "type": "date"
-            },
-            "employees": {
-              "properties": {},
-              "type": "object"
-            },
-            "firstName": {
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              },
-              "type": "text"
-            },
-            "hours": {
-              "type": "long"
-            },
-            "isManager": {
-              "type": "boolean"
-            },
-            "lastName": {
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              },
-              "type": "text"
-            },
-            "salary": {
-              "type": "integer"
-            }
-          },
+          "properties": {},
           "type": "nested"
         },
         "first_name": {

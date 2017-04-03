@@ -283,12 +283,12 @@ namespace DocGenerator.AsciiDoc
                 switch (assemblyName.ToLowerInvariant())
                 {
                     case "elasticsearch.net":
-                        xmlDocsFile = Path.GetFullPath("Elasticsearch.Net.XML");
+                        xmlDocsFile = Path.GetFullPath(Path.Combine(Program.BuildOutputPath, "Elasticsearch.Net.XML"));
                         assembly = typeof(ElasticLowLevelClient).Assembly;
                         assemblyNamespace = typeof(ElasticLowLevelClient).Namespace;
                         break;
                     default:
-                        xmlDocsFile = Path.GetFullPath("Nest.XML");
+                        xmlDocsFile = Path.GetFullPath(Path.Combine(Program.BuildOutputPath, "Nest.XML"));
                         assembly = typeof(ElasticClient).Assembly;
                         assemblyNamespace = typeof(ElasticClient).Namespace;
                         break;

@@ -86,60 +86,46 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 					{
 						properties = new
 						{
-							employees = new
-							{
-								properties = new
-								{
-									birthday = new
-									{
-										type = "date"
-									},
-									employees = new
-									{
-										properties = new { },
-										type = "object"
-									},
-									firstName = new
-									{
-										fields = new
-										{
-											keyword = new
-											{
-												type = "keyword",
-												ignore_above = 256
-											}
-										},
-										type = "text"
-									},
-									hours = new
-									{
-										type = "long"
-									},
-									isManager = new
-									{
-										type = "boolean"
-									},
-									lastName = new
-									{
-										fields = new
-										{
-											keyword = new
-											{
-												type = "keyword",
-												ignore_above = 256
-											}
-										},
-										type = "text"
-									},
-									salary = new
-									{
-										type = "integer"
-									}
-								},
-								store = false,
-								type = "object"
-							},
-							name = new
+                            employees = new
+                            {
+                                properties = new
+                                {
+                                    birthday = new
+                                    {
+                                        format = "MMddyyyy",
+                                        type = "date"
+                                    },
+                                    empl = new
+                                    {
+                                        properties = new {},
+                                        type = "nested"
+                                    },
+                                    first_name = new
+                                    {
+                                        type = "text"
+                                    },
+                                    isManager = new
+                                    {
+                                        null_value = false,
+                                        store = true,
+                                        type = "boolean"
+                                    },
+                                    last_name = new
+                                    {
+                                        type = "text"
+                                    },
+                                    salary = new
+                                    {
+                                        coerce = true,
+                                        doc_values = false,
+                                        ignore_malformed = true,
+                                        type = "float"
+                                    }
+                                },
+                                type = "object",
+                                store = false
+                            },
+                            name = new
 							{
 								null_value = "null",
 								similarity = "BM25",
@@ -162,54 +148,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 							},
 							empl = new
 							{
-								properties = new
-								{
-									birthday = new
-									{
-										type = "date"
-									},
-									employees = new
-									{
-										properties = new { },
-										type = "object"
-									},
-									firstName = new
-									{
-										fields = new
-										{
-											keyword = new
-											{
-												type = "keyword",
-												ignore_above = 256
-											}
-										},
-										type = "text"
-									},
-									hours = new
-									{
-										type = "long"
-									},
-									isManager = new
-									{
-										type = "boolean"
-									},
-									lastName = new
-									{
-										fields = new
-										{
-											keyword = new
-											{
-												type = "keyword",
-												ignore_above = 256
-											}
-										},
-										type = "text"
-									},
-									salary = new
-									{
-										type = "integer"
-									}
-								},
+								properties = new {},
 								type = "nested"
 							},
 							first_name = new
@@ -241,7 +180,6 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
             // hide
 			Expect(expected).WhenSerializing((ICreateIndexRequest) descriptor);
 		}
-
         /**
          * Attribute mapping can be a convenient way to control how POCOs are mapped with minimal code, however
          * there are some mapping features that cannot be expressed with attributes, for example, <<multi-fields, Multi fields>>.
