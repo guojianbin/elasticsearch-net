@@ -12,15 +12,15 @@ using Xunit;
 namespace Tests.ClientConcepts.Troubleshooting
 {
     /**=== Logging with OnRequestCompleted
-     * When constructing the connection settings to pass to the client, you can pass a callback of type 
-     * `Action<IApiCallDetails>` to the `OnRequestCompleted` method that can eavesdrop every time a 
-     * response(good or bad) is received. 
-     * 
+     * When constructing the connection settings to pass to the client, you can pass a callback of type
+     * `Action<IApiCallDetails>` to the `OnRequestCompleted` method that can eavesdrop every time a
+     * response(good or bad) is received.
+     *
      * If you have complex logging needs this is a good place to add that in
      * since you have access to both the request and response details.
      */
     public class LoggingRequestsAndResponses
-    {           
+    {
         /**
         * In this example, we'll use `OnRequestCompleted` on connection settings to increment a counter each time
         * it's called.
@@ -29,18 +29,18 @@ namespace Tests.ClientConcepts.Troubleshooting
         public async Task OnRequestCompletedIsCalled()
         {
             var counter = 0;
-            var client = TestClient.GetInMemoryClient(connectionSettings => 
+            var client = TestClient.GetInMemoryClient(connectionSettings =>
                 connectionSettings.OnRequestCompleted(r => counter++)); // <1> Construct a client
 
             client.RootNodeInfo(); // <2> Make a synchronous call and assert the counter is incremented
             counter.Should().Be(1);
 
             await client.RootNodeInfoAsync(); // <3> Make an asynchronous call and assert the counter is incremented
-            counter.Should().Be(2); 
+            counter.Should().Be(2);
         }
 
         /**
-		*`OnRequestCompleted` is called even when an exception is thrown, so it can be used even if the client is 
+		*`OnRequestCompleted` is called even when an exception is thrown, so it can be used even if the client is
         * configured to throw exceptions
 		*/
         [U]
@@ -48,8 +48,8 @@ namespace Tests.ClientConcepts.Troubleshooting
         {
             var counter = 0;
             var client = TestClient.GetFixedReturnClient( // <1> Configure a client with a connection that **always returns a HTTP 500 response
-                new { }, 
-                500, 
+                new { },
+                500,
                 connectionSettings => connectionSettings
                     .ThrowExceptions() // <2> Always throw exceptions when a call results in an exception
                     .OnRequestCompleted(r => counter++)
@@ -63,15 +63,15 @@ namespace Tests.ClientConcepts.Troubleshooting
         }
 
         /**
-        * Here's an example using `OnRequestCompleted()` for more complex logging 
-        * 
+        * Here's an example using `OnRequestCompleted()` for more complex logging
+        *
         * [NOTE]
         * --
-        * By default, the client writes directly to the request stream and deserializes directly from the 
-        * response stream. 
-        * 
-        * If you would also like to capture the request and/or response bytes, 
-        * you also need to set `.DisableDirectStreaming()` to `true`. 
+        * By default, the client writes directly to the request stream and deserializes directly from the
+        * response stream.
+        *
+        * If you would also like to capture the request and/or response bytes,
+        * you also need to set `.DisableDirectStreaming()` to `true`.
         * --
 		*/
         [U]
@@ -89,7 +89,7 @@ namespace Tests.ClientConcepts.Troubleshooting
                     if (apiCallDetails.RequestBodyInBytes != null)
                     {
                         list.Add(
-                            $"{apiCallDetails.HttpMethod} {apiCallDetails.Uri}\r\n" +
+                            $"{apiCallDetails.HttpMethod} {apiCallDetails.Uri} " +
                             $"{Encoding.UTF8.GetString(apiCallDetails.RequestBodyInBytes)}");
                     }
                     else
@@ -100,12 +100,12 @@ namespace Tests.ClientConcepts.Troubleshooting
                     // log out the response and the response body, if one exists for the type of response
                     if (apiCallDetails.ResponseBodyInBytes != null)
                     {
-                        list.Add($"Status: {apiCallDetails.HttpStatusCode}\r\n" +
-                                 $"{Encoding.UTF8.GetString(apiCallDetails.ResponseBodyInBytes)}\r\n");
+                        list.Add($"Status: {apiCallDetails.HttpStatusCode}" +
+                                 $"{Encoding.UTF8.GetString(apiCallDetails.ResponseBodyInBytes)}");
                     }
                     else
                     {
-                        list.Add($"Status: {apiCallDetails.HttpStatusCode}\r\n");
+                        list.Add($"Status: {apiCallDetails.HttpStatusCode}");
                     }
                 });
 
@@ -134,23 +134,19 @@ namespace Tests.ClientConcepts.Troubleshooting
             list.Count.Should().Be(4);
             list.ShouldAllBeEquivalentTo(new[] // <6> Assert the list contains the contents written in the delegate passed to `OnRequestCompleted`
             {
-                @"POST http://localhost:9200/_search?scroll=2m
-{""sort"":[{""_doc"":{""order"":""asc""}}]}",
-                @"Status: 200
-",
-                @"POST http://localhost:9200/_search?scroll=10m
-{""sort"":[{""_doc"":{""order"":""asc""}}]}",
-                @"Status: 200
-"
+                @"POST http://localhost:9200/_search?scroll=2m {""sort"":[{""_doc"":{""order"":""asc""}}]}",
+                @"Status: 200",
+                @"POST http://localhost:9200/_search?scroll=10m {""sort"":[{""_doc"":{""order"":""asc""}}]}",
+                @"Status: 200"
             });
         }
 
         /**
          * When running an application in production, you probably don't want to disable direct streaming for _all_
          * requests, since doing so will incur a performance overhead, due to buffering request and
-         * response bytes in memory. It can however be useful to capture requests and responses in an ad-hoc fashion, 
+         * response bytes in memory. It can however be useful to capture requests and responses in an ad-hoc fashion,
          * perhaps to troubleshoot an issue in production.
-         * 
+         *
          * `DisableDirectStreaming` can be enabled on a _per-request_ basis for this purpose. In using this feature,
          * it is possible to configure a general logging mechanism in `OnRequestCompleted` and log out
          * request and responses only when necessary
@@ -169,7 +165,7 @@ namespace Tests.ClientConcepts.Troubleshooting
                     if (apiCallDetails.RequestBodyInBytes != null)
                     {
                         list.Add(
-                            $"{apiCallDetails.HttpMethod} {apiCallDetails.Uri}\r\n" +
+                            $"{apiCallDetails.HttpMethod} {apiCallDetails.Uri} " +
                             $"{Encoding.UTF8.GetString(apiCallDetails.RequestBodyInBytes)}");
                     }
                     else
@@ -180,12 +176,12 @@ namespace Tests.ClientConcepts.Troubleshooting
                     // log out the response and the response body, if one exists for the type of response
                     if (apiCallDetails.ResponseBodyInBytes != null)
                     {
-                        list.Add($"Status: {apiCallDetails.HttpStatusCode}\r\n" +
-                                 $"{Encoding.UTF8.GetString(apiCallDetails.ResponseBodyInBytes)}\r\n");
+                        list.Add($"Status: {apiCallDetails.HttpStatusCode}" +
+                                 $"{Encoding.UTF8.GetString(apiCallDetails.ResponseBodyInBytes)}");
                     }
                     else
                     {
-                        list.Add($"Status: {apiCallDetails.HttpStatusCode}\r\n");
+                        list.Add($"Status: {apiCallDetails.HttpStatusCode}");
                     }
                 });
 
@@ -218,12 +214,9 @@ namespace Tests.ClientConcepts.Troubleshooting
             list.ShouldAllBeEquivalentTo(new[]
             {
                 @"POST http://localhost:9200/_search?scroll=2m", // <3> Only the method and url for the first request is captured
-                @"Status: 200
-",
-                @"POST http://localhost:9200/_search?scroll=10m
-{""sort"":[{""_doc"":{""order"":""asc""}}]}", // <4> the body of the second request is captured
-                @"Status: 200
-"
+                @"Status: 200",
+                @"POST http://localhost:9200/_search?scroll=10m {""sort"":[{""_doc"":{""order"":""asc""}}]}", // <4> the body of the second request is captured
+                @"Status: 200"
             });
         }
     }
