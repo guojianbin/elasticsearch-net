@@ -14,12 +14,12 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 	*
 	* When creating a mapping either when creating an index or through the Put Mapping API,
 	* NEST offers a feature called auto mapping that can automagically infer the correct
-	* Elasticsearch field datatypes from the CLR POCO property types you are mapping. 
+	* Elasticsearch field datatypes from the CLR POCO property types you are mapping.
 	**/
 	public class AutoMap
 	{
         /**
-		* We'll look at the features of auto mapping with a number of examples. For this, 
+		* We'll look at the features of auto mapping with a number of examples. For this,
         * we'll define two POCOs, `Company`, which has a name
 		* and a collection of Employees, and `Employee` which has various properties of
 		* different types, and itself has a collection of `Employee` types.
@@ -47,16 +47,13 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 			/**
             * Auto mapping can take the pain out of having to define a manual mapping for all properties
             * on the POCO
-            * 
 			*/
 			var descriptor = new CreateIndexDescriptor("myindex")
 				.Mappings(ms => ms
-					.Map<Company>(m => m.AutoMap()) // <1> Auto map company
-					.Map<Employee>(m => m.AutoMap()) // <2> Auto map employee
+					.Map<Company>(m => m.AutoMap()) // <1> Auto map `Company`
+					.Map<Employee>(m => m.AutoMap()) // <2> Auto map `Employee`
 				);
 
-            /**
-             */
             // json
 			var expected = new
 			{
@@ -191,7 +188,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         }
 
 		// hide
-		public class ParentWithStringId : Parent
+		public class ParentWithStringId : IgnoringProperties.Parent
 		{
 			public new string Id { get; set; }
 		}
@@ -254,40 +251,40 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		 *
 		 * and the remaining string properties as multi field `text` datatypes, each with a `keyword` datatype
          * sub field.
-         * 
+         *
          * NEST has inferred mapping support for the following .NET types
-         * 
-         * `String`:: maps to `"text"` with a `"keyword"` sub field. See <<multi-fields, Multi Fields>>.
-         * `Int32`:: maps to `"integer"`
-         * `UInt16`:: maps to `"integer"`
-         * `Int16`:: maps to `"short"`
-         * `Byte`:: maps to `"short"`
-         * `Int64`:: maps to `"long"`
-         * `UInt32`:: maps to `"long"`
-         * `TimeSpan`:: maps to `"long"`
-         * `Single`:: maps to `"float"`
-         * `Double`:: maps to `"double"`
-         * `Decimal`:: maps to `"double"`
-         * `UInt64`:: maps to `"double"`
-         * `DateTime`:: maps to `"date"`
-         * `DateTimeOffset`:: maps to `"date"`
-         * `Boolean`:: maps to `"boolean"`
-         * `Char`:: maps to `"keyword"`
-         * `Guid`:: maps to `"keyword"`
-         * 
-         * and supports a number of special types
-         * 
-         * `Nest.GeoLocation`:: maps to `"geo_point"`
-         * `Nest.CompletionField`:: maps to `"completion"`
-         * `Nest.Attachment`:: maps to `"attachment"`
-         * `Nest.DateRange`:: maps to `"date_range"`
-         * `Nest.DoubleRange`:: maps to `"double_range"`
-         * `Nest.FloatRange`:: maps to `"float_range"`
-         * `Nest.IntegerRange`:: maps to `"integer_range"`
-         * `Nest.LongRange`:: maps to `"long_range"`
+         *
+         * - `String` maps to `"text"` with a `"keyword"` sub field. See <<multi-fields, Multi Fields>>.
+         * - `Int32` maps to `"integer"`
+         * - `UInt16` maps to `"integer"`
+         * - `Int16` maps to `"short"`
+         * - `Byte` maps to `"short"`
+         * - `Int64` maps to `"long"`
+         * - `UInt32` maps to `"long"`
+         * - `TimeSpan` maps to `"long"`
+         * - `Single` maps to `"float"`
+         * - `Double` maps to `"double"`
+         * - `Decimal` maps to `"double"`
+         * - `UInt64` maps to `"double"`
+         * - `DateTime` maps to `"date"`
+         * - `DateTimeOffset` maps to `"date"`
+         * - `Boolean` maps to `"boolean"`
+         * - `Char` maps to `"keyword"`
+         * - `Guid` maps to `"keyword"`
+         *
+         * and supports a number of special types defined in NEST
+         *
+         * - `Nest.GeoLocation` maps to `"geo_point"`
+         * - `Nest.CompletionField` maps to `"completion"`
+         * - `Nest.Attachment` maps to `"attachment"`
+         * - `Nest.DateRange` maps to `"date_range"`
+         * - `Nest.DoubleRange` maps to `"double_range"`
+         * - `Nest.FloatRange` maps to `"float_range"`
+         * - `Nest.IntegerRange` maps to `"integer_range"`
+         * - `Nest.LongRange` maps to `"long_range"`
 		 *
          * All other types map to `"object"` by default.
-         * 
+         *
          *[IMPORTANT]
 		 * --
 		 * Some .NET types do not have direct equivalent Elasticsearch types. For example, `System.Decimal` is a type
@@ -315,9 +312,9 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		 * === Mapping Recursion
 		 * If you notice in our previous `Company` and `Employee` example, the `Employee` type is recursive
 		 * in that the `Employee` class itself contains a collection of type `Employee`. By default, `.AutoMap()` will only
-		 * traverse a single depth when it encounters recursive instances like this; the collection of type `Employee` 
+		 * traverse a single depth when it encounters recursive instances like this; the collection of type `Employee`
          * on the `Employee` class did not get any of its properties mapped.
-         * 
+         *
 		 * This is done as a safe-guard to prevent stack overflows and all the fun that comes with
 		 * __infinite__ recursion.  Additionally, in most cases, when it comes to Elasticsearch mappings, it is
 		 * often an edge case to have deeply nested mappings like this.  However, you may still have
@@ -415,7 +412,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		}
 
         //hide
-        [U]		
+        [U]
 		public void PutMappingAlsoAdheresToMaxRecursion()
 		{
 			var descriptor = new PutMappingDescriptor<A>().AutoMap();

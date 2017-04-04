@@ -9,15 +9,15 @@
 ////
 IMPORTANT NOTE
 ==============
-This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/Compound/FullText/Match/MatchPhrasePrefixUsageTests.cs. 
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/FullText/Match/MatchPhrasePrefixUsageTests.cs. 
 If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
 please modify the original csharp file found at the link and submit the PR with that change. Thanks!
 ////
 
 [[match-phrase-prefix-usage]]
-== Match Phrase Prefix Usage
+=== Match Phrase Prefix Usage
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -41,7 +41,7 @@ q
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----

@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[responses]]
-== Responses
+=== Responses
 
 Every collection property on a Response type should be either IReadOnlyCollection or IReadOnlyDictionary
 

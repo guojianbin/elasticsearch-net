@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[filters-aggregation-usage]]
-== Filters Aggregation Usage
+=== Filters Aggregation Usage
 
 Defines a multi bucket aggregations where each bucket is associated with a filter.
 Each bucket will collect all documents that match its associated filter. For documents
@@ -23,11 +23,10 @@ that do not match any filter, these will be collected in the _other bucket_.
 
 Be sure to read the Elasticsearch documentation {ref_current}/search-aggregations-bucket-filters-aggregation.html[Filters Aggregation]
 
-[[named-filters]]
 [float]
-== Named filters
+=== Named filters
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -48,7 +47,7 @@ s => s
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----
@@ -115,7 +114,7 @@ new SearchRequest<Project>
 }
 ----
 
-=== Handling Responses
+==== Handling Responses
 
 Using the `.Agg` aggregation helper we can fetch our aggregation results easily
 in the correct type. <<aggs-vs-aggregations, Be sure to read more about .Aggs vs .Aggregations>>
@@ -144,11 +143,10 @@ namedResult.Should().NotBeNull();
 namedResult.DocCount.Should().Be(0);
 ----
 
-[[anonymous-filters]]
 [float]
-== Anonymous filters
+=== Anonymous filters
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -168,7 +166,7 @@ s => s
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----
@@ -233,7 +231,7 @@ new SearchRequest<Project>
 }
 ----
 
-=== Handling Responses
+==== Handling Responses
 
 Using the `.Agg` aggregation helper we can fetch our aggregation results easily
 in the correct type. <<aggs-vs-aggregations, Be sure to read more about .Aggs vs .Aggregations>>
@@ -256,11 +254,10 @@ results.Last().DocCount.Should().Be(0); <1>
 ----
 <1> The last bucket is the _other bucket_
 
-[[empty-filters]]
 [float]
-== Empty Filters
+=== Empty Filters
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -272,7 +269,7 @@ s => s
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----
@@ -299,7 +296,7 @@ new SearchRequest<Project>
 }
 ----
 
-=== Handling Responses
+==== Handling Responses
 
 [source,csharp]
 ----
@@ -307,11 +304,10 @@ response.ShouldBeValid();
 response.Aggs.Filters("empty_filters").Buckets.Should().BeEmpty();
 ----
 
-[[conditionless-filters]]
 [float]
-== Conditionless Filters 
+=== Conditionless Filters 
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -325,7 +321,7 @@ s => s
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----
@@ -355,7 +351,7 @@ new SearchRequest<Project>
 }
 ----
 
-=== Handling Responses
+==== Handling Responses
 
 [source,csharp]
 ----

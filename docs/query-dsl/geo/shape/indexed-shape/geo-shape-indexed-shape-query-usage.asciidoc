@@ -9,15 +9,21 @@
 ////
 IMPORTANT NOTE
 ==============
-This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/Geo/Shape/IndexedShape/GeoIndexedShapeUsageTests.cs. 
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/Geo/Shape/IndexedShape/GeoShapeIndexedShapeQueryUsageTests.cs. 
 If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
 please modify the original csharp file found at the link and submit the PR with that change. Thanks!
 ////
 
-[[geo-indexed-shape-usage]]
-== Geo Indexed Shape Usage
+[[geo-shape-indexed-shape-query-usage]]
+=== Geo Shape Indexed Shape Query Usage
 
-=== Fluent DSL Example
+The GeoShape IndexedShape Query supports using a shape which has already been indexed in another index and/or index type within a geoshape query.
+This is particularly useful for when you have a pre-defined list of shapes which are useful to your application and you want to reference this
+using a logical name (for example __New Zealand__), rather than having to provide their coordinates within the request each time.
+
+See the Elasticsearch documentation on {ref_current}/query-dsl-geo-shape-query.html[geoshape queries] for more detail.
+
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -34,7 +40,7 @@ q
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----

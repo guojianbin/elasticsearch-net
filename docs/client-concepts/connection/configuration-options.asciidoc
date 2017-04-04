@@ -1,4 +1,6 @@
-:ref_current: https://www.elastic.co/guide/en/elasticsearch/reference/5.2
+:ref_current: https://www.elastic.co/guide/en/elasticsearch/reference/5.3
+
+:xpack_current: https://www.elastic.co/guide/en/x-pack/5.3
 
 :github: https://github.com/elastic/elasticsearch-net
 
@@ -30,6 +32,14 @@ Elasticsearch.Net and NEST:
 
 Basic Authentication credentials to send with all requests to Elasticsearch
 
+`ClientCertificate`::
+
+Use the following certificate to authenticate all HTTP requests. You can also set them on individual request using `ClientCertificates`
+
+`ClientCertificates`::
+
+Use the following certificates to authenticate all HTTP requests. You can also set them on individual request using `ClientCertificates`
+
 `ConnectionLimit`::
 
 Limits the number of concurrent connections that can be opened to an endpoint. Defaults to `80` .
@@ -55,6 +65,10 @@ IMPORTANT: Depending on the registered serializer,             this may cause th
 `DisablePing`::
 
 When a node is used for the very first time or when it's used for the first time after it has been marked dead a ping with a very low timeout is send to the node to make sure that when it's still dead it reports it as fast as possible. You can disable these pings globally here if you rather have it fail on the possible slower original request
+
+`EnableDebugMode`::
+
+Turns on settings that aid in debugging like DisableDirectStreaming() and PrettyJson() so that the original request and response JSON can be inspected.
 
 `EnableHttpCompression`::
 
@@ -127,6 +141,10 @@ If your connection has to go through proxy, use this method to specify the proxy
 Sets the default timeout in milliseconds for each request to Elasticsearch. Defaults to `60` seconds.
 +
 NOTE: You can set this to a high value here, and specify a timeout on Elasticsearch's side.
+
+`ServerCertificateValidationCallback`::
+
+Register a ServerCertificateValidationCallback, this is called per endpoint until it returns true. After this callback returns true that endpoint is validated for the lifetime of the ServiceEndpoint for that host.
 
 `SniffLifeSpan`::
 

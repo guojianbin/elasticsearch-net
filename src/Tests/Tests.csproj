@@ -234,7 +234,6 @@
     <Compile Include="ClientConcepts\ConnectionPooling\Dispose\ResponseBuilderDisposeTests.cs" />
     <Compile Include="ClientConcepts\ConnectionPooling\Sniffing\AddressParsing.doc.cs" />
     <Compile Include="ClientConcepts\Connection\ConfigurationOptions.doc.cs" />
-    <Compile Include="ClientConcepts\Connection\ConfiguringSSL.doc.cs" />
     <Compile Include="ClientConcepts\Connection\HttpConnectionTests.cs" />
     <Compile Include="ClientConcepts\Connection\ModifyingDefaultConnection.doc.cs" />
     <Compile Include="ClientConcepts\Troubleshooting\DebugInformation.doc.cs" />

@@ -178,19 +178,19 @@ namespace DocGenerator.AsciiDoc
 							case "queryfluent":
 								if (!LastSectionTitleMatches(text => text.StartsWith("Fluent DSL", StringComparison.OrdinalIgnoreCase)))
 								{
-									_newDocument.Add(CreateSubsectionTitle("Fluent DSL Example"));
+									_newDocument.Add(CreateSubsectionTitle("Fluent DSL example"));
 								}
 
 								_newDocument.Add(source);
                                 break;
 							case "initializer":
                             case "queryinitializer":
-                                _newDocument.Add(CreateSubsectionTitle("Object Initializer Syntax Example"));
+                                _newDocument.Add(CreateSubsectionTitle("Object Initializer syntax example"));
 								_newDocument.Add(source);
                                 break;
 							case "expectresponse":
 								// Don't add the Handlng Response section title if it was the last title (it might be defined in the doc already)
-								if (!LastSectionTitleMatches(text => text.Equals("Handling Responses", StringComparison.OrdinalIgnoreCase)))
+								if (!LastSectionTitleMatches(text => text.Equals("Handling responses", StringComparison.OrdinalIgnoreCase)))
 								{
 									_newDocument.Add(CreateSubsectionTitle("Handling Responses"));
 								}
@@ -371,7 +371,7 @@ namespace DocGenerator.AsciiDoc
 			var level = _topSectionTitleLevel + 1;
 			var sectionTitle = new SectionTitle(title, level);
 
-            // levels 1-3 need to be floating so the Elasticsearch docs generation does not 
+            // levels 1-3 need to be floating so the Elasticsearch docs generation does not
             // split into separate file
 			if (level < 4)
 				sectionTitle.IsFloating = true;

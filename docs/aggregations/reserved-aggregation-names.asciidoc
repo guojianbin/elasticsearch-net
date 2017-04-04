@@ -9,7 +9,7 @@
 ////
 IMPORTANT NOTE
 ==============
-This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/Aggregations/ReservedAggNames.doc.cs. 
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/Aggregations/ReservedAggregationNames.doc.cs. 
 If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
 please modify the original csharp file found at the link and submit the PR with that change. Thanks!
 ////
@@ -17,11 +17,13 @@ please modify the original csharp file found at the link and submit the PR with 
 [[reserved-aggregation-names]]
 === Reserved aggregation names
 
-NEST uses a heuristics based parser to parse the aggregations back in to typed responses
-Therefor some of the key properties we use to make a decision on are not allowed as key names
+NEST uses a heuristics based parser to parse the aggregations back in to typed responses.
+Because of this, some of the key properties we use to make decisions about parsing are not allowed as key names
+for aggregations in a request.
 
 Elasticsearch 5.x will at some point get a flag that returns the aggregations in a parsable
-fashion at which point this limitation will be lifted
+fashion. when this happens, this limitation will be lifted but until that time, avoid the following names for
+aggregation keys:
 
 [source,csharp]
 ----

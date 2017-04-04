@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[skip-dead-nodes]]
-== Skip Dead Nodes
+=== Skip Dead Nodes
 
 Sticky - Skipping Dead Nodes
 When selecting nodes the connection pool will try and skip all the nodes that are marked dead.

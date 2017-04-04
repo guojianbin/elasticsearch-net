@@ -27,15 +27,15 @@ namespace DocGenerator
 		{
 		    var testProject = projects["Tests"];
 
-            yield return testProject.Documents
-               .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
-               .Select(d => new CSharpDocumentationFile(d, projects));
+			yield return testProject.Documents
+			   .Where(d => d.Name.EndsWith(".doc.cs", StringComparison.OrdinalIgnoreCase))
+			   .Select(d => new CSharpDocumentationFile(d, projects));
 
-            yield return testProject.Documents
-                .Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
-                .Select(d => new CSharpDocumentationFile(d, projects));
+			yield return testProject.Documents
+				.Where(d => d.Name.EndsWith("UsageTests.cs", StringComparison.OrdinalIgnoreCase))
+				.Select(d => new CSharpDocumentationFile(d, projects));
 
-            yield return InputFiles("*.png");
+			yield return InputFiles("*.png");
 			yield return InputFiles("*.gif");
 			yield return InputFiles("*.jpg");
 			// process asciidocs last as they may have generated
@@ -56,7 +56,7 @@ namespace DocGenerator
 		        await nestProject,
 		        await elasticSearchNetProject
 		    }.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
-            
+
             foreach (var file in GetDocumentFiles(projects).SelectMany(s => s))
 			{
 				await file.SaveToDocumentationFolderAsync();

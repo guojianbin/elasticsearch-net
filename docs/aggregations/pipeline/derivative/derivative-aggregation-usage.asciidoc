@@ -15,9 +15,9 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[derivative-aggregation-usage]]
-== Derivative Aggregation Usage
+=== Derivative Aggregation Usage
 
-=== Handling Responses
+==== Handling Responses
 
 [source,csharp]
 ----
@@ -37,7 +37,7 @@ foreach (var item in projectsPerMonth.Buckets.Skip(1))
 }
 ----
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -59,7 +59,7 @@ s => s
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----

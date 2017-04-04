@@ -9,15 +9,15 @@
 ////
 IMPORTANT NOTE
 ==============
-This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/Compound/FullText/MultiMatch/MultiMatchUsageTests.cs. 
+This file has been generated from https://github.com/elastic/elasticsearch-net/tree/5.x/src/Tests/QueryDsl/FullText/MultiMatch/MultiMatchUsageTests.cs. 
 If you wish to submit a PR for any spelling mistakes, typos or grammatical errors for this file,
 please modify the original csharp file found at the link and submit the PR with that change. Thanks!
 ////
 
 [[multi-match-usage]]
-== Multi Match Usage
+=== Multi Match Usage
 
-=== Fluent DSL Example
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -42,7 +42,7 @@ q
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----
@@ -95,7 +95,10 @@ new MultiMatchQuery
 }
 ----
 
-=== Fluent DSL Example
+[float]
+=== Multi match with boost usage
+
+==== Fluent DSL example
 
 [source,csharp]
 ----
@@ -107,7 +110,7 @@ q
 )
 ----
 
-=== Object Initializer Syntax Example
+==== Object Initializer syntax example
 
 [source,csharp]
 ----

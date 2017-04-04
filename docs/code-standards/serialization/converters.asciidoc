@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[converters]]
-== Converters
+=== Converters
 
 [source,csharp]
 ----

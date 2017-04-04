@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[descriptors]]
-== Descriptors
+=== Descriptors
 
 Every descriptor should inherit from `DescriptorBase`, this hides object members from the fluent interface
 
