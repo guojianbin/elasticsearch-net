@@ -11,16 +11,16 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
 {
     /**[[testing-analyzers]]
      * === Testing analyzers
-     * 
+     *
      * When <<writing-analyzers, building your own analyzers>>, it's useful to test that the analyzer
-     * does what we expect it to. This is where the {ref_current}/indices-analyze.html[Analyze API] comes in. 
-     * 
+     * does what we expect it to. This is where the {ref_current}/indices-analyze.html[Analyze API] comes in.
+     *
      */
     public class TestingAnalyzers : IntegrationDocumentationTestBase, IClusterFixture<WritableCluster>
     {
         //hide
         public TestingAnalyzers(WritableCluster cluster) : base(cluster)
-        {   
+        {
         }
 
         //hide
@@ -31,7 +31,7 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
 
         /**
          * ==== Testing in-built analyzers
-         * 
+         *
          * To get started with the Analyze API, we can test to see how a built-in analyzer will analyze
          * a piece of text
          */
@@ -99,7 +99,7 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
             //hide
             Expect(expected).WhenSerializing(analyzeResponse as AnalyzeResponse);
 
-            /**which is deserialized to an instance of `IAnalyzeResponse` by NEST 
+            /**which is deserialized to an instance of `IAnalyzeResponse` by NEST
              * that we can work with
              */
             foreach (var analyzeToken in analyzeResponse.Tokens)
@@ -109,17 +109,17 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
         }
 
         /**
-         * In testing the `standard` analyzer on our text, we've noticed that 
-         * 
+         * In testing the `standard` analyzer on our text, we've noticed that
+         *
          * - `F#` is tokenized as `"f"`
          * - stop word tokens `"is"` and `"the"` are included
-         * - `"superior"` is included but we'd also like to tokenize `"great"` as a synonym for superior 
-         * 
+         * - `"superior"` is included but we'd also like to tokenize `"great"` as a synonym for superior
+         *
          * We'll look at how we can test a combination of built-in analysis components next to
          * build an analyzer to fit our needs.
-         * 
+         *
          * ==== Testing built-in analysis components
-         * 
+         *
          * A _transient_ analyzer can be composed from built-in analysis components to test
          * an analysis configuration
          */
@@ -166,10 +166,10 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
                 }
             };
 
-            /** 
+            /**
              * Great! This has removed stop words, but we still have `F#` tokenized as `"f"`
              * and no `"great"` synonym for `"superior"`.
-             * 
+             *
              * IMPORTANT: Character and Token filters are **applied in the order** in which they are specified.
              *
              * Let's build a custom analyzer with additional components to solve this.
@@ -180,17 +180,17 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
 
         /**
          * ==== Testing a custom analyzer in an index
-         * 
+         *
          * A custom analyzer can be created within an index, either when creating the index or by
-         * updating the settings on an existing index. 
-         * 
+         * updating the settings on an existing index.
+         *
          * IMPORTANT: When adding to an existing index, it needs to be closed first.
-         * 
-         * 
+         *
+         *
          */
         [I]public void CustomAnalyzer()
         {
-            //hide 
+            //hide
             var client = Client;
             //hide
             var createIndexResponse = client.CreateIndex("analysis-index", c => c
@@ -203,7 +203,7 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
             client.ClusterHealth(h => h.WaitForStatus(WaitForStatus.Green).Index("analysis-index").Timeout("5s"));
 
             /**
-             * In this example, we'll add a custom analyzer to an existing index. First, 
+             * In this example, we'll add a custom analyzer to an existing index. First,
              * we need to close the index
              */
             client.CloseIndex("analysis-index");
@@ -222,7 +222,7 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
                         .TokenFilters(tf => tf
                             .Synonym("my_synonym", sf => sf
                                 .Synonyms("superior, great")
-                                
+
                             )
                         )
                         .Analyzers(an => an
@@ -232,13 +232,13 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
                                 .Filters("lowercase", "stop", "my_synonym")
                             )
                         )
-                    
+
                     )
                 )
             );
 
             /**
-             * And open the index again. Here, we also wait up to five seconds for the 
+             * And open the index again. Here, we also wait up to five seconds for the
              * status of the index to become green
              */
             client.OpenIndex("analysis-index");
@@ -307,13 +307,13 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
 
         /**
          * ==== Testing an analyzer on a field
-         * 
+         *
          * It's also possible to test the analyzer for a given field type mapping.
-         * 
-         * Given an index created with the following settings and mappings
+		 * Given an index created with the following settings and mappings
          */
         [I] public void CustomAnalyzerOnField()
         {
+			// hide
             var client = Client;
 
             client.CreateIndex("project-index", i => i
@@ -364,10 +364,10 @@ namespace Tests.ClientConcepts.HighLevel.Analysis
 
         /**
          * ==== Advanced details with Explain
-         * 
+         *
          * It's possible to get more advanced details about analysis by setting `Explain()` on
          * the request.
-         * 
+         *
          * For this example, we'll use Object Initializer syntax instead of the Fluent API; choose
          * whichever one you're most comfortable with!
          */

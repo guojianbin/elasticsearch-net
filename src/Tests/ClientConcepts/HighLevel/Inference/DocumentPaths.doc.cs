@@ -8,7 +8,7 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 	public class DocumentPaths
 	{
 		/**[[document-paths]]
-		 * === Document Paths
+		 * === Document paths
 		 *
 		 * Many APIs in Elasticsearch describe a path to a document. In NEST, besides generating a constructor that takes
 		 * and Index, Type and Id separately, we also generate a constructor that allows you to describe the path

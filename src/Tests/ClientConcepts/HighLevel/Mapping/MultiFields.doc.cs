@@ -12,14 +12,14 @@ using static Tests.Framework.RoundTripper;
 namespace Tests.ClientConcepts.HighLevel.Mapping
 {
     /**[[multi-fields]]
-    * === Multi Fields
-    * 
-    * It is often useful to index the same field in Elasticsearch in different ways, to 
-    * serve different purposes, for example, mapping a POCO `string` property as a 
+    * === Multi fields
+    *
+    * It is often useful to index the same field in Elasticsearch in different ways, to
+    * serve different purposes, for example, mapping a POCO `string` property as a
     * `text` datatype for full text search as well as mapping as a `keyword` datatype for
     * structured search, sorting and aggregations. Another example is mapping a POCO `string`
     * property to use different analyzers, to serve different full text search needs.
-    * 
+    *
     * Let's look at a few examples. for each, we use the following simple POCO
     */
 
@@ -32,8 +32,8 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 
         /**
         * ==== Default mapping for String properties
-        * 
-        * When using <<auto-map, Auto Mapping>>, the inferred mapping for a `string` 
+        *
+        * When using <<auto-map, Auto Mapping>>, the inferred mapping for a `string`
         * POCO type is a `text` datatype with multi fields including a `keyword` sub field
         */
         [U]
@@ -145,17 +145,17 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
         }
 
 
-        /** 
+        /**
         * [NOTE]
         * --
         * Multi fields do not change the original `_source` field in Elasticsearch; they affect only how
         * a field is indexed.
-        * 
+        *
         * New multi fields can be added to existing fields using the Put Mapping API.
         * --
-        * 
+        *
         * ==== Creating Multi fields
-        * 
+        *
         * Multi fields can be created on a mapping using the `.Fields()` method within a field mapping
         */
         [U]
@@ -164,13 +164,13 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
             var descriptor = new CreateIndexDescriptor("myindex")
                 .Mappings(ms => ms
                     .Map<Person>(m => m
-                        .Properties(p => p 
+                        .Properties(p => p
                             .Text(t => t
                                 .Name(n => n.Name)
                                 .Fields(ff => ff
                                     .Text(tt => tt
                                         .Name("stop") // <1> Use the stop analyzer on this sub field
-                                        .Analyzer("stop") 
+                                        .Analyzer("stop")
                                     )
                                     .Text(tt => tt
                                         .Name("shingles")

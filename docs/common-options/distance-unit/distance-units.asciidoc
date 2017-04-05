@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[distance-units]]
-=== Distance Units
+=== Distance units
 
 Whenever distances need to be specified, e.g. for a {ref_current}/query-dsl-geo-distance-query.html[geo distance query],
 the distance unit can be specified as a double number representing distance in meters, as a new instance of

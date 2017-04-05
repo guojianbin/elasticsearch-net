@@ -5,11 +5,11 @@ include::intro.asciidoc[]
 
 include::breaking-changes.asciidoc[]
 
+include::conventions.asciidoc[]
+
 include::low-level.asciidoc[]
 
 include::high-level.asciidoc[]
-
-include::conventions.asciidoc[]
 
 include::troubleshooting.asciidoc[]
 

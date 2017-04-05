@@ -7,7 +7,7 @@ namespace Tests.CommonOptions.DistanceUnit
 	public class DistanceUnits
 	{
 		/**[[distance-units]]
-		 * === Distance Units
+		 * === Distance units
 		 * Whenever distances need to be specified, e.g. for a {ref_current}/query-dsl-geo-distance-query.html[geo distance query],
 		 * the distance unit can be specified as a double number representing distance in meters, as a new instance of
 		 * a `Distance`, or as a string of the form number and distance unit e.g. "`2.72km`"

@@ -14,37 +14,37 @@ namespace Tests.ClientConcepts.Connection
 {
     /**[[modifying-default-connection]]
      * === Modifying the default connection
-     * 
-     * The client abstracts sending the request and creating a response behind `IConnection` and the default 
+     *
+     * The client abstracts sending the request and creating a response behind `IConnection` and the default
      * implementation uses
-     * 
+     *
      * - https://msdn.microsoft.com/en-us/library/system.net.webrequest(v=vs.110).aspx[`System.Net.WebRequest`] for Desktop CLR
      * - https://msdn.microsoft.com/en-us/library/system.net.http.httpclient(v=vs.118).aspx[`System.Net.Http.HttpClient`] for Core CLR
-     * 
-     * The reason for different implementations is that `WebRequest` and `ServicePoint` are not directly available 
+     *
+     * The reason for different implementations is that `WebRequest` and `ServicePoint` are not directly available
      * on netstandard 1.3.
-     * 
+     *
      * The Desktop CLR implementation using `WebRequest` is the most mature implementation, having been tried and trusted
      * in production since the beginning of NEST. For this reason, we aren't quite ready to it give up in favour of
      * a `HttpClient` implementation across all CLR versions.
-     * 
-     * In addition to production usage, there are also a couple of important toggles that are easy to set against a 
+     *
+     * In addition to production usage, there are also a couple of important toggles that are easy to set against a
      * `ServicePoint` that are not possible to set as yet on `HttpClient`.
      *
-     * Finally, another limitation is that `HttpClient` has no synchronous code paths, so supporting these means 
+     * Finally, another limitation is that `HttpClient` has no synchronous code paths, so supporting these means
      * doing hacky async patches which definitely need time to bake.
      *
      * So why would you ever want to pass your own `IConnection`? Let's look at a couple of examples
-     * 
+     *
      */
     public class ModifyingTheDefaultConnection
     {
         /**==== Using InMemoryConnection
-         * 
+         *
          * `InMemoryConnection` is an in-built `IConnection` that makes it easy to write unit tests against. It can be
          * configured to respond with default response bytes, HTTP status code and an exception when a call is made.
-         * 
-         * `InMemoryConnection` **doesn't actually send any requests or receive any responses from Elasticsearch**; 
+         *
+         * `InMemoryConnection` **doesn't actually send any requests or receive any responses from Elasticsearch**;
          * requests are still serialized and the request bytes can be obtained on the response if `.DisableDirectStreaming` is
          * set to `true` on the request or globally
          */
@@ -58,9 +58,9 @@ namespace Tests.ClientConcepts.Connection
 
         /**
 		 * Here we create a new `ConnectionSettings` by using the overload that takes a `IConnectionPool` and an `IConnection`.
-		 * We pass it an `InMemoryConnection` which, using the default parameterless constructor, 
+		 * We pass it an `InMemoryConnection` which, using the default parameterless constructor,
          * will return 200 for everything and never actually perform any IO.
-         * 
+         *
          * Let's see a more complex example
 		 */
         [U]
@@ -110,16 +110,16 @@ namespace Tests.ClientConcepts.Connection
         * ==== Changing HttpConnection
         *
         * There may be a need to change how the default `HttpConnection` works, for example, to add an X509 certificate
-        * to the request, change the maximum number of connections allowed to an endpoint, etc. 
-        * 
+        * to the request, change the maximum number of connections allowed to an endpoint, etc.
+        *
         * By deriving from `HttpConnection`, it is possible to change the behaviour of the connection. The following
         * provides some examples
-        * 
+        *
         * [[servicepoint-behaviour]]
         * ===== ServicePoint behaviour
-        * 
-        * If you are running on the Desktop CLR you can override specific properties for the current `ServicePoint` easily 
-        * by overriding `AlterServicePoint` on an `IConnection` implementation deriving from `HttpConnection` 
+        *
+        * If you are running on the Desktop CLR you can override specific properties for the current `ServicePoint` easily
+        * by overriding `AlterServicePoint` on an `IConnection` implementation deriving from `HttpConnection`
         */
 #if !DOTNETCORE
         public class MyCustomHttpConnection : HttpConnection
@@ -139,16 +139,17 @@ namespace Tests.ClientConcepts.Connection
             var settings = new ConnectionSettings(connectionPool, connection);
             var client = new ElasticClient(settings);
         }
-        /** 
-        * The Connection limit has been increased from the default 80 to much higher and 
+        /**
+        * The Connection limit has been increased from the default 80 to much higher and
         * https://en.wikipedia.org/wiki/Nagle's_algorithm[nagling] has been enabled, which is disabled by default in the client.
-        * 
-        * NOTE: The client reuses TCP connections so changing the connection limit to something really high 
-        * should only be done with careful consideration and testing. It's demonstrated here only as an example.
-        * 
+        *
+        * NOTE: The client reuses TCP connections through .NET's internal connection pooling,
+		* so changing the connection limit to something really high should only be done with careful
+		* consideration and testing. It's demonstrated here only as an example.
+        *
         * [[x509-certificates]]
         * ===== X.509 Certificates
-        * 
+        *
         * It is possible to add X509 certificates to each request from the client by overriding the `CreateHttpWebRequest`
         * method in an `IConnection` implementation deriving from `HttpConnection`
         */
@@ -173,6 +174,9 @@ namespace Tests.ClientConcepts.Connection
             var settings = new ConnectionSettings(connectionPool, connection);
             var client = new ElasticClient(settings);
         }
+		/**
+		 * See <<working-with-certificates, Working with certificates>> for further details.
+		 */
 #endif
     }
 }

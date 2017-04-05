@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[changing-serializers]]
-=== Changing Serializers
+=== Changing serializers
 
 NEST uses http://www.newtonsoft.com/json[JSON.Net] to serialize requests to and deserialize responses from JSON.
 

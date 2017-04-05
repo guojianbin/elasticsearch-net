@@ -9,7 +9,7 @@ namespace Tests.CommonOptions.DateMath
 	public class DateMathExpressions
 	{
 		/**[[date-math-expressions]]
-		 * === Date Math Expressions
+		 * === Date math expressions
 		 * The date type supports using date math expression when using it in a query/filter
 		 * Whenever durations need to be specified, eg for a timeout parameter, the duration can be specified
 		 *
@@ -32,7 +32,7 @@ namespace Tests.CommonOptions.DateMath
 		[U] public void SimpleExpressions()
 		{
 			/**
-			* ==== Simple Expressions
+			* ==== Simple expressions
 			* You can create simple expressions using any of the static methods on `DateMath`
 			*/
 			Expect("now").WhenSerializing(Nest.DateMath.Now);
@@ -45,7 +45,7 @@ namespace Tests.CommonOptions.DateMath
 			var nonsense = "now||*asdaqwe";
 
             /** the resulting date math will assume the whole string is the anchor */
-            Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)			
+            Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)
 				.Result(dateMath => ((IDateMath)dateMath)
 					.Anchor.Match(
 						d => d.Should().NotBe(default(DateTime)),
@@ -53,7 +53,7 @@ namespace Tests.CommonOptions.DateMath
 					)
 				);
 
-            /**`DateTime` also implicitly convert to simple date math expressions; the resulting 
+            /**`DateTime` also implicitly convert to simple date math expressions; the resulting
              * anchor will be an actual `DateTime`, even after a serialization/deserialization round trip
              */
             var date = new DateTime(2015, 05, 05);
@@ -69,7 +69,7 @@ namespace Tests.CommonOptions.DateMath
 		[U] public void ComplexExpressions()
 		{
 			/**
-			 * ==== Complex Expressions
+			 * ==== Complex expressions
 			* Ranges can be chained on to simple expressions
 			*/
 			Expect("now+1d").WhenSerializing(

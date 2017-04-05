@@ -23,7 +23,7 @@ and is unopinionated about how you build your requests and responses.
 [float]
 === Connecting
 
-To connect to Elasticsearch running locally at `http://localhost:9200` is as simple as 
+To connect to Elasticsearch running locally at `http://localhost:9200` is as simple as
 instantiating a new instance of the client
 
 [source,csharp]
@@ -32,7 +32,7 @@ var lowlevelClient = new ElasticLowLevelClient();
 ----
 
 Often you may need to pass additional configuration options to the client such as the address of Elasticsearch if it's running on
-a remote machine. This is where `ConnectionConfiguration` come in; an instance can be instantiated to provide 
+a remote machine. This is where `ConnectionConfiguration` comes in; an instance can be instantiated to provide
 the client with different configuration values.
 
 [source,csharp]
@@ -43,17 +43,20 @@ var settings = new ConnectionConfiguration(new Uri("http://example.com:9200"))
 var lowlevelClient = new ElasticLowLevelClient(settings);
 ----
 
-In this example, a default request timeout was also specified to that will be applied to all requests to determine after how long the client should cancel a request. 
+In this example, a default request timeout was also specified that will be applied to all requests, to determine after how long the client should cancel a request.
 There are many other <<configuration-options,configuration options>> on `ConnectionConfiguration` to control things such as
 
-* Basic Authentication header to attach to all requests
+* Basic Authentication header to send with all requests
 
-* Whether the client should connect through a proxy
+* whether the client should connect through a proxy
 
-* HTTP compression support should be enabled on the client
+* whether HTTP compression support should be enabled on the client
 
-`ConnectionConfiguration` is not restricted to being passed a single address for Elasticsearch; There are several different
-types of <<connection-pooling,IConnectionPool>> available, each with different characteristics that can be used to
+[float]
+==== Connecton pools
+
+`ConnectionConfiguration` is not restricted to being passed a single address for Elasticsearch. There are several different
+types of <<connection-pooling,Connection pool>> available, each with different characteristics that can be used to
 configure the client. The following example uses a <<sniffing-connection-pool,SniffingConnectionPool>> seeded with the addresses
 of three Elasticsearch nodes in the cluster, and the client will use this type of pool to maintain a list of available nodes within the
 cluster to which it can send requests in a round-robin fashion.
@@ -77,26 +80,22 @@ var lowlevelClient = new ElasticLowLevelClient(settings);
 === Indexing
 
 Once a client had been configured to connect to Elasticsearch, we need to get some data into the cluster to work with.
-
-Imagine we have the following http://en.wikipedia.org/wiki/Plain_Old_CLR_Object[POCO]
+Imagine we have the following http://en.wikipedia.org/wiki/Plain_Old_CLR_Object[Plain Old CLR Object (POCO)]
 
 [source,csharp]
 ----
 public class Person
 {
-    public Guid Id { get; set; }
-
     public string FirstName { get; set; }
-
     public string LastName { get; set; }
 }
 ----
 
-Indexing a single instance of the POCO either synchronously or asynchronously, is as simple as
+Indexing a single instance of this POCO, either synchronously or asynchronously, is as simple as
 
 [source,csharp]
 ----
-var person = new
+var person = new Person
 {
     FirstName = "Martijn",
     LastName = "Laarman"
@@ -106,19 +105,60 @@ var indexResponse = lowlevelClient.Index<byte[]>("people", "person", "1", person
 byte[] responseBytes = indexResponse.Body;
 
 var asyncIndexResponse = await lowlevelClient.IndexAsync<string>("people", "person", "1", person); <2>
-string asyncResponseString = asyncIndexResponse.Body;
+string responseString = asyncIndexResponse.Body;
 ----
 <1> synchronous method that returns an `IIndexResponse`
 <2> asynchronous method that returns a `Task<IIndexResponse>` that can be awaited
 
-NOTE: All methods available within Elasticsearch.Net are exposed as both synchronous and asynchronous versions,
-with the latter using the idiomatic *Async suffix on the method name.
+NOTE: All available methods within Elasticsearch.Net are exposed as both synchronous and asynchronous versions,
+with the latter using the idiomatic *Async suffix for the method name.
 
-This will index the document to the endpoint `/people/person/1`. An https://msdn.microsoft.com/en-us/library/bb397696.aspx[anonymous type] was 
-used to represent the document to index in Elasticsearch, which was implicitly converted to an instance of `PostData<T>` that
+Both index requests will index the document to the endpoint `/people/person/1`.
+
+An https://msdn.microsoft.com/en-us/library/bb397696.aspx[anonymous type] can also be used to represent the document to index
+
+[source,csharp]
+----
+var person = new
+{
+    FirstName = "Martijn",
+    LastName = "Laarman"
+};
+
+var indexResponse = lowlevelClient.Index<Stream>("people", "person", "1", person);
+Stream responseStream = indexResponse.Body; <1>
+----
+<1> If returning a `Stream`, be sure to properly https://msdn.microsoft.com/en-us/library/b1yfkh5e(v=vs.110).aspx[dispose] of it when you are finished with it.
+
+Whether you use an instance of a class, anonymous type, `string`, etc. they all are implicitly converted to an instance of `PostData<T>` that
 the method accepts. Check out the documentation on <<post-data, Post Data>> to see the other types that are supported.
 
-The generic type parameter on the method specifies the type of the response body.
+The generic type parameter on the method specifies the type of the response body. In the last example, we return the response stream
+from Elasticsearch, forgoing any deserialization.
+
+[float]
+==== Bulk indexing
+
+If you need to index many documents, Elasticsearch has a {ref_current}/docs-bulk.html[Bulk API] that can be used to perform many operations in one request
+
+[source,csharp]
+----
+var people = new object[]
+            {
+                new { index = new { _index = "people", _type = "person", _id = "1"  }},
+                new { FirstName = "Martijn", LastName = "Laarman" },
+                new { index = new { _index = "people", _type = "person", _id = "2"  }},
+                new { FirstName = "Greg", LastName = "Marzouka" },
+                new { index = new { _index = "people", _type = "person", _id = "3"  }},
+                new { FirstName = "Russ", LastName = "Cam" },
+            };
+
+var indexResponse = lowlevelClient.Bulk<Stream>(people);
+Stream responseStream = indexResponse.Body;
+----
+
+The client will serialize each item seperately and join items up using the `\n` character as required by the Bulk API. Refer to the
+Elasticsearch Bulk API documentation for further details and supported operations.
 
 [float]
 === Searching
@@ -158,7 +198,7 @@ var searchResponse = lowlevelClient.Search<byte[]>("people", "person", @"
 {
     ""from"": 0,
     ""size"": 10,
-    ""query"": {               
+    ""query"": {
         ""match"": {
             ""field"": ""firstName"",
             ""query"": ""Martijn""
@@ -169,8 +209,8 @@ var searchResponse = lowlevelClient.Search<byte[]>("people", "person", @"
 var responseBytes = searchResponse.Body;
 ----
 
-As you can see, this can be a little more cumbersome than using anonymous types because of the need to escape
-double quotes within the request string, but it can be useful at times nonetheless. `responseBytes` will contain
+As you can see, using strings is a little more cumbersome than using anonymous types because of the need to escape
+double quotes, but it can be useful at times nonetheless. `responseBytes` will contain
 the bytes of the response from Elasticsearch.
 
 [NOTE]
@@ -178,7 +218,7 @@ the bytes of the response from Elasticsearch.
 Elasticsearch.Net does not provide typed objects to represent responses; if you need this, you should consider
 using <<nest, NEST>>, that does map all requests and responses to types. You can work with
 strong types with Elasticsearch.Net but it will be up to you as the developer to configure Elasticsearch.Net so that
-it understands how to deserialize your types, most likely by providing your own `IElasticsearchSerializer` implementation
+it understands how to deserialize your types, most likely by providing your own <<changing-serializers, IElasticsearchSerializer>> implementation
 to `ConnectionConfiguration`.
 
 --

@@ -14,9 +14,9 @@ namespace Tests.ClientConcepts.HighLevel
 	 *
 	 * NEST is a high level Elasticsearch .NET client that still maps very closely to the original Elasticsearch API.
 	 * All requests and responses are exposed through types, making it ideal for getting up and running quickly.
-     * 
+     *
      * Under the covers, NEST uses the <<elasticsearch-net,Elasticsearch.Net low level client>> to dispatch requests and
-     * responses, using and extending many of the types within Elasticsearch.Net. The low level client itself is still 
+     * responses, using and extending many of the types within Elasticsearch.Net. The low level client itself is still
      * exposed on the high level client through the `.LowLevel` property.
 	 */
 	public class GettingStarted
@@ -48,14 +48,14 @@ namespace Tests.ClientConcepts.HighLevel
 
 		/**
 		 * In this example, a default index was also specified to use if no other index is supplied for the request or can be inferred for the
-		 * POCO generic type parameter in the request. There are many other <<configuration-options,configuration options>> on `ConnectionSettings`, which it inherits
+		 * POCO generic type parameter in the request. There are many other <<configuration-options,Configuration options>> on `ConnectionSettings`, which it inherits
 		 * from `ConnectionConfiguration`, the type used to pass additional configuration options to the low level client in <<elasticsearch-net,Elasticsearch.Net>>.
 		 *
-		 * TIP: Specifying a default index is optional but NEST may throw an exception if no index can be inferred. to understand more around how
-		 * an index can be specified for a request, see the section on <<index-name-inference,Index Name Inference>>.
+		 * TIP: Specifying a default index is _optional_ but NEST may throw an exception if no index can be inferred for a given request. To understand more around how
+		 * an index can be specified for a request, see <<index-name-inference,Index name inference>>.
 		 *
-		 * `ConnectionSettings` is not restricted to being passed a single address for Elasticsearch; There are several different
-		 * types of <<connection-pooling,IConnectionPool>> available in NEST, each with different characteristics, that can be used to
+		 * `ConnectionSettings` is not restricted to being passed a single address for Elasticsearch. There are several different
+		 * types of <<connection-pooling,Connection pool>> available in NEST, each with different characteristics, that can be used to
 		 * configure the client. The following example uses a <<sniffing-connection-pool,SniffingConnectionPool>> seeded with the addresses
 		 * of three Elasticsearch nodes in the cluster, and the client will use this type of pool to maintain a list of available nodes within the
 		 * cluster to which it can send requests in a round-robin fashion.
@@ -79,10 +79,10 @@ namespace Tests.ClientConcepts.HighLevel
 		/**[float]
 		 * === Indexing
 		 *
-		 * Once a client had been configured to connect to Elasticsearch, we need to get some data into the cluster 
+		 * Once a client had been configured to connect to Elasticsearch, we need to get some data into the cluster
          * to work with.
 		 *
-		 * Imagine we have the following http://en.wikipedia.org/wiki/Plain_Old_CLR_Object[POCO]
+		 * Imagine we have the following http://en.wikipedia.org/wiki/Plain_Old_CLR_Object[Plain Old CLR Object (POCO)]
 		 */
 		public class Person
 		{
@@ -143,10 +143,12 @@ namespace Tests.ClientConcepts.HighLevel
 
 		/**
 		 * `people` now holds the first ten people whose first name is Martijn. The search endpoint for this query is
-		 * `/people/person/_search`, which has been determined from the default index on `ConnectionSettings` and the `Person` generic type parameter
-		 * on the search.
+		 * `/people/person/_search` and the index (`"people"`) and type (`"person"`) values has been determined from
 		 *
-		 * All types within an index can be searched with
+		 * . the default index on `ConnectionSettings`
+		 * . the `Person` generic type parameter on the search.
+		 *
+		 * All types within an index can be searched using `.AllTypes()`
 		 */
 		public void SearchingAllTypes()
 		{
@@ -167,7 +169,7 @@ namespace Tests.ClientConcepts.HighLevel
 		 * which generates a request to the search endpoint `/people/_search`, using the default index specified on `ConnectionSettings` as the index
 		 * in the search request.
 		 *
-		 * Similarly, a search can be performed for `person` document types in all indices with
+		 * Similarly, a search can be performed for `person` types in all indices with `.AllIndices()`
 		 */
 		public void SearchingAllIndices()
 		{
@@ -185,9 +187,10 @@ namespace Tests.ClientConcepts.HighLevel
 		}
 
 		/**
-		 * which generates a request to the search endpoint `/_all/person/_search`
+		 * which generates a request to the search endpoint `/_all/person/_search`, taking the `person` type from the generic type parameter on the search
+		 * method.
 		 *
-		 * Both can be provided to perform a search across all types in all indices, generating a request to `/_search`
+		 * Both `.AllTypes()` and `.AllIndices()` can be provided to perform a search across _all_ types in _all_ indices, generating a request to `/_search`
 		 */
 		public async Task SearchingAllIndicesAndAllTypes()
 		{
@@ -207,7 +210,7 @@ namespace Tests.ClientConcepts.HighLevel
 
 		/**
 		 * Single or multiple index and type names can be provided in the request;
-		 * see the documentation on <<indices-paths,Indices Paths>> and <<document-paths,Document Paths>>, respectively.
+		 * see the documentation on <<indices-paths,Indices paths>> and <<document-paths,Document paths>>, respectively.
 		 *
 		 * All of the search examples so far have used NEST's Fluent API which uses lambda expressions to construct a query with a structure
 		 * that mimics the structure of a query expressed in the Elasticsearch's JSON based {ref_current}/query-dsl.html[Query DSL].
@@ -234,18 +237,18 @@ namespace Tests.ClientConcepts.HighLevel
 		}
 
         /** [NOTE]
-         * ====
-         * As indicated at the start of the page, the high level client still exposes the low level client from Elasticsearch.Net
+         * --
+         * As indicated at the start of this section, the high level client still exposes the low level client from Elasticsearch.Net
          * through the `.LowLevel` property on the client. The low level client can be useful in scenarios where you may already have
          * the JSON that represents the request that you wish to send and don't wish to translate it over to the Fluent API or Object Initializer syntax
          * at this point in time, or perhaps there is a bug in the client that can be worked around by sending a request as a string or anonymous type.
-         * 
+         *
          * Using the low level client via the `.LowLevel` property means you can get with the best of both worlds:
-         * 
+         *
          * . Use the high level client
          * . Use the low level client where it makes sense, taking advantage of all the strong types within NEST and using the JSON.Net based
          * serializer for deserialization.
-         * 
+         *
          * Here's an example
          */
 
@@ -268,10 +271,9 @@ namespace Tests.ClientConcepts.HighLevel
             var responseJson = searchResponse.Body;
         }
         /**
-         * Here, the query can be represented as an anonymous type, but the body of the response is a concrete 
-         * implementation of the same type of response that is returned from the high level client.
-         * 
-         * ====
+         * Here, the query is represented as an anonymous type, but the body of the response is a concrete
+         * implementation of the same response type returned from NEST.
+         * --
          */
 
 
@@ -280,7 +282,6 @@ namespace Tests.ClientConcepts.HighLevel
 		 *
 		 * In addition to structured and unstructured search, Elasticsearch is also able to aggregate data based on a search query
 		 */
-
 		public async Task Aggregations()
 		{
 			var searchResponse = await client.SearchAsync<Person>(s => s
@@ -302,16 +303,16 @@ namespace Tests.ClientConcepts.HighLevel
 		}
 
 		/**
-		 * In this example, a `match` query to search for people with the first name of "Martijn" is issued as before; 
+		 * In this example, a `match` query to search for people with the first name of "Martijn" is issued as before;
          * this time however,
 		 *
 		 * . a size of `0` is set because we don't want the first 10 documents that match this query to be returned,
          * we're only interested in the aggregation results
 		 * . a `terms` aggregation is specified to group matching documents into buckets based on last name.
 		 *
-		 * `termsAggregation` can be used to get the count of documents for each bucket, where each bucket will be 
+		 * `termsAggregation` can be used to get the count of documents for each bucket, where each bucket will be
          * keyed by last name.
-         * 
+         *
          * See <<writing-aggregations, Writing aggregations>> for more details.
 		 */
 	}

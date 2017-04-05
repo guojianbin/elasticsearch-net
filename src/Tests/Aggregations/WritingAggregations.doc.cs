@@ -12,7 +12,7 @@ using static Nest.Infer;
 
 namespace Tests.Aggregations
 {
-	/**=== Writing Aggregations
+	/**=== Writing aggregations
 	* NEST allows you to write your aggregations using
 	*
 	* - a strict fluent DSL

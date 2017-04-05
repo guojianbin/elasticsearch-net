@@ -15,9 +15,9 @@ namespace Tests.ClientConcepts.Troubleshooting
 {
     /**
      * === Debug information
-     * 
+     *
      * Every response from Elasticsearch.Net and NEST contains a `DebugInformation` property
-     * that provides a human readable description of what happened during the request for both successful and 
+     * that provides a human readable description of what happened during the request for both successful and
      * failed requests
      */
     public class DebugInformation : IntegrationDocumentationTestBase, IClusterFixture<ReadOnlyCluster>
@@ -39,12 +39,12 @@ namespace Tests.ClientConcepts.Troubleshooting
             response.DebugInformation.Should().Contain("Valid NEST response");
         }
         /**
-         * This can be useful in tracking down numerous problems and can also be useful when filing a
-         * {github}/issues[potential issue] on our github repository.
-         * 
+         * This can be useful in tracking down numerous problems and can also be useful when filing an
+         * {github}/issues[issue] on our github repository.
+         *
          * By default, the request and response bytes are not available within the debug information, but
          * can be enabled globally on Connection Settings
-         * 
+         *
          */
         public void DisableDirectStreaming()
         {

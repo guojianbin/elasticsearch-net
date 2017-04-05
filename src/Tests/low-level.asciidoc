@@ -21,6 +21,10 @@ include::client-concepts/low-level/getting-started.asciidoc[]
 [[elasticsearch-net-conventions]]
 == Conventions
 
+The low level client has only a few conventions
+
+- <<post-data, Sending data using Post data>>
+
 include::client-concepts/low-level/post-data.asciidoc[]
 
 

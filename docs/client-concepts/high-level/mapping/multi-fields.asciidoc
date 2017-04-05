@@ -15,10 +15,10 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[multi-fields]]
-=== Multi Fields
+=== Multi fields
 
-It is often useful to index the same field in Elasticsearch in different ways, to 
-serve different purposes, for example, mapping a POCO `string` property as a `text` datatype for full text search as well as mapping as a `keyword` datatype for
+It is often useful to index the same field in Elasticsearch in different ways, to
+serve different purposes, for example, mapping a POCO `string` property as a`text` datatype for full text search as well as mapping as a `keyword` datatype for
 structured search, sorting and aggregations. Another example is mapping a POCO `string`
 property to use different analyzers, to serve different full text search needs.
 
@@ -34,7 +34,7 @@ public class Person
 
 ==== Default mapping for String properties
 
-When using <<auto-map, Auto Mapping>>, the inferred mapping for a `string` 
+When using <<auto-map, Auto Mapping>>, the inferred mapping for a `string`
 POCO type is a `text` datatype with multi fields including a `keyword` sub field
 
 [source,csharp]
@@ -137,13 +137,13 @@ Multi fields can be created on a mapping using the `.Fields()` method within a f
 var descriptor = new CreateIndexDescriptor("myindex")
     .Mappings(ms => ms
         .Map<Person>(m => m
-            .Properties(p => p 
+            .Properties(p => p
                 .Text(t => t
                     .Name(n => n.Name)
                     .Fields(ff => ff
                         .Text(tt => tt
                             .Name("stop") <1>
-                            .Analyzer("stop") 
+                            .Analyzer("stop")
                         )
                         .Text(tt => tt
                             .Name("shingles")

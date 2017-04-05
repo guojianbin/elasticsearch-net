@@ -15,9 +15,9 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[deprecation-logging]]
-=== Deprecation Logging
+=== Deprecation logging
 
-Elasticsearch will send back `Warn` HTTP Headers when you are using an API feature that is 
+Elasticsearch will send back `Warn` HTTP Headers when you are using an API feature that is
 deprecated and will be removed or rewritten in a future release.
 
 Elasticsearch.NET and NEST report these back to you so you can log and watch out for them.

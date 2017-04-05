@@ -23,7 +23,7 @@ and is exposed in NEST in the form of both a Fluent API and an Object Initialize
 
 ==== Match All query
 
-The simplest of queries is the {ref_current}/query-dsl-match-all-query.html[match_all] query; 
+The simplest of queries is the {ref_current}/query-dsl-match-all-query.html[match_all] query;
 this will return all documents, giving them all a `_score` of 1.0
 
 [NOTE]
@@ -53,7 +53,7 @@ which serializes to the following JSON
 }
 ----
 
-Since `match_all` queries are common, the previous example also has a shorthand which 
+Since `match_all` queries are common, the previous example also has a shorthand which
 serializes to the same query DSL JSON
 
 [source,csharp]
@@ -76,15 +76,15 @@ var searchRequest = new SearchRequest<Project>
 searchResponse = client.Search<Project>(searchRequest);
 ----
 
-==== Search request options
+==== Search request parameters
 
-There are several options available on a search request; take a look at the reference section
+There are several parameters available on a search request; take a look at the reference section
 on <<reference-search, search>> for more details.
 
 [float]
 === Common queries
 
-By default, documents will be returned by `_score` descending, where the `_score` for each hit
+By default, documents will be returned in `_score` descending order, where the `_score` for each hit
 is the relevancy score calculated for how well the document matched the query criteria.
 
 There are a number of search queries at your disposal, all of which are documented in
@@ -119,7 +119,7 @@ var searchResponse = client.Search<Project>(s => s
             .Field(f => f.StartedOn)
             .GreaterThanOrEquals(new DateTime(2017, 01, 01))
             .LessThan(new DateTime(2018, 01, 01))<1>
-        ) 
+        )
     )
 );
 ----
@@ -142,7 +142,7 @@ which yields the following query JSON
 ----
 
 Since the answer to this query is always yes or no, we don't want to _score_ the query. To do this,
-we can get the query to be __executed in a filter context__ by wrapping it in a `bool` query `filter` 
+we can get the query to be __executed in a filter context__ by wrapping it in a `bool` query `filter`
 clause
 
 [source,csharp]
@@ -193,8 +193,8 @@ is not analyzed, and an *exact match* to the input is looked for in the inverted
 trip many new users up when using a term level query against a field that is analyzed at index
 time.
 
-When a field is _only_ to be used for exact matching, you should consider indexing it as a 
-{ref_current}/keyword.html[keyword] datatype. If a field is used for both exact matches and 
+When a field is _only_ to be used for exact matching, you should consider indexing it as a
+{ref_current}/keyword.html[keyword] datatype. If a field is used for both exact matches and
 full text search, you should consider indexing it with <<multi-fields, multi fields>>.
 
 --
@@ -205,7 +205,7 @@ full text search, you should consider indexing it with <<multi-fields, multi fie
 Another common use case is to search within full text fields in order to find the most relevant documents.
 
 <<full-text-queries, Full text queries>> are used for unstructured search; here we use the `match` query
-to find all documents that contain "Russ" in the lead developer first name field
+to find all documents that contain `"Russ"` in the lead developer first name field
 
 [source,csharp]
 ----
@@ -241,7 +241,7 @@ is analyzed, and the resulting terms from query analysis are compared to the ter
 index.
 
 You have full control over the analysis that is applied at both search time and index time, by applying
-<<writing-analyzers, analyzers>> to {ref_current}/text.html`text`] datatype fields through 
+<<writing-analyzers, analyzers>> to {ref_current}/text.html[text] datatype fields through
 <<mapping, mapping>>.
 
 --
@@ -249,8 +249,8 @@ You have full control over the analysis that is applied at both search time and 
 [[combining-queries]]
 ==== Combining queries
 
-An extremely common scenario is to combine separate queries together to form a 
-<<compound-queries, compound query>>, the most common of which is the `bool` query 
+An extremely common scenario is to combine separate queries together to form a
+<<compound-queries, compound query>>, the most common of which is the `bool` query
 
 [source,csharp]
 ----
@@ -263,7 +263,7 @@ var searchResponse = client.Search<Project>(s => s
                     .Query("Russ")
                 ), mu => mu
                 .Match(m => m <2>
-                    .Field(f => f.LeadDeveloper.LastName) 
+                    .Field(f => f.LeadDeveloper.LastName)
                     .Query("Cam")
                 )
             )
@@ -324,24 +324,24 @@ A document must
 satisfy all three queries in this example to be a match
 
 . the `match` queries on both first name and last name will contribute to
-the relevancy score calculated, since both queries are running in a query context 
+the relevancy score calculated, since both queries are running in a query context
 
 . the `range` query against the started on date is running in a filter context,
-so no score is calculated for matching documents (all documents have the same score 
-of 1.0 for this query). 
+so no score is calculated for matching documents (all documents have the same score
+of 1.0 for this query).
 
-Because `bool` queries are so common, NEST overloads operators on queries to make forming`bool` queries much more succinct. The previous `bool` query can be more concisely 
+Because `bool` queries are so common, NEST overloads operators on queries to make forming`bool` queries much more succinct. The previous `bool` query can be more concisely
 expressed as
 
 [source,csharp]
 ----
 searchResponse = client.Search<Project>(s => s
     .Query(q => q
-        .Match(m => m 
+        .Match(m => m
             .Field(f => f.LeadDeveloper.FirstName)
             .Query("Russ")
         ) && q <1>
-        .Match(m => m 
+        .Match(m => m
             .Field(f => f.LeadDeveloper.LastName)
             .Query("Cam")
         ) && +q <2>
@@ -362,13 +362,9 @@ and further examples.
 ==== Search response
 
 The response returned from a search query is an `ISearchResponse<T>`, where `T` is the
-generic parameter type defined in the search method call. The search response contains
-the following properties
-
-:xml-docs: Nest:ISearchResponse`1
-
-There are a fair few properties on the response, but the most common you're likely to
-work with is `.Documents`, which will demonstrate below.
+generic parameter type defined in the search method call. There are a fair few properties
+on the response, but the most common you're likely to work with is `.Documents`,
+which we'll demonstrate below.
 
 ==== Matching documents
 

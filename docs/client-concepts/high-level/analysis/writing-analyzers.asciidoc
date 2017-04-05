@@ -15,37 +15,38 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[writing-analyzers]]
-=== Writing Analyzers
+=== Writing analyzers
 
 There are times when you would like to analyze text in a bespoke fashion, either by configuring
 how one of Elasticsearch's built-in {ref_current}/analysis-analyzers.html[analyzers] works, or
 by combining analysis components together to build a custom analyzer.
 
 [[analysis-chain]]
-==== The Analysis chain
+==== The analysis chain
 
 An analyzer is built of three components:
 
-- **0 or more character filters**
-- **exactly 1 tokenizer**
-- **0 or more token filters**
+* 0 or more character filters
 
-.Anatomy of an analyzer
+* exactly 1 tokenizer
+
+* 0 or more token filters
+
 image::analysis-chain.png[analysis chain]
 
-Check out the Elasticsearch documentation on the {ref_current}/analyzer-anatomy.html[Anatomy of an analyzer] 
+Check out the Elasticsearch documentation on the {ref_current}/analyzer-anatomy.html[Anatomy of an analyzer]
 to understand more.
 
 ==== Specifying an analyzer on a field mapping
 
 An analyzer can be specified on a `text` datatype field mapping when creating a new field on a type, usually
-when creating the type mapping at index creation time, but also when adding a new field 
+when creating the type mapping at index creation time, but also when adding a new field
 using the Put Mapping API.
 
 [IMPORTANT]
 --
-Although you can add new types to an index, or add new fields to a type, you **can't** add new analyzers 
-or make changes to existing fields. If you were to do so, the data that has already been indexed would be 
+Although you can add new types to an index, or add new fields to a type, you **can't** add new analyzers
+or make changes to existing fields. If you were to do so, the data that has already been indexed would be
 incorrect and your searches would no longer work as expected.
 
 When you need to make changes to existing fields, you should look at reindexing your data with the
@@ -53,7 +54,7 @@ When you need to make changes to existing fields, you should look at reindexing 
 
 --
 
-Here's a simple example that specifies that the `name` field in Elasticsearch, 
+Here's a simple example that specifies that the `name` field in Elasticsearch,
 which maps to the `Name` POCO property on the `Project` type, uses the `whitespace` analyzer at index time
 
 [source,csharp]
@@ -67,14 +68,14 @@ var createIndexResponse = client.CreateIndex("my-index", c => c
                     .Analyzer("whitespace")
                 )
             )
-        )    
+        )
     )
 );
 ----
 
 ==== Configuring a built-in analyzer
 
-Several built-in analyzers can be configured to alter their behaviour. For example, the `standard` analyzer can be configured to support a list of stop words with the stop word token filter
+Several built-in analyzers can be configured to alter their behaviour. For example, the`standard` analyzer can be configured to support a list of stop words with the stop word token filter
 it contains.
 
 Configuring a built-in analyzer requires creating an analyzer based on the built-in one
@@ -137,8 +138,8 @@ var createIndexResponse = client.CreateIndex("my-index", c => c
 ==== Creating a custom analyzer
 
 A custom analyzer can be composed when none of the built-in analyzers fit your needs. A custom analyzer
-is built from the components that you saw in <<analysis-chain, the analysis chain>> and a 
-{ref_current}/position-increment-gap.html[position increment gap], 
+is built from the components that you saw in <<analysis-chain, the analysis chain>> and a
+{ref_current}/position-increment-gap.html[position increment gap],
 that determines the size of gap that Elasticsearch should insert between array elements, when a
 field can hold multiple values e.g. a `List<string>` POCO property.
 
@@ -219,7 +220,7 @@ and case invariants), because the search time analysis applied is the same as th
 
 ==== Index and Search time analysis
 
-With the previous example, we probably don't want to apply the same analysis to the query input of a 
+With the previous example, we probably don't want to apply the same analysis to the query input of a
 full text query against a question body; we know for our problem domain that a query input is not going
 to contain HTML tags, so we would like to apply different analysis at search time.
 
@@ -278,7 +279,7 @@ the `search_question` analyzer that does not use the `html_strip` character filt
 [TIP]
 --
 A Search analyzer can also be specified per query i.e. use a different analyzer for a particular
-request from the one specified in the mapping. This can be useful when iterating on and improving 
+request from the one specified in the mapping. This can be useful when iterating on and improving
 your search strategy.
 
 Take a look at the {ref_current}/analyzer.html[analyzer] documentation for more details around where analyzers can be specified

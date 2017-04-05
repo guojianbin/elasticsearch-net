@@ -22,7 +22,7 @@ namespace Tests.ClientConcepts.ConnectionPooling.RequestOverrides
 			);
 
 			audit = await audit.TraceCalls(
-				new ClientCall() {
+				new ClientCall {
 					{ BadResponse, 9200 }
 				},
 				new ClientCall(r => r.AllowedStatusCodes(400)) {

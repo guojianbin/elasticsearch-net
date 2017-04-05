@@ -17,6 +17,9 @@ please modify the original csharp file found at the link and submit the PR with 
 [[raw-combine-usage]]
 === Raw Combine Usage
 
+NEST's <<raw-query-usage, raw query>> can be combined with other queries using a <<compound-queries, compound query>>
+such as a `bool` query.
+
 ==== Fluent DSL example
 
 [source,csharp]

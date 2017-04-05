@@ -17,10 +17,10 @@ namespace Tests.QueryDsl.BoolDsl
 	*/
     public class BoolDslTests : OperatorUsageBase
 	{
-		protected readonly IElasticClient Client = 
+		protected readonly IElasticClient Client =
             TestClient.GetFixedReturnClient(new { }, modifySettings: c => c.DisableDirectStreaming());
 
-		/** 
+		/**
          * Writing `bool` queries can grow verbose rather quickly when using the query DSL. For example,
 		* take a single {ref_current}/query-dsl-bool-query.html[bool query] with two `should` clauses
 		*/
@@ -38,7 +38,7 @@ namespace Tests.QueryDsl.BoolDsl
 			);
 		}
         /**
-         * Now, imagine multiple nested `bool` queries; you'll realise that this quickly becomes an exercise 
+         * Now, imagine multiple nested `bool` queries; you'll realise that this quickly becomes an exercise
          * in __hadouken indenting__
 		*
 		*.hadouken indenting
@@ -47,22 +47,22 @@ namespace Tests.QueryDsl.BoolDsl
 		*[float]
 		*=== Operator overloading
 		*
-		* For this reason, NEST introduces **operator overloading** so complex `bool` queries become easier to write. 
+		* For this reason, NEST introduces **operator overloading** so complex `bool` queries become easier to write.
         * The overloaded operators are
-        * 
+        *
         * - <<binary-or-operator, Binary `||` operator>>
         * - <<binary-and-operator, Binary `&&` operator>>
         * - <<unary-negation-operator, Unary `!` operator>>
         * - <<unary-plus-operator, Unary `+` operator>>
-        * 
+        *
         * We'll demonstrate each with examples.
-        * 
+        *
         * [[binary-or-operator]]
         * ==== Binary || operator
-        * 
+        *
         * Using the overloaded binary `||` operator, a `bool` query with `should` clauses can be more succinctly
         * expressed.
-        * 
+        *
         * The previous example now becomes the following with the Fluent API
 		*/
         public void UsingOperator()
@@ -80,7 +80,7 @@ namespace Tests.QueryDsl.BoolDsl
             /** and, with the the Object Initializer syntax */
             var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
 			{
-				Query = new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" } || 
+				Query = new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" } ||
                         new TermQuery { Field = Field<Project>(p => p.Name), Value = "y" }
 			});
 
@@ -133,8 +133,8 @@ namespace Tests.QueryDsl.BoolDsl
 
         /**[[binary-and-operator]]
          * ==== Binary && operator
-         * 
-         * The overloaded binary `&&` operator can be used to combine queries together. When the queries to be combined 
+         *
+         * The overloaded binary `&&` operator can be used to combine queries together. When the queries to be combined
          * don't have any unary operators applied to them, the resulting query is a `bool` query with `must` clauses
          */
         [U]
@@ -210,9 +210,9 @@ namespace Tests.QueryDsl.BoolDsl
         * ----
 		* term && term && term
 		* ----
-        * 
+        *
         * to
-        * 
+        *
 		*....
 		*bool
 		*|___must
@@ -233,7 +233,7 @@ namespace Tests.QueryDsl.BoolDsl
 		*    |___term
 		*    |___term
 		*....
-        * 
+        *
         * as demonstrated with the following
 		*/
 
@@ -247,11 +247,11 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
 
-        /**[[unary-negation-operator]] 
+        /**[[unary-negation-operator]]
          * ==== Unary ! operator
-         * 
-         * NEST also offers a shorthand notation for creating a `bool` query with a `must_not` clause 
-         * using the unary `!` operator 
+         *
+         * NEST also offers a shorthand notation for creating a `bool` query with a `must_not` clause
+         * using the unary `!` operator
          */
         [U]
         public void MustNotQuery()
@@ -265,7 +265,7 @@ namespace Tests.QueryDsl.BoolDsl
                 )
             );
 
-            /** and, with the the Object Initializer syntax */
+            /** and, with the Object Initializer syntax */
             var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
             {
                 Query = !new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" }
@@ -326,9 +326,9 @@ namespace Tests.QueryDsl.BoolDsl
                 c => c.Bool.MustNot.Should().HaveCount(2)); // <3> assert the resulting `bool` query in each case has two `must_not` clauses
         }
 
-        /**[[unary-plus-operator]] 
+        /**[[unary-plus-operator]]
          * ==== Unary + operator
-         * 
+         *
          * A query can be transformed into a `bool` query with a `filter` clause using the unary `+` operator
          */
         [U]
@@ -343,7 +343,7 @@ namespace Tests.QueryDsl.BoolDsl
                 )
             );
 
-            /** and, with the the Object Initializer syntax */
+            /** and, with the Object Initializer syntax */
             var secondSearchResponse = client.Search<Project>(new SearchRequest<Project>
             {
                 Query = +new TermQuery { Field = Field<Project>(p => p.Name), Value = "x" }
@@ -393,28 +393,28 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
         /**
-         * This runs the {ref_current}/query-filter-context.html[query in a filter context], 
-         * which can be useful in improving performance where the relevancy score for the query 
+         * This runs the {ref_current}/query-filter-context.html[query in a filter context],
+         * which can be useful in improving performance where the relevancy score for the query
          * is not required to affect the order of results.
-         * 
-         * Similarly to the unary `!` operator, queries marked with the unary `+`  operator can be 
+         *
+         * Similarly to the unary `!` operator, queries marked with the unary `+`  operator can be
          * combined with the `&&` operator to form a single `bool` query with two `filter` clauses
         */
         [U] public void UnaryAddOperatorAnd()
 		{
 			Assert(
-                q => +q.Query() && +q.Query(), 
-                +Query && +Query, 
+                q => +q.Query() && +q.Query(),
+                +Query && +Query,
                 c => c.Bool.Filter.Should().HaveCount(2));
 		}
 
 		/**[float]
 		* === Combining bool queries
 		*
-		* When combining multiple queries with the binary `&&` operator 
-        * where some or all queries have unary operators applied, 
+		* When combining multiple queries with the binary `&&` operator
+        * where some or all queries have unary operators applied,
         * NEST is still able to combine them to form a single `bool` query.
-        * 
+        *
         * Take for example the following `bool` query
 		*
 		*....
@@ -427,7 +427,7 @@ namespace Tests.QueryDsl.BoolDsl
 		*|___must_not
 		*    |___term
 		*....
-        * 
+        *
         * This can be constructed with NEST using
 		*/
 		[U] public void JoinsMustWithMustNot()
@@ -443,14 +443,14 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
 		/** An even more complex example
-         * 
+         *
          * [source, sh]
          * ----
          * term && term && term && !term && +term && +term
          * ----
-         * 
+         *
          * still only results in a single `bool` query with the following structure
-         * 
+         *
 		 *....
 		 *bool
 		 *|___must
@@ -480,12 +480,12 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
 		/** You can still mix and match actual `bool` queries with operator overloaded queries e.g
-		* 
+		*
         * [source,sh]
         * ----
         * bool(must=term, term, term) && !term
         * ----
-        * 
+        *
         * This will still merge into a single `bool` query.
 		*/
 		[U] public void MixAndMatch()
@@ -501,9 +501,9 @@ namespace Tests.QueryDsl.BoolDsl
 		}
 
         /**==== Combining queries with || or should clauses
-         * 
-         * As per the previous example, NEST will combine multiple ``should`` or `||` into a single `bool` query
-         * with `should` clauses when it sees that the `bool` queries in play **only** consist of `should` clauses; 
+         *
+         * As per the previous example, NEST will combine multiple `should` or `||` into a single `bool` query
+         * with `should` clauses, when it sees that the `bool` queries in play **only** consist of `should` clauses;
 		*
 		* To summarize, this
 		*
@@ -511,7 +511,7 @@ namespace Tests.QueryDsl.BoolDsl
         * ----
 		* term || term || term
 		* ----
-        * 
+        *
 		* becomes
 		*....
 		*bool
@@ -521,14 +521,14 @@ namespace Tests.QueryDsl.BoolDsl
 		*    |___term
 		*....
 		*
-        * However, the `bool` query does not quite follow the same boolean logic you expect from a 
+        * However, the `bool` query does not quite follow the same boolean logic you expect from a
         * programming language. That is
-        * 
+        *
         * [source,sh]
         * ----
 		* term1 && (term2 || term3 || term4)
         * ----
-        * 
+        *
         * does **not** become
 		*
 		* ....
@@ -543,12 +543,12 @@ namespace Tests.QueryDsl.BoolDsl
 		*....
 		*
 		* Why is this? Well, when a `bool` query has **only** `should` clauses, **__at least one__** of them must match.
-        * However, when that `bool` query also has a `must` clause, the `should` clauses instead now act as a 
+        * However, when that `bool` query also has a `must` clause, the `should` clauses instead now act as a
         * _boost_ factor, meaning none of them have to match but if they do, the relevancy score for that document
         * will be boosted and thus appear higher in the results. The semantics for how `should` clauses behave then
-        * change based on the presence of the `must` clause.
+        * changes based on the presence of the `must` clause.
 		*
-		* So, relating this back to the previous example, you could get back results that **only** contain `term1`. 
+		* So, relating this back to the previous example, you could get back results that **only** contain `term1`.
         * This is clearly not what was intended when using operator overloading.
 		*
 		* To aid with this, NEST rewrites the previous query as
@@ -580,10 +580,10 @@ namespace Tests.QueryDsl.BoolDsl
 
 		/** TIP: *Add parentheses to force evaluation order*
 		*
-		* Using ``should`` clauses as boost factors can be a really powerful construct when building
+		* Using `should` clauses as boost factors can be a really powerful construct when building
         * search queries, and remember, you can mix and match an actual `bool` query with NEST's operator overloading.
 		*
-		* There is another subtle situation where NEST will not blindly merge two `bool` queries with only 
+		* There is another subtle situation where NEST will not blindly merge two `bool` queries with only
         * `should` clauses. Consider the following
 		*
 		* [source,sh]
@@ -592,7 +592,7 @@ namespace Tests.QueryDsl.BoolDsl
 		* ----
 		*
 		* if NEST identified both sides of a binary `||` operation as only containing `should` clauses and
-		* joined them together, it would give a different meaning to the `minimum_should_match` parameter of 
+		* joined them together, it would give a different meaning to the `minimum_should_match` parameter of
         * the first `bool` query; rewriting this to a single `bool` with 5 `should` clauses would break the semantics
         * of the original query because only matching on `term5` or `term6` should still be a hit.
 		**/

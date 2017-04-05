@@ -7,9 +7,9 @@ using Xunit;
 namespace Tests.ClientConcepts.Troubleshooting
 {
 	/**
-     * === Deprecation Logging
-	 * 
-     * Elasticsearch will send back `Warn` HTTP Headers when you are using an API feature that is 
+     * === Deprecation logging
+	 *
+     * Elasticsearch will send back `Warn` HTTP Headers when you are using an API feature that is
      * deprecated and will be removed or rewritten in a future release.
 	 *
 	 * Elasticsearch.NET and NEST report these back to you so you can log and watch out for them.

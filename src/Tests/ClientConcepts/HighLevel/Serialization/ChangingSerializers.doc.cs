@@ -13,13 +13,13 @@ using Newtonsoft.Json;
 namespace Tests.ClientConcepts.HighLevel.Serialization
 {
     /**[[changing-serializers]]
-     * === Changing Serializers
+     * === Changing serializers
      *
      * NEST uses http://www.newtonsoft.com/json[JSON.Net] to serialize requests to and deserialize responses from JSON.
      *
      * Whilst JSON.Net does a good job of serialization, you may wish to use your own JSON serializer for a particular
      * reason. Elasticsearch.Net and NEST make it easy to replace the default serializer with your own.
-     * 
+     *
      * [NOTE]
      * --
      * If you are looking to change how the default serializer works, check out
@@ -60,7 +60,7 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
         }
 
         /**==== Changing serializers in Elasticsearch.Net
-         * 
+         *
          * For Elasticsearch.Net, an implementation of `IElasticsearchSerializer` is all that is needed and a delegate can
 		 * be passed to `ConnectionConfiguration` that will be called to construct an instance of the serializer
          */
@@ -75,7 +75,7 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
         }
 
         /**==== Changing serializers in NEST
-         * 
+         *
          * With NEST however, an implementation of `ISerializerFactory` in addition to an implementation
          * of `IElasticsearchSerializer` is required.
          */

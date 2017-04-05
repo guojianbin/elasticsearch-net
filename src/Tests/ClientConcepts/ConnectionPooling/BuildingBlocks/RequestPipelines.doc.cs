@@ -8,13 +8,12 @@ using Elasticsearch.Net;
 using FluentAssertions;
 using Nest;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Tests.Framework;
 using Xunit;
 
 namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 {
-	/**=== Request Pipeline
+	/**=== Request pipelines
 	* Every request is executed in the context of a `RequestPipeline` when using the
 	* default <<transports,ITransport>> implementation.
 	*/
@@ -38,26 +37,29 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			pipeline.GetType().Should().Implement<IDisposable>();
 
 			/** An `ITransport` does not instantiate a `RequestPipeline` directly; it uses a pluggable `IRequestPipelineFactory`
-			* to create it
+			* to create them
 			*/
 			var requestPipelineFactory = new RequestPipelineFactory();
 			var requestPipeline = requestPipelineFactory.Create(
 				settings,
-				DateTimeProvider.Default, //<1> An <<date-time-providers,`IDateTimeProvider` implementation>>
+				DateTimeProvider.Default, //<1> An <<date-time-providers,`IDateTimeProvider`>> implementation
 				new MemoryStreamFactory(),
 				new SearchRequestParameters());
 
 			requestPipeline.Should().BeOfType<RequestPipeline>();
 			requestPipeline.GetType().Should().Implement<IDisposable>();
 
-			/** You can pass your own `IRequestPipeline` implementation to the Transport when instantiating a client,
-			* allowing you to have requests executed on your own custom request pipeline
+			/**
+			 * You can pass your own `IRequestPipeline` implementation to the transport when instantiating a client,
+			* allowing you to have requests executed in your own custom request pipeline
 			*/
 			var transport = new Transport<ConnectionSettings>(
 				settings,
 				requestPipelineFactory,
 				DateTimeProvider.Default,
 				new MemoryStreamFactory());
+
+			var client = new ElasticClient(transport);
 		}
 
         // hide
@@ -71,27 +73,30 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		}
 
 		/**
-		*==== Sniffing on first usage
-		*/
+		 * Let's now have a look at some of the characteristics of the request pipeline
+		 *
+		 *==== Sniffing on first usage
+		 */
 		[U]
 		public void FirstUsageCheck()
 		{
+			/** Here we have setup three pipelines with three different <<connection-pooling, connection pools>> */
 			var singleNodePipeline = CreatePipeline(uris => new SingleNodeConnectionPool(uris.First()));
 			var staticPipeline = CreatePipeline(uris => new StaticConnectionPool(uris));
 			var sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris));
 
-			/** Here we have setup three pipelines using three different connection pools. Let's see how they behave
-			* on first usage
-			*/
+			/**  Let's see how they behave on first usage */
 			singleNodePipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 			staticPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
 			sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeTrue();
 
-			/** Only the <<sniffing-connection-pool, Sniffing connection pool>> supports sniffing on first usage
-             * as it supports reseeding. Sniffing on startup however can be disabled on `ConnectionSettings`
+			/**
+			 * We see that only the <<sniffing-connection-pool, Sniffing connection pool>> supports sniffing on first usage,
+             * since it supports reseeding. Sniffing on startup however can be disabled on `ConnectionSettings` for sniffing
+			 * connection pool
 			*/
 			sniffingPipeline = CreatePipeline(
-                uris => new SniffingConnectionPool(uris), 
+                uris => new SniffingConnectionPool(uris),
                 s => s.SniffOnStartup(false)); //<1> Disable sniffing on startup
 
 			sniffingPipeline.FirstPoolUsageNeedsSniffing.Should().BeFalse();
@@ -156,10 +161,11 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 				settingsSelector: s => s.RequestTimeout(TimeSpan.FromSeconds(2)));
 
             /**Now, with a `SemaphoreSlim` in place that allows only one thread to enter at a time,
-			 * start three tasks that will initiate a sniff on startup. 
-             * 
-             * The first task will successfully sniff on startup with the remaining two waiting 
-             * tasks exiting without exception and releasing the `SemaphoreSlim`.
+			 * start three tasks that will initiate a sniff on startup.
+             *
+             * The first task will successfully sniff on startup with the remaining two waiting
+             * tasks exiting without exception. The `SemaphoreSlim` is also released, ready for
+			 * when sniffing needs to take place again
 			 */
             var semaphoreSlim = new SemaphoreSlim(1, 1);
 
@@ -177,6 +183,10 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		[U]
 		public void SniffsOnConnectionFailure()
 		{
+			/**
+			 * Only a connection pool that supports reseeding will opt in to `SniffsOnConnectionFailure()`.
+			 * In this case, it is only the Sniffing connection pool
+			 */
 			var singleNodePipeline = CreatePipeline(uris => new SingleNodeConnectionPool(uris.First()));
 			var staticPipeline = CreatePipeline(uris => new StaticConnectionPool(uris));
 			var sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris));
@@ -185,8 +195,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			staticPipeline.SniffsOnConnectionFailure.Should().BeFalse();
 			sniffingPipeline.SniffsOnConnectionFailure.Should().BeTrue();
 
-			/** Only the cluster that supports reseeding will opt in to SniffsOnConnectionFailure()
-			* You can however disable this on ConnectionSettings
+			/**
+			* You can however disable this behaviour on `ConnectionSettings`
 			*/
 			sniffingPipeline = CreatePipeline(uris => new SniffingConnectionPool(uris), s => s.SniffOnConnectionFault(false));
 			sniffingPipeline.SniffsOnConnectionFailure.Should().BeFalse();
@@ -196,6 +206,13 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 		[U]
 		public void SniffsOnStaleCluster()
 		{
+			/**
+			 * A connection pool that supports reseeding will sniff after a period of time
+			 * to ensure that its understanding of the state of the cluster is not stale.
+			 *
+			 * Let's set up three request pipelines with different connection pools and a
+			 * date time provider that will allow us to artificially change the time
+			 */
 			var dateTime = new TestableDateTimeProvider();
 			var singleNodePipeline = CreatePipeline(uris =>
 				new SingleNodeConnectionPool(uris.First(), dateTime), dateTimeProvider: dateTime);
@@ -206,21 +223,32 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			var sniffingPipeline = CreatePipeline(uris =>
 				new SniffingConnectionPool(uris, dateTimeProvider: dateTime), dateTimeProvider: dateTime);
 
+			/**
+			 * On the request pipeline with the Sniffing connection pool will sniff when its
+			 * understanding of the cluster is stale
+			 */
 			singleNodePipeline.SniffsOnStaleCluster.Should().BeFalse();
 			staticPipeline.SniffsOnStaleCluster.Should().BeFalse();
 			sniffingPipeline.SniffsOnStaleCluster.Should().BeTrue();
 
+			/**
+			 * To begin with, all request pipelines have a _fresh_ view of cluster state i.e. not stale
+			 */
 			singleNodePipeline.StaleClusterState.Should().BeFalse();
 			staticPipeline.StaleClusterState.Should().BeFalse();
 			sniffingPipeline.StaleClusterState.Should().BeFalse();
 
-			/** go one hour into the future */
+			/** Now, if we go two hours into the future */
 			dateTime.ChangeTime(d => d.Add(TimeSpan.FromHours(2)));
 
-			/**connection pools that do not support reseeding never go stale */
+			/** Those connection pools that do not support reseeding never go stale */
 			singleNodePipeline.StaleClusterState.Should().BeFalse();
 			staticPipeline.StaleClusterState.Should().BeFalse();
-			/** the sniffing connection pool supports reseeding so the pipeline will signal the state is out of date */
+
+			/**
+			 * but the Request pipeline using the Sniffing connection pool that supports reseeding,
+			 * signals that its understanding of the cluster state is out of date
+			 */
 			sniffingPipeline.StaleClusterState.Should().BeTrue();
 
 		}
@@ -228,9 +256,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 
 		/**
         * ==== Retrying
-        * 
+        *
 		* A request pipeline also checks whether the overall time across multiple retries exceeds the request timeout.
-		* See <<maximum-retries, Maximum retries>> for more details, here we assert that our request pipeline exposes this propertly
+		* See <<retries, Retries>> for more details, here we assert that our request pipeline exposes this properly
 		*/
 		[U]
 		public void IsTakingTooLong()
@@ -252,18 +280,19 @@ namespace Tests.ClientConcepts.ConnectionPooling.BuildingBlocks
 			/** go one hour into the future */
 			dateTime.ChangeTime(d => d.Add(TimeSpan.FromHours(2)));
 
-			/**connection pools that do not support reseeding never go stale */
+			/**Connection pools that do not support reseeding never go stale */
 			singleNodePipeline.IsTakingTooLong.Should().BeTrue();
 			staticPipeline.IsTakingTooLong.Should().BeTrue();
 			/** the sniffing connection pool supports reseeding so the pipeline will signal the state is out of date */
 			sniffingPipeline.IsTakingTooLong.Should().BeTrue();
 
-			/** request pipeline exposes the DateTime it started, here we assert it started 2 hours in the past */
+			/** request pipeline exposes the DateTime it started; we assert it started 2 hours in the past */
 			(dateTime.Now() - singleNodePipeline.StartedOn).Should().BePositive().And.BeCloseTo(TimeSpan.FromHours(2));
 			(dateTime.Now() - staticPipeline.StartedOn).Should().BePositive().And.BeCloseTo(TimeSpan.FromHours(2));
 			(dateTime.Now() - sniffingPipeline.StartedOn).Should().BePositive().And.BeCloseTo(TimeSpan.FromHours(2));
 		}
 
+		// hide
 		[U]
 		public void SetsSniffPathUsingToTimespan()
 		{

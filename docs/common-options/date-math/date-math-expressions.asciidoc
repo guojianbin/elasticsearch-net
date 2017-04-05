@@ -15,7 +15,7 @@ please modify the original csharp file found at the link and submit the PR with 
 ////
 
 [[date-math-expressions]]
-=== Date Math Expressions
+=== Date math expressions
 
 The date type supports using date math expression when using it in a query/filter
 Whenever durations need to be specified, eg for a timeout parameter, the duration can be specified
@@ -44,7 +44,7 @@ as a whole number representing time in milliseconds, or as a time value like `2d
 
 Be sure to read the Elasticsearch documentation on {datemath}[Date Math].
 
-==== Simple Expressions
+==== Simple expressions
 
 You can create simple expressions using any of the static methods on `DateMath`
 
@@ -72,7 +72,7 @@ the resulting date math will assume the whole string is the anchor
 
 [source,csharp]
 ----
-Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)            
+Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)
     .Result(dateMath => ((IDateMath)dateMath)
         .Anchor.Match(
             d => d.Should().NotBe(default(DateTime)),
@@ -81,7 +81,7 @@ Expect(nonsense).WhenSerializing<Nest.DateMath>(nonsense)
     );
 ----
 
-`DateTime` also implicitly convert to simple date math expressions; the resulting 
+`DateTime` also implicitly convert to simple date math expressions; the resulting
 anchor will be an actual `DateTime`, even after a serialization/deserialization round trip
 
 [source,csharp]
@@ -96,7 +96,7 @@ Expect("2015-05-05T00:00:00").WhenSerializing<Nest.DateMath>(date)
     );
 ----
 
-==== Complex Expressions
+==== Complex expressions
 
 Ranges can be chained on to simple expressions
 

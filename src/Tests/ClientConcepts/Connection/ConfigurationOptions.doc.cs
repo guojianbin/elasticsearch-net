@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Elasticsearch.Net;
-using FluentAssertions;
 using Nest;
-using Tests.Framework;
-using Xunit;
+using Tests.Framework.MockData;
 
 #if DOTNETCORE
 using System.Net.Http;
@@ -18,56 +11,68 @@ namespace Tests.ClientConcepts.Connection
 {
 	public class ConfigurationOptions
 	{
-        /**[[configuration-options]]
-		 * === Configuration Options
-         * 
-		 * Connecting to Elasticsearch with Elasticsearch.Net or NEST is easy, as demonstrated by the Getting started
-         * documentation on the <<elasticsearch-net-getting-started, low level>> and <<nest-getting-started, high level>> clients demonstrates. 
-         * 
-         * There are a number of configuration options available on `ConnectionSettings` (and `ConnectionConfiguration` for
-         * Elasticsearch.Net) that can be used to control how the clients interact with Elasticsearch.
-         * 
+		/**[[configuration-options]]
+		 * === Configuration options
+         *
+         * Connecting to Elasticsearch with <<elasticsearch-net-getting-started,Elasticsearch.Net>> and <<nest-getting-started,NEST>> is easy, but
+		 * it's entirely possible that you'd like to change the default connection behaviour. There are a number of configuration options available
+		 * on `ConnectionSettings` (and `ConnectionConfiguration` for Elasticsearch.Net) that can be used to control
+		 * how the clients interact with Elasticsearch.
+         *
          * ==== Options on ConnectionConfiguration
-         * 
+         *
          * The following is a list of available connection configuration options on `ConnectionConfiguration`; since
-         * `ConnectionSettings` derives from `ConnectionConfiguration`, these options are available for both 
+         * `ConnectionSettings` derives from `ConnectionConfiguration`, these options are available for both
          * Elasticsearch.Net and NEST:
-         * 
+         *
          * :xml-docs: Elasticsearch.Net:ConnectionConfiguration`1
-         * 
+         *
          * ==== Options on ConnectionSettings
-         * 
+         *
          * The following is a list of available connection configuration options on `ConnectionSettings`:
-         * 
+         *
          * :xml-docs: Nest:ConnectionSettingsBase`1
 		 *
-         * Here's an example to demonstrate setting configuration options
+         * Here's an example to demonstrate setting several configuration options using the low level client
 		 */
 		public void AvailableOptions()
 		{
 			var connectionConfiguration = new ConnectionConfiguration()
-				.DisableAutomaticProxyDetection() 
-				.EnableHttpCompression() 
+				.DisableAutomaticProxyDetection()
+				.EnableHttpCompression()
 				.DisableDirectStreaming()
                 .PrettyJson()
                 .RequestTimeout(TimeSpan.FromMinutes(2));
 
-			var client = new ElasticLowLevelClient(connectionConfiguration);
-		
+			var lowLevelClient = new ElasticLowLevelClient(connectionConfiguration);
 
-			/**[NOTE] 
+			/**
+			 * And with the high level client
+			 */
+			var connectionSettings = new ConnectionSettings()
+				.InferMappingFor<Project>(i => i
+					.IndexName("my-projects")
+					.TypeName("project")
+				)
+				.EnableDebugMode()
+				.PrettyJson()
+				.RequestTimeout(TimeSpan.FromMinutes(2));
+
+			var client = new ElasticClient(connectionSettings);
+
+			/**[NOTE]
             * ====
-            * 
+            *
             * Basic Authentication credentials can alternatively be specified on the node URI directly
 			*/
 			var uri = new Uri("http://username:password@localhost:9200");
 			var settings = new ConnectionConfiguration(uri);
 		}
-
         /**
-        * but this may become tedious when using connection pooling with multiple nodes. For this reason,
-        * we'd recommend specifying it on `ConnectionSettings`.
+        * but this can be awkward when using connection pooling with multiple nodes, especially when the connection pool
+		* used is one that is capable of reseeding iteslf. For this reason, we'd recommend specifying credentials
+		* on `ConnectionSettings`.
         *====
-        */  
+        */
 	}
 }

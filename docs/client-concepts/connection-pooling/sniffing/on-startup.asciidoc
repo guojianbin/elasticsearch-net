@@ -17,13 +17,13 @@ please modify the original csharp file found at the link and submit the PR with 
 [[sniffing-on-startup]]
 === Sniffing on startup
 
-<<connection-pooling, Connection pools>> that return true for `SupportsReseeding` 
+<<connection-pooling, Connection pools>> that return `true` for `SupportsReseeding`
 will sniff on startup by default.
 
 We can demonstrate this by creating a _virtual_ Elasticsearch cluster using NEST's Test cluster framework.
 
-Here we create a 10 node cluster that uses a <<sniffing-connection-pool,SniffingConnectionPool>>, setting
-sniff to fail on all nodes *_except_* 9202
+Here we create a 10 node cluster that uses a <<sniffing-connection-pool,Sniffing connection pool>>, setting
+sniff to fail on all nodes _*except*_ 9202
 
 [source,csharp]
 ----
@@ -36,8 +36,8 @@ var audit = new Auditor(() => Framework.Cluster
 );
 ----
 
-When the client call is made, we can see from the audit trail that the pool first tried to sniff on startup,
-with a sniff failure on 9200 and 9201, followed by a sniff success on 9202. A ping and healthy response are made on
+When the client call is made, from the audit trail we see that the pool first tried to sniff on startup,
+with a sniff failure on 9200 and 9201, followed by a sniff success on 9202. A ping and then healthy response are made on
 9200
 
 [source,csharp]
@@ -57,7 +57,7 @@ await audit.TraceCall(
 
 ==== Occurs once
 
-**A sniff on startup only happens once**. That is, 
+**A sniff on startup only happens once**. That is,
 
 . a sniff is attempted on a node
 
@@ -97,7 +97,7 @@ await audit.TraceCalls(
 
 ==== Uses cluster state
 
-**A sniff on startup will use the returned cluster state**. 
+**A sniff on startup will use the returned cluster state**.
 
 In this next example, the state of the cluster returned from the successful sniff
 is used for subsequent client requests
@@ -127,7 +127,7 @@ await audit.TraceCall(new ClientCall {
 
 ==== Prefers master eligible nodes
 
-Sniffing prefers to run on master eligible nodes 
+Sniffing prefers to run on master eligible nodes
 
 [source,csharp]
 ----

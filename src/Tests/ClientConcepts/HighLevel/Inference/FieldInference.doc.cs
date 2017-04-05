@@ -18,7 +18,7 @@ namespace Tests.ClientConcepts.HighLevel.Inference
 	public class FieldInference
 	{
 		/**[[field-inference]]
-		 * === Field Inference
+		 * === Field inference
 		 *
 		 * Several places in the Elasticsearch API expect the path to a field from your original source document, as a string value.
 		 * NEST allows you to use C# expressions to strongly type these field path strings.

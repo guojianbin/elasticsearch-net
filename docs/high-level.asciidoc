@@ -62,6 +62,9 @@ include::{output-dir}/getting-started.asciidoc[]
 [[connecting]]
 == Connecting
 
+NEST uses sensible defaults for connecting to and interacting with an Elasticsearch cluster but provides numerous
+configuration options and components to change this behaviour
+
 * <<configuration-options, Configuration options>>
 
 * <<connection-pooling, Connection pools>>
@@ -78,10 +81,12 @@ include::client-concepts/connection/modifying-default-connection.asciidoc[]
 
 include::client-concepts/certificates/working-with-certificates.asciidoc[]
 
-include::client-concepts/connection-pooling/building-blocks/date-time-providers.asciidoc[]
-
 [[serialization]]
 == Serialization
+
+NEST's default JSON serialization understands how to correctly serialize all request and response types, as well as
+correctly handle your POCOs. Sometimes however, you might want to change this behaviour, either by providing your
+own serializer, or by modifying how NEST's serializer behaves.
 
 :anchor-list: client-concepts/high-level/serialization
 
@@ -146,8 +151,6 @@ _Analysis_ is the process of converting text, like the body of any email, into _
 the inverted index for searching. Analysis is performed by an _analyzer_ which can be either a built-in 
 analyzer or a _custom_ analyzer defined per index.
 
-Take a look at
-
 * <<writing-analyzers, Writing analyzers>>
 
 * <<testing-analyzers, Testing analyzers>>
@@ -158,6 +161,11 @@ include::{output-dir}/analysis/testing-analyzers.asciidoc[]
 
 [[search]]
 == Search
+
+The {ref_current}/search-search.html[Search API] allows you to execute a search query and get 
+back search hits that match the query. The search capabilities of Elasticsearch is likely one
+of the reasons you're using it, and NEST exposes all of the different types of search available, along
+with some smarts to make working with Elasticsearch from a strongly typed language easier.
 
 * <<writing-queries, Writing queries>>
 
@@ -195,21 +203,19 @@ include::aggregations/reserved-aggregation-names.asciidoc[]
 
 There are a number of conventions that NEST uses for inference of
 
-:anchor-list: client-concepts/high-level/inference
+* <<document-paths, Document paths>>
 
-* <<document-paths,Document Paths>>
+* <<features-inference, API features>>
 
-* <<features-inference,Features Inference>>
+* <<field-inference, Fields>>
 
-* <<field-inference,Field Inference>>
+* <<ids-inference, Ids>>
 
-* <<ids-inference,Ids Inference>>
+* <<index-name-inference, Index names>>
 
-* <<index-name-inference,Index Name Inference>>
+* <<indices-paths, Index paths>>
 
-* <<indices-paths,Indices Paths>>
-
-* <<property-inference,Property Inference>>
+* <<property-inference, Properties>>
 
 :includes-from-dirs: client-concepts/high-level/inference
 
@@ -229,6 +235,14 @@ include::client-concepts/high-level/inference/property-inference.asciidoc[]
 
 [[common-types]]
 == Common Types
+
+NEST has a number of types for working with Elasticsearch conventions for
+
+* <<time-units, Time units>>
+
+* <<distance-units, Distance units>>
+
+* <<date-math-expressions, Dat math expressions>>
 
 include::common-options/time-unit/time-units.asciidoc[]
 

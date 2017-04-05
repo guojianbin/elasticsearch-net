@@ -8,10 +8,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.FailOver
 	{
 		/**[[fail-over]]
 		* === Fail over
-		* When using connection pooling and the pool has sufficient nodes a request will be retried if
-		* the call to a node throws an exception or returns a 502 or 503
+		* When using a connection pool with more than one node, a request will be retried if
+		* the call to a node throws an exception or returns a 502, 503 or 504 response
 		*/
-
 		[U]
 		public async Task ExceptionFallsOverToNextNode()
 		{

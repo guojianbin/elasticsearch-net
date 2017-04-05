@@ -11,17 +11,17 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
     public class OnStartupSniffing
     {
         /**=== Sniffing on startup
-         * 
-        * <<connection-pooling, Connection pools>> that return true for `SupportsReseeding` 
+         *
+        * <<connection-pooling, Connection pools>> that return `true` for `SupportsReseeding`
         * will sniff on startup by default.
         */
         [U] [SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
         public async Task ASniffOnStartupHappens()
         {
             /** We can demonstrate this by creating a _virtual_ Elasticsearch cluster using NEST's Test cluster framework.
-             *  
-            * Here we create a 10 node cluster that uses a <<sniffing-connection-pool,SniffingConnectionPool>>, setting
-            * sniff to fail on all nodes *_except_* 9202
+             *
+            * Here we create a 10 node cluster that uses a <<sniffing-connection-pool,Sniffing connection pool>>, setting
+            * sniff to fail on all nodes _*except*_ 9202
             */
             var audit = new Auditor(() => Framework.Cluster
                 .Nodes(10)
@@ -31,9 +31,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
                 .AllDefaults()
             );
 
-            /** 
-            * When the client call is made, we can see from the audit trail that the pool first tried to sniff on startup,
-            * with a sniff failure on 9200 and 9201, followed by a sniff success on 9202. A ping and healthy response are made on
+            /**
+            * When the client call is made, from the audit trail we see that the pool first tried to sniff on startup,
+            * with a sniff failure on 9200 and 9201, followed by a sniff success on 9202. A ping and then healthy response are made on
             * 9200
             */
              await audit.TraceCall(
@@ -50,13 +50,13 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
         }
 
         /** ==== Occurs once
-         * **A sniff on startup only happens once**. That is, 
-         * 
+         * **A sniff on startup only happens once**. That is,
+         *
          * . a sniff is attempted on a node
          * . if that node fails, a sniff is attempted on the next node
          * . this continues until a sniff succeeds
          * . a sniff on startup does not occur again.
-         * 
+         *
          */
         [U] [SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
         public async Task ASniffOnStartupHappensOnce()
@@ -88,9 +88,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
         }
 
         /** ==== Uses cluster state
-         * 
-         * **A sniff on startup will use the returned cluster state**. 
-         * 
+         *
+         * **A sniff on startup will use the returned cluster state**.
+         *
          * In this next example, the state of the cluster returned from the successful sniff
          * is used for subsequent client requests
          */
@@ -145,8 +145,8 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
         }
 
         /**==== Prefers master eligible nodes
-         * 
-         * Sniffing prefers to run on master eligible nodes 
+         *
+         * Sniffing prefers to run on master eligible nodes
          */
         [U] [SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
         public async Task SniffPrefersMasterNodes()

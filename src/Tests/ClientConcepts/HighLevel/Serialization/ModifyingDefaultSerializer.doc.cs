@@ -102,8 +102,8 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
 
         /**[IMPORTANT]
          * ====
-         * Any custom serializer that derives from `JsonNetSerializer` and wishes to change the settings for the JSON.Net
-         * serializer must do so using the `OverwriteDefaultSerializers` method in the constructor of the derived
+         * Any custom serializer that derives from `JsonNetSerializer` wishing to change the settings for the JSON.Net
+         * serializer, must do so using the `OverwriteDefaultSerializers` method in the constructor of the derived
          * serializer.
          *
          * NEST includes many custom changes to the http://www.newtonsoft.com/json/help/html/ContractResolver.htm[`IContractResolver`] that the JSON.Net serializer uses to resolve
@@ -113,7 +113,7 @@ namespace Tests.ClientConcepts.HighLevel.Serialization
          * - Special handling of dictionaries to ensure dictionary keys are serialized verbatim
          * - Explicitly implemented interface properties are serialized in requests
          *
-         * Therefore it's important that these changes to `IContractResolver` are not overwritten by a serializer derived
+         * It's important therefore that these changes to `IContractResolver` are not overwritten by a serializer derived
          * from `JsonNetSerializer`.
          * ====
          */

@@ -18,7 +18,7 @@ please modify the original csharp file found at the link and submit the PR with 
 === Testing analyzers
 
 When <<writing-analyzers, building your own analyzers>>, it's useful to test that the analyzer
-does what we expect it to. This is where the {ref_current}/indices-analyze.html[Analyze API] comes in. 
+does what we expect it to. This is where the {ref_current}/indices-analyze.html[Analyze API] comes in.
 
 ==== Testing in-built analyzers
 
@@ -79,7 +79,7 @@ This returns the following response from Elasticsearch
 }
 ----
 
-which is deserialized to an instance of `IAnalyzeResponse` by NEST 
+which is deserialized to an instance of `IAnalyzeResponse` by NEST
 that we can work with
 
 [source,csharp]
@@ -90,13 +90,13 @@ foreach (var analyzeToken in analyzeResponse.Tokens)
 }
 ----
 
-In testing the `standard` analyzer on our text, we've noticed that 
+In testing the `standard` analyzer on our text, we've noticed that
 
 * `F#` is tokenized as `"f"`
 
 * stop word tokens `"is"` and `"the"` are included
 
-* `"superior"` is included but we'd also like to tokenize `"great"` as a synonym for superior 
+* `"superior"` is included but we'd also like to tokenize `"great"` as a synonym for superior
 
 We'll look at how we can test a combination of built-in analysis components next to
 build an analyzer to fit our needs.
@@ -154,11 +154,11 @@ Let's build a custom analyzer with additional components to solve this.
 ==== Testing a custom analyzer in an index
 
 A custom analyzer can be created within an index, either when creating the index or by
-updating the settings on an existing index. 
+updating the settings on an existing index.
 
 IMPORTANT: When adding to an existing index, it needs to be closed first.
 
-In this example, we'll add a custom analyzer to an existing index. First, 
+In this example, we'll add a custom analyzer to an existing index. First,
 we need to close the index
 
 [source,csharp]
@@ -181,7 +181,7 @@ client.UpdateIndexSettings("analysis-index", i => i
             .TokenFilters(tf => tf
                 .Synonym("my_synonym", sf => sf
                     .Synonyms("superior, great")
-                    
+
                 )
             )
             .Analyzers(an => an
@@ -191,13 +191,13 @@ client.UpdateIndexSettings("analysis-index", i => i
                     .Filters("lowercase", "stop", "my_synonym")
                 )
             )
-        
+
         )
     )
 );
 ----
 
-And open the index again. Here, we also wait up to five seconds for the 
+And open the index again. Here, we also wait up to five seconds for the
 status of the index to become green
 
 [source,csharp]
@@ -265,13 +265,10 @@ Exactly what we were after!
 ==== Testing an analyzer on a field
 
 It's also possible to test the analyzer for a given field type mapping.
-
 Given an index created with the following settings and mappings
 
 [source,csharp]
 ----
-var client = Client;
-
 client.CreateIndex("project-index", i => i
     .Settings(s => s
         .Analysis(a => a

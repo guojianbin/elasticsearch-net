@@ -49,6 +49,8 @@ NEST exposes all of the search request parameters available in Elasticsearch
 
 * <<suggest-usage,Suggest Usage>>
 
+See the documentation on <<writing-queries, Writing queries>> for how to use them in NEST.
+
 --
 
 :includes-from-dirs: search/request

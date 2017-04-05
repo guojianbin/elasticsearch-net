@@ -14,8 +14,9 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 		*
 		* Connection pools that return true for `SupportsReseeding` can be configured to sniff periodically.
 		* In addition to sniffing on startup and sniffing on failures, sniffing periodically can benefit scenarios where
-		* clusters are often scaled horizontally during peak hours. An application might have a healthy view of a subset of the nodes
-		* but without sniffing periodically it will never find the nodes that have been added to help out with load
+		* clusters are often scaled horizontally during peak hours. An application might have a healthy view of a subset of the nodes,
+		* but without sniffing periodically, it will never find the nodes that have been added as part of horizontal scaling,
+		* to help out with load
 		*/
 		[U]
 		[SuppressMessage("AsyncUsage", "AsyncFixer001:Unnecessary async/await usage", Justification = "Its a test")]
@@ -60,24 +61,29 @@ namespace Tests.ClientConcepts.ConnectionPooling.Sniffing
 					{ pool => pool.Nodes.Count.Should().Be(10) }
 				}
 			);
-			/** Now let's forward the clock 31 minutes, our sniff lifespan should now go state
-			* and the first call should do a sniff, which discovered we scaled up to a 100 nodes!
+			/** Now let's forward the clock 31 minutes. Our sniff lifespan should now go stale
+			* and the first call should do a sniff, which discovers we've scaled up to 100 nodes!
 			*/
 			audit.ChangeTime(d => d.AddMinutes(31));
+
 			audit = await audit.TraceCalls(
 				new ClientCall {
-					{ SniffOnStaleCluster }, // <1> a sniff is done first and it prefers the first node master node
+					{ SniffOnStaleCluster },
 					{ SniffSuccess, 9202 },
 					{ HealthyResponse, 9201 },
 					{ pool => pool.Nodes.Count.Should().Be(100) }
 				}
 			);
 
+			/** If we move the clock forward again by another 31 minutes, we now discover that we've scaled back
+			 * down to 10 nodes
+			 */
             audit.ChangeTime(d => d.AddMinutes(31));
+
 			audit = await audit.TraceCalls(
 				new ClientCall {
-					
-					{ SniffOnStaleCluster }, // <2> a sniff is done first and it prefers the first node master node
+
+					{ SniffOnStaleCluster },
 					{ SniffSuccess, 9202 },
 					{ HealthyResponse, 9200 },
 					{ pool => pool.Nodes.Count.Should().Be(10) }

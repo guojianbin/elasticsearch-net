@@ -9,21 +9,21 @@ using static Tests.Framework.RoundTripper;
 namespace Tests.ClientConcepts.HighLevel.Mapping
 {
     /**[[ignoring-properties]]
-    * === Ignoring Properties
+    * === Ignoring properties
     * Properties on a POCO can be ignored for mapping purposes in a few ways:
     *
-    * - Using the `Ignore` property on a derived `ElasticsearchPropertyAttribute` type applied to 
+    * - Using the `Ignore` property on a derived `ElasticsearchPropertyAttribute` type applied to
     * the property that should be ignored on the POCO
     *
-    * - Using the `.InferMappingFor<TDocument>(Func<ClrTypeMappingDescriptor<TDocument>, IClrTypeMapping<TDocument>> 
+    * - Using the `.InferMappingFor<TDocument>(Func<ClrTypeMappingDescriptor<TDocument>, IClrTypeMapping<TDocument>>
     * selector)` on `ConnectionSettings`
     *
-    * - Using an ignore attribute applied to the POCO property that is understood by 
-    * the `IElasticsearchSerializer` used, and inspected inside of the `CreatePropertyMapping()` on 
+    * - Using an ignore attribute applied to the POCO property that is understood by
+    * the `IElasticsearchSerializer` used, and inspected inside of the `CreatePropertyMapping()` on
     * the serializer. In the case of the default `JsonNetSerializer`, this is the Json.NET `JsonIgnoreAttribute`
     *
-    * This example demonstrates all ways, using the `Ignore` property on the attribute to ignore the property 
-    * `PropertyToIgnore`, the infer mapping to ignore the property `AnotherPropertyToIgnore` and the 
+    * This example demonstrates all ways, using the `Ignore` property on the attribute to ignore the property
+    * `PropertyToIgnore`, the infer mapping to ignore the property `AnotherPropertyToIgnore` and the
     * json serializer specific attribute  to ignore the property `JsonIgnoredProperty`
     */
     public class IgnoringProperties
@@ -93,10 +93,10 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 		}
 
         /**==== Ignoring inherited properties
-         * 
+         *
          * By using the infer mapping configuration for a POCO on the `ConnectionSettings`, it is possible to
          * ignore inherited properties too.
-         * 
+         *
          */
 		public class Parent
 		{
@@ -109,7 +109,7 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 
 		[U]
 		public void IgnoringInheritedProperties()
-		{			
+		{
 			var descriptor = new CreateIndexDescriptor("myindex")
 				.Mappings(ms => ms
                     .Map<Child>(m => m
@@ -154,6 +154,6 @@ namespace Tests.ClientConcepts.HighLevel.Mapping
 
             //hide
 			settings.Expect(expected).WhenSerializing((ICreateIndexRequest)descriptor);
-		}	
+		}
 	}
 }
